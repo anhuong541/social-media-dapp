@@ -1,0 +1,41 @@
+{
+  "name": "ui-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@alch/alchemy-web3": "^1.4.7",
+    "@metamask/providers": "^14.0.2",
+    "@sanity/client": "^6.9.3",
+    "@types/react-modal": "^3.16.3",
+    "axios": "^1.6.2",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
+    "next": "14.0.4",
+    "nft.storage": "^7.1.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^4.12.0",
+    "react-modal": "^3.16.1",
+    "react-spinners": "^0.13.8",
+    "timeago.js": "^4.0.2",
+    "web3": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}
