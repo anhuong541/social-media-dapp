@@ -1,3 +1,3 @@
-import SocialContext from "./TwitterContext";
+import TwitterContext from "./TwitterContext";
 
-export { SocialContext };
+export { TwitterContext };

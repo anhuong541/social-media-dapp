@@ -1,5 +1,5 @@
-import { news, whoToFollow } from '../lib/static'
-import { BiSearch } from 'react-icons/bi'
+import { news, whoToFollow } from "../lib/static";
+import { BiSearch } from "react-icons/bi";
 
 const style = {
   wrapper: `flex-[1] p-4`,
@@ -21,7 +21,7 @@ const style = {
   name: `font-bold`,
   handle: `text-[#8899a6]`,
   followButton: `bg-white text-black px-3 py-1 rounded-full text-xs font-bold`,
-}
+};
 
 function Widgets() {
   return (
@@ -29,13 +29,13 @@ function Widgets() {
       <div className={style.searchBar}>
         <BiSearch className={style.searchIcon} />
         <input
-          placeholder='Search Twitter'
-          type='text'
+          placeholder="Search Twitter"
+          type="text"
           className={style.inputBox}
         />
       </div>
       <div className={style.section}>
-        <div className={style.title}>What's happening</div>
+        <div className={style.title}>What&apos;s happening</div>
         {news.map((item, index) => (
           <div key={index} className={style.item}>
             <div className={style.newsItemLeft}>
@@ -74,7 +74,7 @@ function Widgets() {
         <div className={style.showMore}>Show more</div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Widgets
+export default Widgets;

@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
-import { TwitterContext } from '../../context/TwitterContext'
-import { BsArrowLeftShort } from 'react-icons/bs'
-import { useRouter } from 'next/router'
-import Modal from 'react-modal'
-import ProfileImageMinter from './mintingModal/ProfileImageMinter'
-import { customStyles } from '../../lib/constants'
+import { useContext, useEffect, useState } from "react";
+import { TwitterContext } from "../../context/TwitterContext";
+import { BsArrowLeftShort } from "react-icons/bs";
+import { useRouter } from "next/router";
+import Modal from "react-modal";
+import ProfileImageMinter from "./mintingModal/ProfileImageMinter";
+import { customStyles } from "../../lib/constants";
 
-Modal.setAppElement('#__next')
+Modal.setAppElement("#__next");
 
 const style = {
   wrapper: `border-[#38444d] border-b`,
@@ -23,36 +23,36 @@ const style = {
   details: `px-3`,
   nav: `flex justify-around mt-4 mb-2 text-xs font-semibold text-[#8899a6]`,
   activeNav: `text-white`,
-}
+};
 
 interface Tweets {
-  tweet: string
-  timestamp: string
+  tweet: string;
+  timestamp: string;
 }
 
 interface UserData {
-  name: string
-  profileImage: string
-  coverImage: string
-  walletAddress: string
-  tweets: Array<Tweets>
-  isProfileImageNft: Boolean | undefined
+  name: string;
+  profileImage: string;
+  coverImage: string;
+  walletAddress: string;
+  tweets: Array<Tweets>;
+  isProfileImageNft: Boolean | undefined;
 }
 
 const ProfileHeader = () => {
-  const { currentAccount, currentUser } = useContext(TwitterContext)
-  const router = useRouter()
+  const { currentAccount, currentUser } = useContext<any>(TwitterContext);
+  const router = useRouter();
   const [userData, setUserData] = useState<UserData>({
-    name: '',
-    profileImage: '',
-    coverImage: '',
-    walletAddress: '',
+    name: "",
+    profileImage: "",
+    coverImage: "",
+    walletAddress: "",
     tweets: [],
     isProfileImageNft: undefined,
-  })
+  });
 
   useEffect(() => {
-    if (!currentUser) return
+    if (!currentUser) return;
 
     setUserData({
       name: currentUser.name,
@@ -61,13 +61,13 @@ const ProfileHeader = () => {
       coverImage: currentUser.coverImage,
       tweets: currentUser.tweets,
       isProfileImageNft: currentUser.isProfileImageNft,
-    })
-  }, [currentUser])
+    });
+  }, [currentUser]);
 
   return (
     <div className={style.wrapper}>
       <div className={style.header}>
-        <div onClick={() => router.push('/')} className={style.backButton}>
+        <div onClick={() => router.push("/")} className={style.backButton}>
           <BsArrowLeftShort />
         </div>
         <div className={style.details}>
@@ -80,14 +80,14 @@ const ProfileHeader = () => {
       <div className={style.coverPhotoContainer}>
         <img
           src={userData.coverImage}
-          alt='cover'
+          alt="cover"
           className={style.coverPhoto}
         />
       </div>
       <div className={style.profileImageContainer}>
         <div
           className={
-            currentUser.isProfileImageNft ? 'hex' : style.profileImageContainer
+            currentUser.isProfileImageNft ? "hex" : style.profileImageContainer
           }
         >
           <img
@@ -120,7 +120,7 @@ const ProfileHeader = () => {
         <div>Likes</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProfileHeader
+export default ProfileHeader;

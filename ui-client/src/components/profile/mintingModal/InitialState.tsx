@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction } from 'react'
-import { GiEarthAmerica } from 'react-icons/gi'
+import { Dispatch, SetStateAction } from "react";
+import { GiEarthAmerica } from "react-icons/gi";
 
 const style = {
   wrapper: `h-[20rem] w-[35rem] text-white bg-[#15202b] rounded-3xl p-10 flex flex-col`,
@@ -14,16 +14,16 @@ const style = {
   visibilityText: `ml-2`,
   mintButton: `bg-white text-black px-3 py-1 rounded-full hover:bg-[#8899a6] cursor-pointer`,
   inactiveMintButton: `text-black px-3 py-1 rounded-full bg-[#8899a6]`,
-}
+};
 
 interface InitialStateProps {
-  profileImage: File
-  setProfileImage: Dispatch<SetStateAction<File | undefined>>
-  name: string
-  setName: Dispatch<SetStateAction<string>>
-  description: string
-  setDescription: Dispatch<SetStateAction<string>>
-  mint: Function
+  profileImage: File;
+  setProfileImage: Dispatch<SetStateAction<File | undefined>>;
+  name: string;
+  setName: Dispatch<SetStateAction<string>>;
+  description: string;
+  setDescription: Dispatch<SetStateAction<string>>;
+  mint: Function;
 }
 
 const InitialState = ({
@@ -35,43 +35,43 @@ const InitialState = ({
   setDescription,
   mint,
 }: InitialStateProps) => {
-  console.log(profileImage)
+  console.log(profileImage);
 
   return (
     <div className={style.wrapper}>
       <div className={style.inputFieldsContainer}>
         <div className={style.inputContainer}>
           <label
-            htmlFor='image-upload'
+            htmlFor="image-upload"
             className={profileImage ? style.fileSelected : style.customInput}
           >
             <input
-              type='file'
-              id='image-upload'
-              accept='.jpg, .jpeg, .png'
+              type="file"
+              id="image-upload"
+              accept=".jpg, .jpeg, .png"
               className={style.fileInput}
-              placeholder='Image URL'
-              onChange={e => setProfileImage(e.target.files![0])}
+              placeholder="Image URL"
+              onChange={(e) => setProfileImage(e.target.files![0])}
             />
             Select File
           </label>
         </div>
         <div className={style.inputContainer}>
           <input
-            type='text'
+            type="text"
             className={style.input}
-            placeholder='Title of Image'
+            placeholder="Title of Image"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className={style.inputContainer}>
           <input
-            type='text'
+            type="text"
             className={style.input}
-            placeholder='Description'
+            placeholder="Description"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
       </div>
@@ -88,7 +88,7 @@ const InitialState = ({
           }
           onClick={() => {
             if (name && description && profileImage) {
-              mint()
+              mint();
             }
           }}
         >
@@ -96,7 +96,7 @@ const InitialState = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InitialState
+export default InitialState;

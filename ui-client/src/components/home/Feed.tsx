@@ -24,7 +24,7 @@ interface TweetAuthor {
 }
 
 function Feed() {
-  const { tweets } = useContext(TwitterContext);
+  const { tweets } = useContext<any>(TwitterContext);
 
   return (
     <div className={`${style.wrapper} no-scrollbar`}>

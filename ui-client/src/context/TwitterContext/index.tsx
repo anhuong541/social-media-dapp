@@ -4,7 +4,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const TwitterContext = createContext({});
 
-export default function SocialContext({ children }: { children: any }) {
+export default function TwitterContext({ children }: { children: any }) {
   const [appStatus, setAppStatus] = useState("");
   const [currentAccount, setCurrentAccount] = useState("");
   const [currentUser, setCurrentUser] = useState({});
