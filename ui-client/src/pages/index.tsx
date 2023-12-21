@@ -1,8 +1,11 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import FollowBar from "@/components/Home/Followbar";
+import NewsFeed from "@/components/Home/NewsFeed";
 
 export default function Home() {
-  return <main></main>;
+  return (
+    <>
+      <NewsFeed />
+      <FollowBar />
+    </>
+  );
 }

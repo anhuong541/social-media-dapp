@@ -1,4 +1,4 @@
-export default function FollowBar() {
+export default function CharRoom() {
   return (
     <>
       <></>

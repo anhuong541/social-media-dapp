@@ -1,11 +1,22 @@
+import { Header, SideBar } from "@/components/layouts";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import Layout from "../../components/Layout";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <main className={`container max-h-screen ${inter.className}`}>
+      <Header />
+      <div className="max-w-screen-xl mx-auto">
+        <div className="grid grid-cols-4 h-full">
+          <SideBar />
+          <div className="flex col-span-3 rounded-lg bg-green-50">
+            <Component {...pageProps} />
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
