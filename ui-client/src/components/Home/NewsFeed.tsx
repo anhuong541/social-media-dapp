@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function NewsFeed() {
   return (
-    <div className="flex-grow p-4 space-y-4">
+    <div className="flex-grow p-4 col-span-2 space-y-4">
       <div className="flex space-x-2">
         <Avatar>
           <AvatarImage

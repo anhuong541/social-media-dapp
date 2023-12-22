@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function SideBar() {
   return (
-    <nav className="bg-white w-full h-full px-2 py-3 flex flex-col gap-3">
+    <nav className="bg-white px-2 py-3 flex flex-col gap-3 border-r">
       {/* <Link
         href="/"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
@@ -27,7 +27,7 @@ export default function SideBar() {
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
       >
         <MessageCircleIcon className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Hi</span>
+        <span className="font-medium text-gray-900">Hi!</span>
       </Link>
       {/* <Link href="/" className="flex items-center gap-3 rounded-lg hover:bg-green-200 py-3">
         <GroupIcon className="h-6 w-6 text-green-700" />
@@ -39,7 +39,7 @@ export default function SideBar() {
         <span className="font-medium text-gray-900">More</span>
       </Link> */}
       <Link
-        href="/"
+        href="/crypto"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
       >
         <BsCurrencyBitcoin className="h-6 w-6 text-green-700" />

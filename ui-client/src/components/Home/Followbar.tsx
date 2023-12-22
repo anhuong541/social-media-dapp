@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 
-const items = [
+const hashtagItems = [
   { title: "thisbfa" },
   { title: "saf" },
   { title: "thisis" },
@@ -19,12 +19,12 @@ const items = [
 
 export default function FollowBar() {
   return (
-    <div className="w-[300px] p-4 space-y-4">
+    <div className="p-4 space-y-4">
       <Input className="w-full" placeholder="Search" />
       <div className="bg-white p-4 rounded-lg space-y-2">
         <h2 className="text-lg font-semibold">Trending 🔥</h2>
         <div className="flex flex-wrap gap-2">
-          {items.map((item, index) => {
+          {hashtagItems.map((item, index) => {
             return (
               <Link
                 key={index}
