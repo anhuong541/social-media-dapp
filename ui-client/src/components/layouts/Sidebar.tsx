@@ -61,7 +61,7 @@ export default function SideBar() {
   );
 }
 
-function HomeIcon(props) {
+function HomeIcon(props: any) {
   return (
     <svg
       {...props}
@@ -81,7 +81,7 @@ function HomeIcon(props) {
   );
 }
 
-function MessageCircleIcon(props) {
+function MessageCircleIcon(props: any) {
   return (
     <svg
       {...props}
@@ -100,7 +100,7 @@ function MessageCircleIcon(props) {
   );
 }
 
-function WifiIcon(props) {
+function WifiIcon(props: any) {
   return (
     <svg
       {...props}
@@ -122,7 +122,7 @@ function WifiIcon(props) {
   );
 }
 
-function GroupIcon(props) {
+function GroupIcon(props: any) {
   return (
     <svg
       {...props}
@@ -146,7 +146,7 @@ function GroupIcon(props) {
   );
 }
 
-function MoreHorizontalIcon(props) {
+function MoreHorizontalIcon(props: any) {
   return (
     <svg
       {...props}

@@ -13,7 +13,7 @@ export const getNews = async () => {
   }
 };
 
-const handleImgError = (e) => {
+const handleImgError = (e: any) => {
   console.log(e);
   // lỗi detect
   e.target.src = "/new-default-img.png";
@@ -32,12 +32,12 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default function NewsPage({ listNews }) {
+export default function NewsPage({ listNews }: { listNews: any }) {
   return (
     <div className="flex flex-col gap-4 pt-4 h-[90vh] w-full">
       <h2 className="font-medium text-xl text-black px-4">🔥 Trending News</h2>
       <div className="grid grid-cols-3 gap-4 px-4 overflow-y-auto">
-        {listNews.map((item, index: number) => {
+        {listNews.map((item: any, index: number) => {
           return (
             <div className="flex flex-col gap-6" key={index}>
               <a

@@ -29,7 +29,7 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default function Crypto({ topCrypto }) {
+export default function Crypto({ topCrypto }: { topCrypto: any }) {
   return (
     <div className="flex flex-col gap-4 pt-4 h-[90vh] w-full">
       <h2 className="font-medium text-xl text-black px-4">
