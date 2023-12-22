@@ -46,7 +46,7 @@ export default function SideBar() {
         <span className="font-medium text-gray-900">Crypto Trends</span>
       </Link>
       <Link
-        href="/"
+        href="/news"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
       >
         <PiNewspaper className="h-6 w-6 text-green-700" />

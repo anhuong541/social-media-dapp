@@ -109,3 +109,11 @@ export const exponentialToDecimal = (exponential: number) => {
   }
   return decimal;
 };
+
+export const add3Dots = (string: string, limit: number) => {
+  const dots = "...";
+  if (string.length > limit) {
+    string = string.substring(0, limit) + dots;
+  }
+  return string;
+};

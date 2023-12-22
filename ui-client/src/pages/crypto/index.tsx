@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import TooltipNumber from "@/components/Tooltip/TooltipNumber";
+import Image from "next/image";
 
 export const getListingsLatest = async () => {
   const res = await coinmarketcap.get("/v1/cryptocurrency/listings/latest");
@@ -77,7 +78,7 @@ export default function Crypto({ topCrypto }) {
                       className="flex items-center gap-4"
                       href={`/cryptocurrency/${item.slug}`}
                     > */}
-                    <img
+                    <Image
                       src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${item.id}.png`}
                       alt="nft"
                       width={30}
