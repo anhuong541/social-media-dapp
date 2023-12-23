@@ -1,8 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { BsCurrencyBitcoin } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
-import { Button } from "../ui/button";
 import { BiImageAdd } from "react-icons/bi";
+import { Button } from "../ui/button";
 import Link from "next/link";
 
 export default function SideBar() {
