@@ -3,8 +3,8 @@ import NewsFeed from "@/components/Home/NewsFeed";
 
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
+import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
-import loadingLottie from "./../../public/loadingLottie.json";
 import { useAddress } from "@thirdweb-dev/react";
 import styles from "@/styles/Home.module.css";
 

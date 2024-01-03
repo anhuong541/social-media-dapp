@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { useContract, useContractEvents } from "@thirdweb-dev/react";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
-import loadingLottie from "./../../../public/loadingLottie.json";
 import styles from "@/styles/Home.module.css";
 import EventCard from "./EventCard";
 import UserStatus from "./user-status";
@@ -45,19 +41,8 @@ export default function NewsFeed() {
 
   return (
     <div className="flex-grow p-4 col-span-2 space-y-4">
-      <div className="flex space-x-2">
-        {/* <Avatar>
-          <AvatarImage
-            src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-            alt="user Avatar"
-          />
-          <AvatarFallback>AH</AvatarFallback>
-        </Avatar>
-        <Input className="flex-grow" placeholder="What's happening?" />
-        <Button variant="default">Post</Button> */}
-        <UserStatus />
-      </div>
-      <div>
+      <UserStatus />
+      <div className="flex flex-col gap-3">
         {!isStatusEventsLoading &&
           statusEvents &&
           statusEvents

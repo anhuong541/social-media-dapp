@@ -41,7 +41,7 @@ export default function EventCard(props: EventCardProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage
               src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
@@ -59,9 +59,9 @@ export default function EventCard(props: EventCardProps) {
       </CardHeader>
       <CardContent>
         <p>{props.newStatus}</p>
-        <div className="flex justify-between items-center mt-4">
+        {/* <div className="flex justify-between items-center mt-4">
           <div className="flex space-x-2"></div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

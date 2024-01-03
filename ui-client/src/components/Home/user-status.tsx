@@ -10,10 +10,13 @@ import {
 import { useState } from "react";
 import styles from "@/styles/Home.module.css";
 import Lottie from "lottie-react";
-import loadingLottie from "./../../../public/loadingLottie.json";
+import loadingLottie from "@/lib/loadingLottie.json";
 import Link from "next/link";
 import { truncateAddress } from "@/lib/utils";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
+import { Input } from "../ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "../ui/button";
 
 export default function UserStatus() {
   const address = useAddress();
@@ -59,27 +62,19 @@ export default function UserStatus() {
 
   return (
     <div className={styles.userContainer}>
-      <div className={styles.statusHeader}>
-        <Link href={`/account/${address}`} style={{ color: "white" }}>
-          <p className={styles.connectedAddress}>{truncateAddress(address!)}</p>
-        </Link>
-        <button className={styles.logoutButton} onClick={() => disconnect()}>
-          Logout
-        </button>
+      <div className="flex gap-2 w-full flex-1">
+        {/* <Avatar>
+          <AvatarImage
+            src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
+            alt="user Avatar"
+          />
+          <AvatarFallback>AH</AvatarFallback>
+        </Avatar> */}
+        <Input className="flex-grow" placeholder="What's on your mind today?" />
+        <Button variant="default" onClick={() => setIsStatusModalOpen(true)}>
+          Post
+        </Button>
       </div>
-
-      {!isMyStatusLoading && myStatus && (
-        <div>
-          <p className={styles.statusText}>{myStatus}</p>
-        </div>
-      )}
-      <button
-        className={styles.updateButton}
-        onClick={() => setIsStatusModalOpen(true)}
-      >
-        Update
-      </button>
-
       {isStatusModalOpen && (
         <div className={styles.statusModalContainer}>
           <div className={styles.statusModal}>
@@ -93,7 +88,7 @@ export default function UserStatus() {
                 setNewStatus(e.target.value);
                 setCharacterCount(e.target.value.length);
               }}
-              placeholder="Enter your status"
+              placeholder="What is on your mind today!"
             />
             <div className={styles.characterCountContainer}>
               <p className={characterDecoration}>{characterCount}/140</p>
@@ -108,7 +103,7 @@ export default function UserStatus() {
                 setNewStatus("");
               }}
             >
-              Update Status
+              Post
             </Web3Button>
           </div>
         </div>

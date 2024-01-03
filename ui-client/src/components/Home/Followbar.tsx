@@ -5,22 +5,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 
 const hashtagItems = [
-  { title: "thisbfa" },
-  { title: "saf" },
-  { title: "thisis" },
-  { title: "asfafasfasf" },
-  { title: "afaf" },
-  { title: "ds" },
-  { title: "as" },
-  { title: "thisis" },
-  { title: "thisis" },
-  { title: "afs" },
+  { title: "crypto" },
+  { title: "web3" },
+  { title: "Nimbus" },
+  { title: "vku university" },
+  { title: "daihoc" },
+  { title: "Viet Han" },
 ];
 
 export default function FollowBar() {
   return (
     <div className="p-4 space-y-4">
-      <Input className="w-full" placeholder="Search" />
+      {/* <Input className="w-full" placeholder="Search" /> */}
       <div className="bg-white p-4 rounded-lg space-y-2">
         <h2 className="text-lg font-semibold">Trending 🔥</h2>
         <div className="flex flex-wrap gap-2">
@@ -35,13 +31,12 @@ export default function FollowBar() {
               </Link>
             );
           })}
-
           {/* <Button variant="ghost" className="rounded-xl self-end">
             Show more
           </Button> */}
         </div>
       </div>
-      <div className="bg-white p-4 rounded-lg space-y-2">
+      {/* <div className="bg-white p-4 rounded-lg space-y-2">
         <h2 className="text-lg font-semibold">Who to follow</h2>
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -94,7 +89,7 @@ export default function FollowBar() {
           </div>
         </div>
         <Button variant="ghost">Show more</Button>
-      </div>
+      </div> */}
     </div>
   );
 }
