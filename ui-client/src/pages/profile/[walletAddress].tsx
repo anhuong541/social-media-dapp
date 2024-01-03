@@ -47,25 +47,25 @@ export default function AcountFeed() {
   }
 
   return (
-    <div className={styles.container} style={{ maxWidth: "500px" }}>
-      <button onClick={() => router.push("/")} className={styles.updateButton}>
-        Back
-      </button>
-      <h1>Account Feed</h1>
-      <p style={{ fontSize: "0.75rem" }}>{walletAddress}</p>
-      <h3>Latest Updates:</h3>
-      {!isUserEventsLoading &&
-        userEvents &&
-        userEvents
-          .slice(0, 20)
-          .map((event, index) => (
-            <EventCard
-              key={index}
-              walletAddress={event.data.user}
-              newStatus={event.data.newStatus}
-              timeStamp={event.data.timestamp}
-            />
-          ))}
+    <div className="flex flex-col gap-4 pt-4 w-full">
+      <h1 className="font-medium text-xl text-black px-4">
+        Account: {walletAddress}
+      </h1>
+      <div className="px-4 flex flex-col gap-2">
+        <h3>Latest Updates:</h3>
+        {!isUserEventsLoading &&
+          userEvents &&
+          userEvents
+            .slice(0, 20)
+            .map((event, index) => (
+              <EventCard
+                key={index}
+                walletAddress={event.data.user}
+                newStatus={event.data.newStatus}
+                timeStamp={event.data.timestamp}
+              />
+            ))}
+      </div>
     </div>
   );
 }
