@@ -1,9 +1,30 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
+import dayjs from "dayjs";
+const durationex = require("dayjs/plugin/duration");
+dayjs.extend(durationex);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function formatTime(timestamp: number) {
+  const startTime: any = new Date(timestamp);
+  const currentTime: any = new Date();
+  const timeDifference = currentTime - startTime;
+  const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert milliseconds to hours
+
+  if (hoursDifference < 24) {
+    // If active for less than 24 hours, return "today"
+    return "today";
+  } else {
+    // If active for 24 hours or more, return the formatted date
+    const day = startTime.getDate();
+    const month = startTime.getMonth() + 1; // Months are 0-indexed
+    const year = startTime.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 }
 
 export const formatCurrency = (input: number) => {
@@ -117,3 +138,11 @@ export const add3Dots = (string: string, limit: number) => {
   }
   return string;
 };
+
+export function truncateAddress(address: string) {
+  if (!address) {
+    return "";
+  }
+
+  return address.slice(0, 4) + "..." + address.slice(-4);
+}
