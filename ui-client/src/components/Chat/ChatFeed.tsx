@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 
 export default function ChatFeed() {
   return (
-    <div className="flex flex-col justify-between items-center col-span-2 py-4 border-r">
+    <div className="flex flex-col justify-between items-center xl:col-span-2 py-4 border-r h-full">
       <div className="flex flex-col gap-4 px-8 w-full">
         <div className="flex items-start space-x-3">
           <Avatar className="h-9 w-9">

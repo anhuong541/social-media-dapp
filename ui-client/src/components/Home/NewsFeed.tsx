@@ -3,7 +3,6 @@ import { useContract, useContractEvents } from "@thirdweb-dev/react";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
-import styles from "@/styles/Home.module.css";
 import EventCard from "./EventCard";
 import UserStatus from "./user-status";
 
@@ -30,9 +29,11 @@ export default function NewsFeed() {
   if (isLoading) {
     return (
       <div className="col-span-2">
-        <div className={styles.sectionLoading}>
-          <Lottie animationData={loadingLottie} loop={true} />
-        </div>
+        <Lottie
+          animationData={loadingLottie}
+          loop={true}
+          className="w-24 h-24 mx-auto"
+        />
       </div>
     );
   }

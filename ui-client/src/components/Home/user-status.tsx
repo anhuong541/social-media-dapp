@@ -6,9 +6,17 @@ import {
   useContractRead,
   useDisconnect,
 } from "@thirdweb-dev/react";
-
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useState } from "react";
-import styles from "@/styles/Home.module.css";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import Link from "next/link";
@@ -22,12 +30,8 @@ export default function UserStatus() {
   const address = useAddress();
   const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
-  const characterDecoration =
-    characterCount >= 140
-      ? styles.characterCountOver
-      : styles.characterCountUnder;
 
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
@@ -47,26 +51,87 @@ export default function UserStatus() {
 
   if (isMyStatusLoading) {
     return (
-      <div className={styles.sectionLoading}>
-        <Lottie animationData={loadingLottie} loop={true} />
-      </div>
+      <Lottie
+        animationData={loadingLottie}
+        loop={true}
+        className="w-24 h-24 mx-auto"
+      />
     );
   }
 
   return (
     <div className="w-full">
-      <div className="flex gap-2 w-full flex-1">
-        <Input className="flex-grow" placeholder="What's on your mind today?" />
-        <Button variant="default" onClick={() => setIsStatusModalOpen(true)}>
-          Post
-        </Button>
-      </div>
-      {isStatusModalOpen && (
-        <div className={styles.statusModalContainer}>
+      <Dialog>
+        <div className="flex gap-2 w-full flex-1">
+          <Input
+            className="flex-grow"
+            placeholder="What's on your mind today?"
+          />
+          <Button variant="default">
+            <DialogTrigger>Post</DialogTrigger>
+          </Button>
+        </div>
+
+        <DialogContent>
+          {dialogOnClose ? (
+            <DialogHeader>
+              <DialogTitle>Status Updated!</DialogTitle>
+              <DialogDescription>
+                You can close the popup now!
+              </DialogDescription>
+            </DialogHeader>
+          ) : (
+            <DialogHeader>
+              <DialogTitle>New Status:</DialogTitle>
+              <DialogDescription>Typing your thought!</DialogDescription>
+            </DialogHeader>
+          )}
+
+          {dialogOnClose ? (
+            <DialogClose>close</DialogClose>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <textarea
+                value={newStatus}
+                onChange={(e) => {
+                  setNewStatus(e.target.value);
+                  setCharacterCount(e.target.value.length);
+                }}
+                placeholder="What is on your mind today!"
+                className="h-40 py-2 px-4 border"
+              />
+              <div className="flex justify-end w-full pr-2">
+                <p
+                  className={`${
+                    characterCount >= 140 ? "text-red-500" : "text-black"
+                  }`}
+                >
+                  {characterCount}/140
+                </p>
+              </div>
+
+              <Web3Button
+                className="bg-[#2c9f41] cursor-pointer rounded-xl p-2 w-full h-10 text-sm hover:opacity-80"
+                contractAddress={STATUS_CONTRACT_ADDRESS}
+                action={(contract) => contract.call("setStatus", [newStatus])}
+                isDisabled={characterCount === 0 || characterCount > 140}
+                onSuccess={() => {
+                  setNewStatus("");
+                  setDialogOnClose(true);
+                }}
+              >
+                Post
+              </Web3Button>
+            </div>
+          )}
+        </DialogContent>
+
+        {/* {isStatusModalOpen && (
+        <div className="">
           <div className={styles.statusModal}>
             <div className={styles.statusModalHeader}>
               <p>New Status:</p>
-              <button onClick={() => setIsStatusModalOpen(false)}>Close</button>
+              <button>Close</button>
             </div>
             <textarea
               value={newStatus}
@@ -77,7 +142,13 @@ export default function UserStatus() {
               placeholder="What is on your mind today!"
             />
             <div className={styles.characterCountContainer}>
-              <p className={characterDecoration}>{characterCount}/140</p>
+              <p
+                className={`${
+                  characterCount >= 140 ? "text-red-500" : "text-white"
+                }`}
+              >
+                {characterCount}/140
+              </p>
             </div>
             <Web3Button
               className={styles.statusModalButton}
@@ -93,7 +164,8 @@ export default function UserStatus() {
             </Web3Button>
           </div>
         </div>
-      )}
+      )} */}
+      </Dialog>
     </div>
   );
 }

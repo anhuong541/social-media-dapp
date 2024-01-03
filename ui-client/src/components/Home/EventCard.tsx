@@ -1,5 +1,3 @@
-import Link from "next/link";
-import styles from "@/styles/Home.module.css";
 import { BigNumber } from "ethers";
 import { formatTime, truncateAddress } from "@/lib/utils";
 
@@ -11,7 +9,6 @@ import {
   Card,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import dayjs from "dayjs";
 
 type EventCardProps = {
   walletAddress: string;
@@ -60,7 +57,7 @@ export default function EventCard(props: EventCardProps) {
       <CardContent>
         <p>{props.newStatus}</p>
         {/* <div className="flex justify-between items-center mt-4">
-          <div className="flex space-x-2"></div>
+          <div className="flex space-x-2">csa</div>
         </div> */}
       </CardContent>
     </Card>
