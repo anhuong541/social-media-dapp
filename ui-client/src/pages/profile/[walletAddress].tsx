@@ -11,9 +11,7 @@ import EventCard from "@/components/Home/EventCard";
 export default function AcountFeed() {
   const router = useRouter();
   const { walletAddress } = router.query;
-
   const [isLoading, setIsLoading] = useState(true);
-
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
   const { data: userEvents, isLoading: isUserEventsLoading } =

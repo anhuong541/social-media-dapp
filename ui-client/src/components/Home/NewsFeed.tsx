@@ -9,9 +9,7 @@ import UserStatus from "./user-status";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(true);
-
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-
   const { data: statusEvents, isLoading: isStatusEventsLoading } =
     useContractEvents(contract, "StatusUpdated", {
       subscribe: true,
@@ -40,9 +38,9 @@ export default function NewsFeed() {
   }
 
   return (
-    <div className="flex-grow p-4 col-span-2 space-y-4">
+    <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
       <UserStatus />
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 overflow-y-auto h-[80vh]">
         {!isStatusEventsLoading &&
           statusEvents &&
           statusEvents

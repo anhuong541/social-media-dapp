@@ -15,7 +15,7 @@ const hashtagItems = [
 
 export default function FollowBar() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-4 lg:block hidden">
       {/* <Input className="w-full" placeholder="Search" /> */}
       <div className="bg-white p-4 rounded-lg space-y-2">
         <h2 className="text-lg font-semibold">Trending 🔥</h2>

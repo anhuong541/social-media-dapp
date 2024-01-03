@@ -3,17 +3,27 @@ import { PiNewspaper } from "react-icons/pi";
 import { BiImageAdd } from "react-icons/bi";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
+import {
+  useAddress,
+  useContract,
+  useContractEvents,
+  useContractRead,
+} from "@thirdweb-dev/react";
+import { useRouter } from "next/router";
 
 export default function SideBar() {
+  const router = useRouter();
+  const address = useAddress();
+  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
+  const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
+    contract,
+    "getStatus",
+    [address]
+  );
+
   return (
-    <nav className="bg-white px-2 py-3 flex flex-col gap-3 border-r">
-      {/* <Link
-        href="/"
-        className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-      >
-        <HomeIcon className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Home</span>
-      </Link> */}
+    <nav className="bg-white px-2 py-3 xl:flex hidden flex-col gap-3 border-r">
       <Link
         href="/"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
@@ -28,15 +38,16 @@ export default function SideBar() {
         <MessageCircleIcon className="h-6 w-6 text-green-700" />
         <span className="font-medium text-gray-900">Hi!</span>
       </Link>
-      {/* <Link href="/" className="flex items-center gap-3 rounded-lg hover:bg-green-200 py-3">
-        <GroupIcon className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Group</span>
-        <Badge variant="secondary">Beta</Badge>
-      </Link> */}
-      {/* <Link href="/" className="flex items-center gap-3 rounded-lg hover:bg-green-200 py-3">
-        <MoreHorizontalIcon className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">More</span>
-      </Link> */}
+      <button
+        onClick={() => router.push(`/profile/${address}`)}
+        disabled={!address}
+        className={`flex items-center gap-3 rounded-lg hover:bg-green-200 p-3 ${
+          !address ? "opacity-40" : ""
+        }`}
+      >
+        <HomeIcon className="h-6 w-6 text-green-700" />
+        <span className="font-medium text-gray-900">Feed History</span>
+      </button>
       <Link
         href="/crypto"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
@@ -80,7 +91,7 @@ function HomeIcon(props: any) {
   );
 }
 
-function MessageCircleIcon(props: any) {
+export function MessageCircleIcon(props: any) {
   return (
     <svg
       {...props}
@@ -99,7 +110,7 @@ function MessageCircleIcon(props: any) {
   );
 }
 
-function WifiIcon(props: any) {
+export function WifiIcon(props: any) {
   return (
     <svg
       {...props}
@@ -121,7 +132,7 @@ function WifiIcon(props: any) {
   );
 }
 
-function GroupIcon(props: any) {
+export function GroupIcon(props: any) {
   return (
     <svg
       {...props}
@@ -145,7 +156,7 @@ function GroupIcon(props: any) {
   );
 }
 
-function MoreHorizontalIcon(props: any) {
+export function MoreHorizontalIcon(props: any) {
   return (
     <svg
       {...props}

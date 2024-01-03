@@ -39,15 +39,8 @@ export default function UserStatus() {
 
   if (!address) {
     return (
-      <div>
-        <ConnectWallet
-          modalSize="compact"
-          dropdownPosition={{
-            side: "bottom",
-            align: "start",
-          }}
-        />
-        <p>Please connect your wallet.</p>
+      <div className="text-red-500">
+        Your did not connected your wallet yet!
       </div>
     );
   }
@@ -61,15 +54,8 @@ export default function UserStatus() {
   }
 
   return (
-    <div className={styles.userContainer}>
+    <div className="w-full">
       <div className="flex gap-2 w-full flex-1">
-        {/* <Avatar>
-          <AvatarImage
-            src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-            alt="user Avatar"
-          />
-          <AvatarFallback>AH</AvatarFallback>
-        </Avatar> */}
         <Input className="flex-grow" placeholder="What's on your mind today?" />
         <Button variant="default" onClick={() => setIsStatusModalOpen(true)}>
           Post
