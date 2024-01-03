@@ -27,7 +27,7 @@ export default function AcountFeed() {
     // Set a timeout for 2 seconds
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, 1000);
 
     // Cleanup the timer when the component is unmounted
     return () => clearTimeout(timer);

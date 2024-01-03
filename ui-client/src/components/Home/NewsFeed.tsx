@@ -8,6 +8,7 @@ import UserStatus from "./user-status";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(true);
+  const [countFeed, setCountFeed] = useState(10);
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
   const { data: statusEvents, isLoading: isStatusEventsLoading } =
     useContractEvents(contract, "StatusUpdated", {
@@ -20,7 +21,7 @@ export default function NewsFeed() {
     // Set a timeout for 2 seconds
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, 1000);
 
     // Cleanup the timer when the component is unmounted
     return () => clearTimeout(timer);
@@ -45,7 +46,7 @@ export default function NewsFeed() {
         {!isStatusEventsLoading &&
           statusEvents &&
           statusEvents
-            .slice(0, 30)
+            .slice(0, countFeed)
             .map((event, index) => (
               <EventCard
                 key={index}
@@ -54,6 +55,13 @@ export default function NewsFeed() {
                 timeStamp={event.data.timestamp}
               />
             ))}
+        {!isStatusEventsLoading &&
+          statusEvents &&
+          countFeed < statusEvents?.length && (
+            <button onClick={() => setCountFeed(() => countFeed + 10)}>
+              more
+            </button>
+          )}
       </div>
     </div>
   );

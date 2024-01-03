@@ -9,6 +9,7 @@ import {
   Card,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 type EventCardProps = {
   walletAddress: string;
@@ -38,7 +39,7 @@ export default function EventCard(props: EventCardProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Avatar>
             <AvatarImage
               src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
@@ -47,8 +48,10 @@ export default function EventCard(props: EventCardProps) {
             <AvatarFallback>AH</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg">
-              {truncateAddress(props.walletAddress)}
+            <CardTitle className="text-lg hover:underline">
+              <Link href={`/profile/${props.walletAddress}`}>
+                {truncateAddress(props.walletAddress)}
+              </Link>
             </CardTitle>
             <CardDescription>{date.toLocaleString()}</CardDescription>
           </div>
