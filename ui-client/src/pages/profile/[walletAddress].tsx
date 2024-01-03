@@ -1,5 +1,4 @@
 import { useContract, useContractEvents } from "@thirdweb-dev/react";
-import styles from "@/styles/Home.module.css";
 import { useRouter } from "next/router";
 
 import Lottie from "lottie-react";
@@ -36,10 +35,12 @@ export default function AcountFeed() {
 
   if (isLoading) {
     return (
-      <div className={styles.pageLoading}>
-        <div>
-          <Lottie animationData={loadingLottie} loop={true} />
-        </div>
+      <div className="w-full">
+        <Lottie
+          animationData={loadingLottie}
+          loop={true}
+          className="w-24 h-24 mx-auto"
+        />
       </div>
     );
   }
@@ -50,19 +51,17 @@ export default function AcountFeed() {
         Account: {walletAddress}
       </h1>
       <div className="px-4 flex flex-col gap-2">
-        <h3>Latest Updates:</h3>
+        <h3>Latest Post:</h3>
         {!isUserEventsLoading &&
           userEvents &&
-          userEvents
-            .slice(0, 20)
-            .map((event, index) => (
-              <EventCard
-                key={index}
-                walletAddress={event.data.user}
-                newStatus={event.data.newStatus}
-                timeStamp={event.data.timestamp}
-              />
-            ))}
+          userEvents.map((event, index) => (
+            <EventCard
+              key={index}
+              walletAddress={event.data.user}
+              newStatus={event.data.newStatus}
+              timeStamp={event.data.timestamp}
+            />
+          ))}
       </div>
     </div>
   );

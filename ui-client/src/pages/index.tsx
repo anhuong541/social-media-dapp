@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
 import { useAddress } from "@thirdweb-dev/react";
-import styles from "@/styles/Home.module.css";
 
 export default function Home() {
   const address = useAddress();
@@ -24,12 +23,12 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3">
-        <div className={styles.pageLoading}>
-          <div>
-            <Lottie animationData={loadingLottie} loop={true} />
-          </div>
-        </div>
+      <div className="w-full">
+        <Lottie
+          animationData={loadingLottie}
+          loop={true}
+          className="w-24 h-24 mx-auto"
+        />
       </div>
     );
   }
