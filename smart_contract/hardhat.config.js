@@ -1,21 +1,43 @@
-require("@nomicfoundation/hardhat-toolbox");
+require("@matterlabs/hardhat-zksync-solc");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.19",
+  zksolc: {
+    version: "1.3.9",
+    compilerSource: "binary",
+    settings: {
+      optimizer: {
+        enabled: true,
+      },
+    },
+  },
   networks: {
-    rinkeby: {
-      url: "https://eth-mainnet.g.alchemy.com/v2/D921hqvIgrLTtV4g9ucUew5V4LQ_hYHo",
-      accounts: [
-        "66ddcea898d9ac261eac727fdda2bc024d47db54e66685c0db81471822b6ee3c",
-      ],
+    zksync_testnet: {
+      url: "https://zksync2-testnet.zksync.dev",
+      ethNetwork: "goerli",
+      chainId: 280,
+      zksync: true,
+    },
+    zksync_mainnet: {
+      url: "https://zksync2-mainnet.zksync.io/",
+      ethNetwork: "mainnet",
+      chainId: 324,
+      zksync: true,
+    },
+  },
+  paths: {
+    artifacts: "./artifacts-zk",
+    cache: "./cache-zk",
+    sources: "./contracts",
+    tests: "./test",
+  },
+  solidity: {
+    version: "0.8.17",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
     },
   },
 };
-
-// metamark
-// 66ddcea898d9ac261eac727fdda2bc024d47db54e66685c0db81471822b6ee3c
-// phantom
-// 0xeed5c6bcd953416cf76e0730dfb2e9d0b6caf948eda4d4cdfb70212b47c0012c
-
-// url: https://eth-mainnet.g.alchemy.com/v2/D921hqvIgrLTtV4g9ucUew5V4LQ_hYHo
