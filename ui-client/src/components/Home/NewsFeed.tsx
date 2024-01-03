@@ -9,6 +9,7 @@ import Lottie from "lottie-react";
 import loadingLottie from "./../../../public/loadingLottie.json";
 import styles from "@/styles/Home.module.css";
 import EventCard from "./EventCard";
+import UserStatus from "./user-status";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,8 +35,10 @@ export default function NewsFeed() {
 
   if (isLoading) {
     return (
-      <div className={styles.sectionLoading}>
-        <Lottie animationData={loadingLottie} loop={true} />
+      <div className="col-span-2">
+        <div className={styles.sectionLoading}>
+          <Lottie animationData={loadingLottie} loop={true} />
+        </div>
       </div>
     );
   }
@@ -43,7 +46,7 @@ export default function NewsFeed() {
   return (
     <div className="flex-grow p-4 col-span-2 space-y-4">
       <div className="flex space-x-2">
-        <Avatar>
+        {/* <Avatar>
           <AvatarImage
             src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
             alt="user Avatar"
@@ -51,7 +54,8 @@ export default function NewsFeed() {
           <AvatarFallback>AH</AvatarFallback>
         </Avatar>
         <Input className="flex-grow" placeholder="What's happening?" />
-        <Button variant="default">Post</Button>
+        <Button variant="default">Post</Button> */}
+        <UserStatus />
       </div>
       <div>
         {!isStatusEventsLoading &&
