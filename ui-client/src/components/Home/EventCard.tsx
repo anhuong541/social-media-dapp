@@ -1,6 +1,8 @@
 import { BigNumber } from "ethers";
 import { formatTime, truncateAddress } from "@/lib/utils";
-
+import { BiUpvote } from "react-icons/bi";
+import { FaRegComments } from "react-icons/fa";
+import { PiHandshakeFill } from "react-icons/pi";
 import {
   CardTitle,
   CardDescription,
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useAddress } from "@thirdweb-dev/react";
 
 type EventCardProps = {
   walletAddress: string;
@@ -18,6 +21,7 @@ type EventCardProps = {
 };
 
 export default function EventCard(props: EventCardProps) {
+  const address = useAddress();
   const date = formatTime(props.timeStamp.toNumber() * 1000);
 
   //   return (
@@ -48,10 +52,20 @@ export default function EventCard(props: EventCardProps) {
             <AvatarFallback>AH</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg hover:underline">
-              <Link href={`/profile/${props.walletAddress}`}>
-                {truncateAddress(props.walletAddress)}
-              </Link>
+            <CardTitle className="text-lg">
+              <div className="flex items-center gap-3">
+                <Link
+                  href={`/profile/${props.walletAddress}`}
+                  className="hover:underline"
+                >
+                  {truncateAddress(props.walletAddress)}
+                </Link>
+                {address !== props.walletAddress && (
+                  <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
+                    <PiHandshakeFill className="w-5 h-5" />
+                  </div>
+                )}
+              </div>
             </CardTitle>
             <CardDescription>{date.toLocaleString()}</CardDescription>
           </div>
@@ -59,9 +73,15 @@ export default function EventCard(props: EventCardProps) {
       </CardHeader>
       <CardContent>
         <p>{props.newStatus}</p>
-        {/* <div className="flex justify-between items-center mt-4">
-          <div className="flex space-x-2">csa</div>
-        </div> */}
+        <div className="flex justify-end items-center gap-3 mt-1">
+          <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
+            <BiUpvote className="w-5 h-5" />
+            13
+          </div>
+          <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
+            <FaRegComments className="w-5 h-5" />3
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -32,12 +32,6 @@ export default function Header() {
   const address = useAddress();
   const disconnect = useDisconnect();
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-
-  const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
-    contract,
-    "getStatus",
-    [address]
-  );
   return (
     <header className="w-full h-[10vh]">
       <div className="max-w-screen-xl h-full mx-auto flex items-center justify-between border-b px-3">

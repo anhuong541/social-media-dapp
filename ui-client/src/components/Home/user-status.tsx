@@ -28,7 +28,7 @@ import { Button } from "../ui/button";
 
 export default function UserStatus() {
   const address = useAddress();
-  const disconnect = useDisconnect();
+  // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
   const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
@@ -63,11 +63,8 @@ export default function UserStatus() {
     <div className="w-full">
       <Dialog>
         <div className="flex gap-2 w-full flex-1">
-          <Input
-            className="flex-grow"
-            placeholder="What's on your mind today?"
-          />
-          <Button variant="default">
+          <Input className="flex-grow" placeholder={myStatus} />
+          <Button variant="default" onClick={() => setDialogOnClose(false)}>
             <DialogTrigger>Post</DialogTrigger>
           </Button>
         </div>

@@ -15,12 +15,6 @@ import { useRouter } from "next/router";
 export default function SideBar() {
   const router = useRouter();
   const address = useAddress();
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-  const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
-    contract,
-    "getStatus",
-    [address]
-  );
 
   return (
     <nav className="bg-white px-2 py-3 xl:flex hidden flex-col gap-3 border-r">
