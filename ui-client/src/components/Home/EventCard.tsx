@@ -24,6 +24,7 @@ import { CommentSection } from "./Comment";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
+import { useState } from "react";
 
 type EventCardProps = {
   walletAddress: string;
@@ -50,14 +51,17 @@ export default function EventCard(props: EventCardProps) {
     [props.walletAddress, statusIdDeciaml]
   );
 
-  const { mutateAsync: addLike, isLoading } = useContractWrite(
+  const { mutateAsync: addLike, isLoading: isLikeLoading } = useContractWrite(
     contract,
     "addLike"
   );
+  // console.log({ isLikeLoading });
 
   const callLike = async () => {
     try {
-      const data = await addLike({ args: [statusIdDeciaml] });
+      const data = await addLike({
+        args: [props.walletAddress, statusIdDeciaml],
+      });
       // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);

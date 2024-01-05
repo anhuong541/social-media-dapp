@@ -369,15 +369,15 @@ contract SocialMediaV3 {
         emit CommentAdded(msg.sender, _statusId, _comment, block.timestamp);
     }
 
-    function addLike(uint256 _statusId) public payable {
+    function addLike(address _user, uint256 _statusId) public {
         // Increase the likes count for the status
-        likes[msg.sender][_statusId]++;
+        likes[_user][_statusId]++;
 
         // Emit LikeAdded event
         emit LikeAdded(
-            msg.sender,
+            _user,
             _statusId,
-            likes[msg.sender][_statusId],
+            likes[_user][_statusId],
             block.timestamp
         );
     }
