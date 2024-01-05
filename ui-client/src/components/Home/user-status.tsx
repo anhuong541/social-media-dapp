@@ -26,7 +26,11 @@ import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 
-export default function UserStatus() {
+export default function UserStatus({
+  statusFeedsLengh,
+}: {
+  statusFeedsLengh: number;
+}) {
   const address = useAddress();
   // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
@@ -38,7 +42,7 @@ export default function UserStatus() {
   const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
     contract,
     "getStatus",
-    [address]
+    [address, statusFeedsLengh + 1]
   );
 
   if (!address) {

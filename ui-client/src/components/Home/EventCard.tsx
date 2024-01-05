@@ -60,7 +60,6 @@ export default function EventCard(props: EventCardProps) {
             />
             <AvatarFallback>AH</AvatarFallback>
           </Avatar>
-          {formatHexToDecimal(props.statusId._hex)}
           <div>
             <CardTitle className="text-lg">
               <div className="flex items-center gap-3">
