@@ -1,16 +1,11 @@
+import { useAddress } from "@thirdweb-dev/react";
+import { useRouter } from "next/router";
 import { BsCurrencyBitcoin } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
 import { BiImageAdd } from "react-icons/bi";
+
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-import {
-  useAddress,
-  useContract,
-  useContractEvents,
-  useContractRead,
-} from "@thirdweb-dev/react";
-import { useRouter } from "next/router";
 
 export default function SideBar() {
   const router = useRouter();

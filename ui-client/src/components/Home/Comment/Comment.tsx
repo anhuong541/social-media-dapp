@@ -1,25 +1,23 @@
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Web3Button,
+  useAddress,
+  useContract,
+  useContractRead,
+} from "@thirdweb-dev/react";
+import Lottie from "lottie-react";
+
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Web3Button,
-  useAddress,
-  useContract,
-  useContractRead,
-  useContractWrite,
-} from "@thirdweb-dev/react";
-import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import { formatHexToDecimal, truncateAddress } from "@/lib/utils";
-import Link from "next/link";
-import { PiHandshakeFill } from "react-icons/pi";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 
 type CommentType = {
   status: string;

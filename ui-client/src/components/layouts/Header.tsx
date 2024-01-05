@@ -1,37 +1,27 @@
-import {
-  ConnectWallet,
-  useAddress,
-  useContract,
-  useContractRead,
-  useDisconnect,
-} from "@thirdweb-dev/react";
-import { Button } from "../ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import Link from "next/link";
+import { HomeIcon } from "lucide-react";
+import { useRouter } from "next/router";
+import { ConnectWallet, useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BsCurrencyBitcoin } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
 import { BiImageAdd } from "react-icons/bi";
-import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-import Link from "next/link";
 import { truncateAddress } from "@/lib/utils";
+
 import { MessageCircleIcon, WifiIcon } from "./Sidebar";
-import { HomeIcon } from "lucide-react";
-import { useRouter } from "next/router";
+import { Button } from "../ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Header() {
   const router = useRouter();
   const address = useAddress();
   const disconnect = useDisconnect();
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
+
   return (
     <header className="w-full h-[10vh]">
       <div className="max-w-screen-xl h-full mx-auto flex items-center justify-between border-b px-3">

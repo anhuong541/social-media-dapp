@@ -1,8 +1,16 @@
-import { BigNumber } from "ethers";
-import { formatHexToDecimal, formatTime, truncateAddress } from "@/lib/utils";
+import Lottie from "lottie-react";
+import Link from "next/link";
+import {
+  useAddress,
+  useContract,
+  useContractRead,
+  useContractWrite,
+} from "@thirdweb-dev/react";
+
 import { BiUpvote } from "react-icons/bi";
 import { FaRegComments } from "react-icons/fa";
 import { PiHandshakeFill } from "react-icons/pi";
+
 import {
   CardTitle,
   CardDescription,
@@ -10,21 +18,12 @@ import {
   CardContent,
   Card,
 } from "@/components/ui/card";
+import { formatHexToDecimal, formatTime, truncateAddress } from "@/lib/utils";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import {
-  Web3Button,
-  useAddress,
-  useContract,
-  useContractRead,
-  useContractWrite,
-} from "@thirdweb-dev/react";
-import { CommentSection } from "./Comment";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { useState } from "react";
+import { CommentSection } from "./Comment";
 
 type EventCardProps = {
   walletAddress: string;
@@ -40,10 +39,10 @@ type EventCardProps = {
 };
 
 export default function EventCard(props: EventCardProps) {
-  const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
   const address = useAddress();
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
+  const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
   const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
+  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
   const { data: statusState, isLoading: isMyStatusLoading } = useContractRead(
     contract,
@@ -55,6 +54,7 @@ export default function EventCard(props: EventCardProps) {
     contract,
     "addLike"
   );
+
   // console.log({ isLikeLoading });
 
   const callLike = async () => {
@@ -67,24 +67,6 @@ export default function EventCard(props: EventCardProps) {
       console.error("contract call failure", err);
     }
   };
-
-  // console.log(props);
-
-  //   return (
-  //     <div className={styles.eventCard}>
-  //       <div className={styles.eventHeader}>
-  //         <Link href={`account/${props.walletAddress}`} className="text-white">
-  //           <p className={styles.connectedAddress}>
-  //             {truncateAddress(props.walletAddress)}
-  //           </p>
-  //         </Link>
-  //         <p style={{ fontSize: "0.75rem" }}>{date.toLocaleString()}</p>
-  //       </div>
-  //       <p style={{ fontSize: "16px" }}>{props.newStatus}</p>
-  //     </div>
-  //   );
-
-  //   href={`account/${props.walletAddress}`}
 
   return (
     <Card className="w-full">

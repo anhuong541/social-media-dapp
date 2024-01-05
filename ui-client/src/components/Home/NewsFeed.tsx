@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
 import { useContract, useContractEvents } from "@thirdweb-dev/react";
+
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
-import Lottie from "lottie-react";
+import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 import EventCard from "./EventCard";
 import UserStatus from "./user-status";
-import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,11 +1,12 @@
 import {
-  ConnectWallet,
   Web3Button,
   useAddress,
   useContract,
   useContractRead,
-  useDisconnect,
 } from "@thirdweb-dev/react";
+import { useState } from "react";
+import Lottie from "lottie-react";
+
 import {
   Dialog,
   DialogClose,
@@ -15,28 +16,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { useState } from "react";
-import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
-import Link from "next/link";
-import { truncateAddress } from "@/lib/utils";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-import { Input } from "../ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 
-export default function UserStatus({
-  statusFeedsLengh,
-}: {
-  statusFeedsLengh: number;
-}) {
+export default function UserStatus(statusFeedsLengh: number) {
   const address = useAddress();
   // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
   const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
-
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
   const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
@@ -135,46 +124,6 @@ export default function UserStatus({
             </div>
           )}
         </DialogContent>
-
-        {/* {isStatusModalOpen && (
-        <div className="">
-          <div className={styles.statusModal}>
-            <div className={styles.statusModalHeader}>
-              <p>New Status:</p>
-              <button>Close</button>
-            </div>
-            <textarea
-              value={newStatus}
-              onChange={(e) => {
-                setNewStatus(e.target.value);
-                setCharacterCount(e.target.value.length);
-              }}
-              placeholder="What is on your mind today!"
-            />
-            <div className={styles.characterCountContainer}>
-              <p
-                className={`${
-                  characterCount >= 140 ? "text-red-500" : "text-white"
-                }`}
-              >
-                {characterCount}/140
-              </p>
-            </div>
-            <Web3Button
-              className={styles.statusModalButton}
-              contractAddress={STATUS_CONTRACT_ADDRESS}
-              action={(contract) => contract.call("setStatus", [newStatus])}
-              isDisabled={characterCount === 0 || characterCount > 140}
-              onSuccess={() => {
-                setIsStatusModalOpen(false);
-                setNewStatus("");
-              }}
-            >
-              Post
-            </Web3Button>
-          </div>
-        </div>
-      )} */}
       </Dialog>
     </div>
   );
