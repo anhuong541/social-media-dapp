@@ -1,14 +1,11 @@
 import Link from "next/link";
-import { HomeIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { ConnectWallet, useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { BsCurrencyBitcoin } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
 import { BiImageAdd } from "react-icons/bi";
 import { truncateAddress } from "@/lib/utils";
 
-import { MessageCircleIcon, WifiIcon } from "./Sidebar";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -16,6 +13,10 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { HiOutlineStatusOnline } from "react-icons/hi";
+import { FaRegComments } from "react-icons/fa";
+import { IoPersonOutline } from "react-icons/io5";
+import { MdOutlineCurrencyBitcoin } from "react-icons/md";
 
 export default function Header() {
   const router = useRouter();
@@ -63,14 +64,14 @@ export default function Header() {
                     href="/"
                     className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
                   >
-                    <WifiIcon className="h-6 w-6 text-green-700" />
+                    <HiOutlineStatusOnline className="h-6 w-6 text-green-700" />
                     <span className="font-medium text-gray-900">Stream</span>
                   </Link>
                   <Link
                     href="/room"
                     className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
                   >
-                    <MessageCircleIcon className="h-6 w-6 text-green-700" />
+                    <FaRegComments className="h-6 w-6 text-green-700" />
                     <span className="font-medium text-gray-900">Hi!</span>
                   </Link>
                   <button
@@ -80,7 +81,7 @@ export default function Header() {
                       !address ? "opacity-40" : ""
                     }`}
                   >
-                    <HomeIcon className="h-6 w-6 text-green-700" />
+                    <IoPersonOutline className="h-6 w-6 text-green-700" />
                     <span className="font-medium text-gray-900">
                       Feed History
                     </span>
@@ -89,7 +90,7 @@ export default function Header() {
                     href="/crypto"
                     className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
                   >
-                    <BsCurrencyBitcoin className="h-6 w-6 text-green-700" />
+                    <MdOutlineCurrencyBitcoin className="h-6 w-6 text-green-700" />
                     <span className="font-medium text-gray-900">
                       Crypto Trends
                     </span>
