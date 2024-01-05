@@ -20,7 +20,11 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import { Button } from "../ui/button";
 
-export default function UserStatus(statusFeedsLengh: number) {
+export default function UserStatus({
+  statusFeedsLengh,
+}: {
+  statusFeedsLengh: number;
+}) {
   const address = useAddress();
   // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
