@@ -1,3 +1,4 @@
 import CommentSection from "./Comment";
+import ChangeStatusSection from "./ChangeStatus";
 
-export { CommentSection };
+export { CommentSection, ChangeStatusSection };

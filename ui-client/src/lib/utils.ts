@@ -26,7 +26,7 @@ export function filterStatusID(data: any): any {
 
   // add delete at this filter function
   return Object.values(uniqueUpdates).filter(
-    (item) => item.data.newStatus !== ""
+    (item) => item.data.newStatus !== "deleted_status_@"
   );
 }
 

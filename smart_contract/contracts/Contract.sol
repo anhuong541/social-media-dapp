@@ -411,26 +411,35 @@ contract SocialMediaV3 {
         }
     }
 
-    function editStatus(uint256 _statusId, string memory _newStatus) public {
+    function editStatus(
+        address _user,
+        uint256 _statusId,
+        string memory _newStatus
+    ) public {
         require(
             bytes(_newStatus).length <= MAX_CHARACTER_AMOUNT,
             "New status is too long"
         );
-        require(_statusId <= lastStatusId[msg.sender], "Invalid status ID");
+        require(_statusId <= lastStatusId[_user], "Invalid status ID");
 
-        statuses[msg.sender][_statusId] = _newStatus;
+        statuses[_user][_statusId] = _newStatus;
 
-        emit StatusUpdated(msg.sender, _statusId, _newStatus, block.timestamp);
+        emit StatusUpdated(_user, _statusId, _newStatus, block.timestamp);
     }
 
-    function deleteStatus(uint256 _statusId) public {
-        require(_statusId <= lastStatusId[msg.sender], "Invalid status ID");
+    function deleteStatus(address _user, uint256 _statusId) public {
+        require(_statusId <= lastStatusId[_user], "Invalid status ID");
 
         // Delete the status
-        delete statuses[msg.sender][_statusId];
+        delete statuses[_user][_statusId];
 
         // Emit an event to indicate the status deletion
-        emit StatusUpdated(msg.sender, _statusId, "", block.timestamp);
+        emit StatusUpdated(
+            _user,
+            _statusId,
+            "deleted_status_@",
+            block.timestamp
+        );
     }
 
     function getLatestStatus(
@@ -575,26 +584,35 @@ contract SocialMediaV4 {
         }
     }
 
-    function editStatus(uint256 _statusId, string memory _newStatus) public {
+    function editStatus(
+        address _user,
+        uint256 _statusId,
+        string memory _newStatus
+    ) public {
         require(
             bytes(_newStatus).length <= MAX_CHARACTER_AMOUNT,
             "New status is too long"
         );
-        require(_statusId <= lastStatusId[msg.sender], "Invalid status ID");
+        require(_statusId <= lastStatusId[_user], "Invalid status ID");
 
-        statuses[msg.sender][_statusId] = _newStatus;
+        statuses[_user][_statusId] = _newStatus;
 
-        emit StatusUpdated(msg.sender, _statusId, _newStatus, block.timestamp);
+        emit StatusUpdated(_user, _statusId, _newStatus, block.timestamp);
     }
 
-    function deleteStatus(uint256 _statusId) public {
-        require(_statusId <= lastStatusId[msg.sender], "Invalid status ID");
+    function deleteStatus(address _user, uint256 _statusId) public {
+        require(_statusId <= lastStatusId[_user], "Invalid status ID");
 
         // Delete the status
-        delete statuses[msg.sender][_statusId];
+        delete statuses[_user][_statusId];
 
         // Emit an event to indicate the status deletion
-        emit StatusUpdated(msg.sender, _statusId, "", block.timestamp);
+        emit StatusUpdated(
+            _user,
+            _statusId,
+            "deleted_status_@",
+            block.timestamp
+        );
     }
 
     function getLatestStatus(

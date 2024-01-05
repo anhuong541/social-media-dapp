@@ -23,7 +23,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { CommentSection } from "./PopupSection";
+import { ChangeStatusSection, CommentSection } from "./PopupSection";
 type EventCardProps = {
   walletAddress: string;
   newStatus: string;
@@ -106,6 +106,7 @@ export default function EventCard(props: EventCardProps) {
             <DialogTrigger>
               <BiDotsVerticalRounded className="w-5 h-5" />
             </DialogTrigger>
+            <ChangeStatusSection />
           </Dialog>
         </div>
       </CardHeader>
