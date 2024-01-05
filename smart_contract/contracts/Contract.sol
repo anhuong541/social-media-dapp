@@ -643,6 +643,91 @@ contract SocialMediaV4 {
     }
 }
 
+// simple chat
+contract SimpleChat is Ownable {
+    struct ChatRequest {
+        bool exists;
+        bool accepted;
+        bytes32 securityKey;
+    }
+
+    mapping(address => mapping(address => ChatRequest)) public chatRequests;
+    mapping(address => mapping(address => string[])) public chatMessages;
+
+    event ChatRequestSent(address indexed sender, address indexed receiver);
+    event ChatRequestAccepted(address indexed sender, address indexed receiver);
+    event MessageSent(
+        address indexed sender,
+        address indexed receiver,
+        string message
+    );
+
+    function sendChatRequest(address receiver) external {
+        require(
+            !chatRequests[msg.sender][receiver].exists,
+            "Chat request already sent"
+        );
+        require(
+            !chatRequests[receiver][msg.sender].exists,
+            "Chat request already received"
+        );
+
+        chatRequests[msg.sender][receiver] = ChatRequest(
+            true,
+            false,
+            bytes32(0)
+        );
+        emit ChatRequestSent(msg.sender, receiver);
+    }
+
+    function acceptChatRequest(address sender) external {
+        require(
+            chatRequests[sender][msg.sender].exists,
+            "No chat request from this user"
+        );
+        require(
+            !chatRequests[sender][msg.sender].accepted,
+            "Chat request already accepted"
+        );
+
+        chatRequests[sender][msg.sender].accepted = true;
+        chatRequests[sender][msg.sender].securityKey = keccak256(
+            abi.encodePacked(msg.sender, sender, block.timestamp)
+        );
+
+        emit ChatRequestAccepted(sender, msg.sender);
+    }
+
+    function sendMessage(address receiver, string calldata message) external {
+        require(
+            chatRequests[msg.sender][receiver].exists,
+            "No active chat with this user"
+        );
+        require(
+            chatRequests[msg.sender][receiver].accepted,
+            "Chat request not accepted"
+        );
+
+        chatMessages[msg.sender][receiver].push(message);
+        emit MessageSent(msg.sender, receiver, message);
+    }
+
+    function getChatMessages(
+        address sender,
+        address receiver
+    ) external view returns (string[] memory) {
+        return chatMessages[sender][receiver];
+    }
+
+    function hasPendingChatRequest(
+        address sender
+    ) external view returns (bool) {
+        return
+            chatRequests[sender][msg.sender].exists &&
+            !chatRequests[sender][msg.sender].accepted;
+    }
+}
+
 contract Chat is Ownable {
     /// @dev See `initializeUser` function
     struct UserInitialization {
