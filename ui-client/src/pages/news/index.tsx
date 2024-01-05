@@ -2,7 +2,6 @@ import { coinstats } from "@/lib/network";
 import { add3Dots } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetStaticProps } from "next";
-import defaultImage from "./../../../public/new-default-img.png";
 
 export const getNews = async () => {
   try {
@@ -61,7 +60,7 @@ export default function NewsPage({ listNews }: { listNews: any }) {
                       target="_blank"
                       className="xl:text-xl text-3xl font-medium cursor-pointer"
                     >
-                      {item?.title || ""}
+                      {item?.title || "News Title"}
                     </a>
                     <div className="flex items-end gap-2">
                       <div className="xl:text-sm text-2xl font-medium">
@@ -71,7 +70,8 @@ export default function NewsPage({ listNews }: { listNews: any }) {
                         </span>
                       </div>
                       <div className="xl:text-sm text-2xl text_00000080">
-                        {dayjs(item?.feedDate).format("MMM DD, YYYY") || ""}
+                        {dayjs(item?.feedDate).format("MMM DD, YYYY") ||
+                          "00-00-0000"}
                       </div>
                     </div>
                   </div>

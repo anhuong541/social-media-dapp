@@ -7,7 +7,11 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 
-import { BiUpvote, BiDotsVerticalRounded } from "react-icons/bi";
+import {
+  BiUpvote,
+  BiDotsVerticalRounded,
+  BiMessageRounded,
+} from "react-icons/bi";
 import { FaRegComments } from "react-icons/fa";
 import { PiHandshakeFill } from "react-icons/pi";
 
@@ -23,7 +27,11 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { ChangeStatusSection, CommentSection } from "./PopupSection";
+import {
+  ChangeStatusSection,
+  CommentSection,
+  TipsSection,
+} from "./PopupSection";
 import { useState } from "react";
 
 type EventCardProps = {
@@ -100,15 +108,22 @@ export default function EventCard(props: EventCardProps) {
                   >
                     {truncateAddress(props.walletAddress)}
                   </Link>
-                  {address !== props.walletAddress && (
-                    <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
-                      <PiHandshakeFill className="w-5 h-5" />
-                    </div>
-                  )}
+                  {/* {address !== props.walletAddress && (
+                    <Dialog>
+                      <DialogTrigger className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
+                        <PiHandshakeFill className="w-5 h-5" />
+                      </DialogTrigger>
+                      <TipsSection
+                        status={props.newStatus}
+                        walletAddress={props.walletAddress}
+                        statusId={props.statusId}
+                      />
+                    </Dialog>
+                  )} */}
                 </div>
               </CardTitle>
               <CardDescription>
-                {date.toLocaleString()}{" "}
+                {date.toLocaleString()}
                 {/* - {formatHexToDecimal(props.statusId._hex)} */}
               </CardDescription>
             </div>
@@ -134,7 +149,15 @@ export default function EventCard(props: EventCardProps) {
       </CardHeader>
       <CardContent>
         <p>{props.newStatus}</p>
-        <div className="flex justify-end items-center gap-3 mt-1">
+        <div className="flex justify-end items-center gap-3 mt-1 font-medium">
+          {/* DM  */}
+          {address !== props.walletAddress && (
+            <div className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer">
+              <FaRegComments className="w-5 h-5" />
+              DM
+            </div>
+          )}
+          {/* like  */}
           <div
             className={`flex gap-1 items-center ${
               !address ? "opacity-50" : "cursor-pointer hover:text-green-700"
@@ -156,10 +179,11 @@ export default function EventCard(props: EventCardProps) {
               formatHexToDecimal(statusState[1]._hex)
             )}
           </div>
+          {/* comment  */}
           <Dialog>
             <DialogTrigger>
               <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
-                <FaRegComments className="w-5 h-5" />
+                <BiMessageRounded className="w-5 h-5" />
                 {isMyStatusLoading ? (
                   <Lottie
                     animationData={loadingLottie}

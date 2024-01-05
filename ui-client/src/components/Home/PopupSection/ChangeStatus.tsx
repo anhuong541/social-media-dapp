@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Link from "next/link";
 import {
   Web3Button,
   useAddress,
@@ -7,17 +6,16 @@ import {
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
-import Lottie from "lottie-react";
 
 import {
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
-import { formatHexToDecimal, truncateAddress } from "@/lib/utils";
+import { formatHexToDecimal } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SuccesType } from "../EventCard";
@@ -125,6 +123,9 @@ export default function ChangeStatusSection({
             >
               Delete
             </Button>
+            <DialogClose>
+              <Button variant="secondary">Cancel</Button>
+            </DialogClose>
           </div>
         </div>
       ) : (
