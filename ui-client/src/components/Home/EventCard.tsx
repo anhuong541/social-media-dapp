@@ -81,7 +81,10 @@ export default function EventCard(props: EventCardProps) {
                 )}
               </div>
             </CardTitle>
-            <CardDescription>{date.toLocaleString()}</CardDescription>
+            <CardDescription>
+              {date.toLocaleString()}{" "}
+              {/* - {formatHexToDecimal(props.statusId._hex)} */}
+            </CardDescription>
           </div>
         </div>
       </CardHeader>

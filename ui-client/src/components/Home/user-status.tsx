@@ -67,13 +67,15 @@ export default function UserStatus({
     <div className="w-full">
       <Dialog>
         <div className="w-full flex justify-center">
-          <Button
-            variant="default"
-            onClick={() => setDialogOnClose(false)}
-            className="w-[200px]"
-          >
-            <DialogTrigger>Posting</DialogTrigger>
-          </Button>
+          <DialogTrigger>
+            <Button
+              variant="default"
+              onClick={() => setDialogOnClose(false)}
+              className="w-[200px]"
+            >
+              Posting
+            </Button>
+          </DialogTrigger>
         </div>
         <DialogContent>
           {dialogOnClose ? (
@@ -115,6 +117,11 @@ export default function UserStatus({
 
               <Web3Button
                 className="bg-[#2c9f41] cursor-pointer rounded-xl p-2 w-full h-10 text-sm hover:opacity-80"
+                style={{
+                  backgroundColor: "#2c9f41",
+                  color: "white",
+                  height: "0px",
+                }}
                 contractAddress={STATUS_CONTRACT_ADDRESS}
                 action={(contract) => contract.call("setStatus", [newStatus])}
                 isDisabled={characterCount === 0 || characterCount > 140}

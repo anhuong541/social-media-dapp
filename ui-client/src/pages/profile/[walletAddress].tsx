@@ -46,7 +46,13 @@ export default function AcountFeed() {
     );
   } else {
     const userStatusFeeds =
-      !isUserEventsLoading && userEvents && filterStatusID(userEvents);
+      !isUserEventsLoading &&
+      userEvents &&
+      filterStatusID(userEvents).sort(
+        (a: any, b: any) =>
+          formatHexToDecimal(b.data.statusId._hex) -
+          formatHexToDecimal(a.data.statusId._hex)
+      );
 
     return (
       <div className="flex flex-col gap-4 pt-4 w-full">
@@ -55,17 +61,19 @@ export default function AcountFeed() {
         </h1>
         <div className="px-4 flex flex-col gap-2">
           <h3>Latest Post:</h3>
-          {!isUserEventsLoading &&
-            userEvents &&
-            userStatusFeeds.map((event: any, index: number) => (
-              <EventCard
-                key={formatHexToDecimal(event.data.statusId._hex)}
-                walletAddress={event.data.user}
-                newStatus={event.data.newStatus}
-                timeStamp={event.data.timestamp}
-                statusId={event.data.statusId}
-              />
-            ))}
+          <div className="flex flex-col gap-4 border-y rounded-lg overflow-y-auto h-[78vh]">
+            {!isUserEventsLoading &&
+              userEvents &&
+              userStatusFeeds.map((event: any, index: number) => (
+                <EventCard
+                  key={formatHexToDecimal(event.data.statusId._hex)}
+                  walletAddress={event.data.user}
+                  newStatus={event.data.newStatus}
+                  timeStamp={event.data.timestamp}
+                  statusId={event.data.statusId}
+                />
+              ))}
+          </div>
         </div>
       </div>
     );
