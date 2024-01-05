@@ -13,8 +13,17 @@ import {
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { useAddress } from "@thirdweb-dev/react";
+import {
+  Web3Button,
+  useAddress,
+  useContract,
+  useContractRead,
+  useContractWrite,
+} from "@thirdweb-dev/react";
 import { CommentSection } from "./Comment";
+import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
+import Lottie from "lottie-react";
+import loadingLottie from "@/lib/loadingLottie.json";
 
 type EventCardProps = {
   walletAddress: string;
@@ -30,8 +39,30 @@ type EventCardProps = {
 };
 
 export default function EventCard(props: EventCardProps) {
+  const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
   const address = useAddress();
+  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
   const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
+
+  const { data: statusState, isLoading: isMyStatusLoading } = useContractRead(
+    contract,
+    "getStatus",
+    [props.walletAddress, statusIdDeciaml]
+  );
+
+  const { mutateAsync: addLike, isLoading } = useContractWrite(
+    contract,
+    "addLike"
+  );
+
+  const callLike = async () => {
+    try {
+      const data = await addLike({ args: [statusIdDeciaml] });
+      console.info("contract call successs", data);
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
 
   // console.log(props);
 
@@ -66,7 +97,7 @@ export default function EventCard(props: EventCardProps) {
             <AvatarFallback>AH</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg">
+            <CardTitle className="text-base">
               <div className="flex items-center gap-3">
                 <Link
                   href={`/profile/${props.walletAddress}`}
@@ -91,14 +122,34 @@ export default function EventCard(props: EventCardProps) {
       <CardContent>
         <p>{props.newStatus}</p>
         <div className="flex justify-end items-center gap-3 mt-1">
-          <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
+          <div
+            className="flex gap-1 items-center hover:text-green-700 cursor-pointer"
+            onClick={callLike}
+          >
             <BiUpvote className="w-5 h-5" />
-            13
+            {isMyStatusLoading ? (
+              <Lottie
+                animationData={loadingLottie}
+                loop={true}
+                className="w-10 h-10 mx-auto"
+              />
+            ) : (
+              formatHexToDecimal(statusState[1]._hex)
+            )}
           </div>
           <Dialog>
             <DialogTrigger>
               <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
-                <FaRegComments className="w-5 h-5" />3
+                <FaRegComments className="w-5 h-5" />
+                {isMyStatusLoading ? (
+                  <Lottie
+                    animationData={loadingLottie}
+                    loop={true}
+                    className="w-10 h-10 mx-auto"
+                  />
+                ) : (
+                  formatHexToDecimal(statusState[2]._hex)
+                )}
               </div>
             </DialogTrigger>
             <CommentSection

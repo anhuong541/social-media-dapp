@@ -9,6 +9,7 @@ import {
   useAddress,
   useContract,
   useContractRead,
+  useContractWrite,
 } from "@thirdweb-dev/react";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
@@ -45,7 +46,7 @@ export default function CommentSection({
     [statusIdDeciaml]
   );
 
-  console.log({ myCommenst, statusIdDeciaml, status });
+  // console.log({ myCommenst, statusIdDeciaml, status });
 
   if (!address) {
     return (

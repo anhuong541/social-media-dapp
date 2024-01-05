@@ -8,7 +8,7 @@ import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import EventCard from "@/components/Home/EventCard";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 
-export default function AcountFeed() {
+export default function AccountFeed() {
   const router = useRouter();
   const { walletAddress } = router.query;
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +56,7 @@ export default function AcountFeed() {
 
     return (
       <div className="flex flex-col gap-4 pt-4 w-full">
-        <h1 className="font-medium text-xl text-black px-4">
+        <h1 className="font-semibold text-black px-4">
           Account: {walletAddress}
         </h1>
         <div className="px-4 flex flex-col gap-2">
