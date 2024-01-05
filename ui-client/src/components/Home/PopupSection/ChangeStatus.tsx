@@ -5,6 +5,7 @@ import {
   useAddress,
   useContract,
   useContractRead,
+  useContractWrite,
 } from "@thirdweb-dev/react";
 import Lottie from "lottie-react";
 
@@ -18,93 +19,119 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import { formatHexToDecimal, truncateAddress } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { SuccesType } from "../EventCard";
+
+type ChangeStatusType = {
+  success: SuccesType;
+  onChangeSuccess: ({ state, title }: SuccesType) => void;
+  status: string;
+  walletAddress: string;
+  statusId: {
+    type: string;
+    _hex: string;
+  };
+};
 
 export default function ChangeStatusSection({
+  success,
+  onChangeSuccess,
   status,
   walletAddress,
   statusId,
-}: CommentType) {
+}: ChangeStatusType) {
   const address = useAddress();
+  const [edit, setEdit] = useState("");
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
   const statusIdDeciaml = formatHexToDecimal(statusId._hex);
-  const [comment, setComment] = useState("");
 
-  const { data: myCommenst, isLoading: isStatusCommentLoading } =
-    useContractRead(contract, "getComments", [statusIdDeciaml]);
+  const { mutateAsync: editStatus, isLoading: isLoadingEdit } =
+    useContractWrite(contract, "editStatus");
 
-  // console.log({ myCommenst, statusIdDeciaml, status });
+  const { mutateAsync: deleteStatus, isLoading: isLoadingDelete } =
+    useContractWrite(contract, "deleteStatus");
 
-  if (isStatusCommentLoading) {
-    return (
-      <DialogContent>
-        <Lottie
-          animationData={loadingLottie}
-          loop={true}
-          className="w-24 h-24 mx-auto"
-        />
-      </DialogContent>
-    );
-  }
+  const callEditStatus = async () => {
+    try {
+      const data = await editStatus({ args: [address, statusIdDeciaml, edit] });
+      // console.info("contract call successs", data);
+      setEdit("");
+      onChangeSuccess({
+        state: true,
+        title: "Edit",
+      });
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
+
+  const callDeleteStatus = async () => {
+    try {
+      const data = await deleteStatus({ args: [address, statusIdDeciaml] });
+      // console.info("contract call successs", data);
+      onChangeSuccess({
+        state: true,
+        title: "Delete",
+      });
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
+
+  // if () {
+  //   return (
+  //     <DialogContent>
+  //       <Lottie
+  //         animationData={loadingLottie}
+  //         loop={true}
+  //         className="w-24 h-24 mx-auto"
+  //       />
+  //     </DialogContent>
+  //   );
+  // }
 
   return (
     <DialogContent>
-      <DialogHeader>
-        <DialogTitle className="text-sm">
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/profile/${walletAddress}`}
-              className="hover:underline"
-            >
-              {truncateAddress(walletAddress)}
-            </Link>
-          </div>
-        </DialogTitle>
-        <DialogDescription>{status}</DialogDescription>
-        {!address ? (
-          <div className="text-red-500">
-            Your did not connected your wallet yet!
-          </div>
-        ) : (
+      {!success?.state && (
+        <DialogHeader>
+          <DialogTitle>Are you sure you want to edit your status?</DialogTitle>
+          <DialogDescription>Your old status: {status}</DialogDescription>
+        </DialogHeader>
+      )}
+      {!success?.state ? (
+        <div className="flex flex-col gap-4 pt-4">
           <div>
-            <div className="flex flex-col gap-2 border-t py-2">
-              <h4 className="font-medium">Comments:</h4>
-
-              <div className="flex flex-col gap-4 border py-2 px-4 rounded-lg h-[50vh] overflow-y-auto">
-                {myCommenst.map((item: string) => {
-                  return <div key={item}>{item}</div>;
-                })}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input
-                className="flex-grow"
-                placeholder="say something!!"
-                value={comment}
-                onChange={(e) => {
-                  setComment(e.target.value);
-                }}
-              />
-              <Web3Button
-                className="cursor-pointer rounded-xl text-sm hover:opacity-80"
-                style={{
-                  backgroundColor: "#2c9f41",
-                  color: "white",
-                  height: "0px",
-                }}
-                contractAddress={STATUS_CONTRACT_ADDRESS}
-                action={(contract) =>
-                  contract.call("addComment", [statusIdDeciaml, comment])
-                }
-                onSuccess={() => {
-                  setComment("");
-                }}
-              >
-                Add Comment
-              </Web3Button>
-            </div>
+            <Input
+              value={edit}
+              onChange={(e) => {
+                setEdit(e.target.value);
+              }}
+              placeholder="!!!!"
+              disabled={isLoadingDelete || isLoadingEdit}
+            />
           </div>
-        )}
-      </DialogHeader>
+          <div className="flex justify-end items-center gap-2">
+            <Button
+              variant="default"
+              onClick={callEditStatus}
+              disabled={isLoadingDelete || isLoadingEdit}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={callDeleteStatus}
+              disabled={isLoadingDelete || isLoadingEdit}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center text-green-600 font-medium text-lg">
+          {success?.title} success
+        </div>
+      )}
     </DialogContent>
   );
 }

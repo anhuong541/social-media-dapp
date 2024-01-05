@@ -24,6 +24,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { ChangeStatusSection, CommentSection } from "./PopupSection";
+import { useState } from "react";
+
 type EventCardProps = {
   walletAddress: string;
   newStatus: string;
@@ -37,8 +39,17 @@ type EventCardProps = {
   };
 };
 
+export type SuccesType = {
+  state: boolean;
+  title: string;
+};
+
 export default function EventCard(props: EventCardProps) {
   const address = useAddress();
+  const [changeContentSuccess, setChangeContentSuccess] = useState<SuccesType>({
+    state: false,
+    title: "Edit",
+  });
   const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
   const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
@@ -103,10 +114,21 @@ export default function EventCard(props: EventCardProps) {
             </div>
           </div>
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger
+              className={`${address !== props.walletAddress && "hidden"}`}
+              onClick={() =>
+                setChangeContentSuccess({ state: false, title: "" })
+              }
+            >
               <BiDotsVerticalRounded className="w-5 h-5" />
             </DialogTrigger>
-            <ChangeStatusSection />
+            <ChangeStatusSection
+              success={changeContentSuccess}
+              onChangeSuccess={setChangeContentSuccess}
+              status={props.newStatus}
+              walletAddress={props.walletAddress}
+              statusId={props.statusId}
+            />
           </Dialog>
         </div>
       </CardHeader>

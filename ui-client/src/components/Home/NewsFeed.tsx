@@ -63,7 +63,7 @@ export default function NewsFeed() {
             ))}
         {!isStatusEventsLoading &&
           statusEvents &&
-          countFeed < statusEvents?.length && (
+          countFeed < statusFeeds?.length && (
             <button onClick={() => setCountFeed(() => countFeed + 10)}>
               more
             </button>
