@@ -9,31 +9,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const filterStatusID = (data: any) => {
-  // Create a map to store the latest timestamp for each unique statusId
-  const latestTimestamps = new Map();
+export function filterStatusID(data: any): any {
+  const uniqueUpdates: { [key: string]: any } = {};
 
-  // Iterate through the array to find the latest timestamp for each unique statusId
-  data.forEach((item: any) => {
-    const statusIdHex = item.data.statusId._hex;
-
-    // If statusId is not in the map or the timestamp is newer, update the map
+  for (const update of data) {
+    const key = `${update.data.user}-${update.data.statusId._hex}`;
     if (
-      !latestTimestamps.has(statusIdHex) ||
-      item.data.timestamp._hex > latestTimestamps.get(statusIdHex)
+      !uniqueUpdates[key] ||
+      parseInt(update.data.timestamp._hex, 16) >
+        parseInt(uniqueUpdates[key].data.timestamp._hex, 16)
     ) {
-      latestTimestamps.set(statusIdHex, item.data.timestamp._hex);
+      uniqueUpdates[key] = update;
     }
-  });
+  }
 
-  // Filter the array to keep only the objects with the latest timestamp for each unique statusId
-  const filteredData = data.filter(
-    (item: any) =>
-      item.data.timestamp._hex === latestTimestamps.get(item.data.statusId._hex)
-  );
-
-  return filteredData;
-};
+  return Object.values(uniqueUpdates);
+}
 
 export function formatHexToDecimal(hexNumber: string): number {
   // Ensure the input is a string
