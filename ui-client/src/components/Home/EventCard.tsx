@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { formatTime, truncateAddress } from "@/lib/utils";
+import { formatHexToDecimal, formatTime, truncateAddress } from "@/lib/utils";
 import { BiUpvote } from "react-icons/bi";
 import { FaRegComments } from "react-icons/fa";
 import { PiHandshakeFill } from "react-icons/pi";
@@ -17,12 +17,21 @@ import { useAddress } from "@thirdweb-dev/react";
 type EventCardProps = {
   walletAddress: string;
   newStatus: string;
-  timeStamp: BigNumber;
+  timeStamp: {
+    type: string;
+    _hex: string;
+  };
+  statusId: {
+    type: string;
+    _hex: string;
+  };
 };
 
 export default function EventCard(props: EventCardProps) {
   const address = useAddress();
-  const date = formatTime(props.timeStamp.toNumber() * 1000);
+  const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
+
+  console.log(props);
 
   //   return (
   //     <div className={styles.eventCard}>
@@ -51,6 +60,7 @@ export default function EventCard(props: EventCardProps) {
             />
             <AvatarFallback>AH</AvatarFallback>
           </Avatar>
+          {formatHexToDecimal(props.statusId._hex)}
           <div>
             <CardTitle className="text-lg">
               <div className="flex items-center gap-3">

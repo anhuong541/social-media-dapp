@@ -5,6 +5,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
 import EventCard from "./EventCard";
 import UserStatus from "./user-status";
+import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(true);
@@ -45,14 +46,15 @@ export default function NewsFeed() {
       <div className="flex flex-col gap-3 overflow-y-auto h-[80vh]">
         {!isStatusEventsLoading &&
           statusEvents &&
-          statusEvents
+          filterStatusID(statusEvents)
             .slice(0, countFeed)
-            .map((event, index) => (
+            .map((event: any, index: number) => (
               <EventCard
-                key={index}
+                key={formatHexToDecimal(event.data.statusId._hex)}
                 walletAddress={event.data.user}
                 newStatus={event.data.newStatus}
                 timeStamp={event.data.timestamp}
+                statusId={event.data.statusId}
               />
             ))}
         {!isStatusEventsLoading &&

@@ -9,6 +9,42 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const filterStatusID = (data: any) => {
+  // Create a map to store the latest timestamp for each unique statusId
+  const latestTimestamps = new Map();
+
+  // Iterate through the array to find the latest timestamp for each unique statusId
+  data.forEach((item: any) => {
+    const statusIdHex = item.data.statusId._hex;
+
+    // If statusId is not in the map or the timestamp is newer, update the map
+    if (
+      !latestTimestamps.has(statusIdHex) ||
+      item.data.timestamp._hex > latestTimestamps.get(statusIdHex)
+    ) {
+      latestTimestamps.set(statusIdHex, item.data.timestamp._hex);
+    }
+  });
+
+  // Filter the array to keep only the objects with the latest timestamp for each unique statusId
+  const filteredData = data.filter(
+    (item: any) =>
+      item.data.timestamp._hex === latestTimestamps.get(item.data.statusId._hex)
+  );
+
+  return filteredData;
+};
+
+export function formatHexToDecimal(hexNumber: string): number {
+  // Ensure the input is a string
+  hexNumber = String(hexNumber);
+
+  // Parse the hexadecimal number to decimal
+  const decimalNumber: number = parseInt(hexNumber, 16);
+
+  return decimalNumber;
+}
+
 export function formatTime(timestamp: number) {
   const startTime: any = new Date(timestamp);
   const currentTime: any = new Date();
