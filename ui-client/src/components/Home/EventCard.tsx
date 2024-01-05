@@ -7,7 +7,7 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 
-import { BiUpvote } from "react-icons/bi";
+import { BiUpvote, BiDotsVerticalRounded } from "react-icons/bi";
 import { FaRegComments } from "react-icons/fa";
 import { PiHandshakeFill } from "react-icons/pi";
 
@@ -23,8 +23,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { CommentSection } from "./Comment";
-
+import { CommentSection } from "./PopupSection";
 type EventCardProps = {
   walletAddress: string;
   newStatus: string;
@@ -55,8 +54,6 @@ export default function EventCard(props: EventCardProps) {
     "addLike"
   );
 
-  // console.log({ isLikeLoading });
-
   const callLike = async () => {
     try {
       const data = await addLike({
@@ -71,38 +68,45 @@ export default function EventCard(props: EventCardProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center gap-4">
-          <Avatar>
-            <AvatarImage
-              // src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-              // src="/nekocat_a_thanos.gif"
-              // src="/PepeScared.png"
-              src="/PepeNoHappy.gif"
-              alt="user Avatar"
-            />
-            <AvatarFallback>AH</AvatarFallback>
-          </Avatar>
-          <div>
-            <CardTitle className="text-base">
-              <div className="flex items-center gap-3">
-                <Link
-                  href={`/profile/${props.walletAddress}`}
-                  className="hover:underline"
-                >
-                  {truncateAddress(props.walletAddress)}
-                </Link>
-                {address !== props.walletAddress && (
-                  <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
-                    <PiHandshakeFill className="w-5 h-5" />
-                  </div>
-                )}
-              </div>
-            </CardTitle>
-            <CardDescription>
-              {date.toLocaleString()}{" "}
-              {/* - {formatHexToDecimal(props.statusId._hex)} */}
-            </CardDescription>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Avatar>
+              <AvatarImage
+                // src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
+                // src="/nekocat_a_thanos.gif"
+                // src="/PepeScared.png"
+                src="/PepeNoHappy.gif"
+                alt="user Avatar"
+              />
+              <AvatarFallback>AH</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle className="text-base">
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/profile/${props.walletAddress}`}
+                    className="hover:underline"
+                  >
+                    {truncateAddress(props.walletAddress)}
+                  </Link>
+                  {address !== props.walletAddress && (
+                    <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
+                      <PiHandshakeFill className="w-5 h-5" />
+                    </div>
+                  )}
+                </div>
+              </CardTitle>
+              <CardDescription>
+                {date.toLocaleString()}{" "}
+                {/* - {formatHexToDecimal(props.statusId._hex)} */}
+              </CardDescription>
+            </div>
           </div>
+          <Dialog>
+            <DialogTrigger>
+              <BiDotsVerticalRounded className="w-5 h-5" />
+            </DialogTrigger>
+          </Dialog>
         </div>
       </CardHeader>
       <CardContent>

@@ -24,7 +24,10 @@ export function filterStatusID(data: any): any {
     }
   }
 
-  return Object.values(uniqueUpdates);
+  // add delete at this filter function
+  return Object.values(uniqueUpdates).filter(
+    (item) => item.data.newStatus !== ""
+  );
 }
 
 export function formatHexToDecimal(hexNumber: string): number {
