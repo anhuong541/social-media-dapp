@@ -10,6 +10,7 @@ export const getNews = async () => {
     return res.data;
   } catch (error) {
     console.log("this is error : ", error);
+    return [];
   }
 };
 
@@ -22,11 +23,11 @@ const handleImgError = (e: any) => {
 // cần xử lý data ở api để khi đổi trang sẽ fetch data trang mới
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const listNews = await getNews();
+  const listNews = await getNews();
 
   return {
     props: {
-      // listNews,
+      listNews,
     },
     revalidate: 60 * 5,
   };
@@ -37,7 +38,7 @@ export default function NewsPage({ listNews }: { listNews: any }) {
     <div className="flex flex-col gap-4 pt-4 h-[90vh] w-full">
       <h2 className="font-medium text-xl text-black px-4">🔥 Trending News</h2>
       <div className="grid grid-cols-3 gap-4 px-4 overflow-y-auto app_scroll_bar">
-        {/* {listNews.map((item: any, index: number) => {
+        {listNews.map((item: any, index: number) => {
           return (
             <div className="flex flex-col gap-6" key={index}>
               <a
@@ -81,7 +82,7 @@ export default function NewsPage({ listNews }: { listNews: any }) {
               </div>
             </div>
           );
-        })} */}
+        })}
       </div>
     </div>
   );
