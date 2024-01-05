@@ -31,7 +31,7 @@ export default function EventCard(props: EventCardProps) {
   const address = useAddress();
   const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
 
-  console.log(props);
+  // console.log(props);
 
   //   return (
   //     <div className={styles.eventCard}>
@@ -55,7 +55,10 @@ export default function EventCard(props: EventCardProps) {
         <div className="flex items-center gap-4">
           <Avatar>
             <AvatarImage
-              src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
+              // src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
+              // src="/nekocat_a_thanos.gif"
+              // src="/PepeScared.png"
+              src="/PepeNoHappy.gif"
               alt="user Avatar"
             />
             <AvatarFallback>AH</AvatarFallback>
