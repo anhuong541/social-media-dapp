@@ -10,9 +10,11 @@ import {
   CardContent,
   Card,
 } from "@/components/ui/card";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useAddress } from "@thirdweb-dev/react";
+import { CommentSection } from "./Comment";
 
 type EventCardProps = {
   walletAddress: string;
@@ -90,9 +92,18 @@ export default function EventCard(props: EventCardProps) {
             <BiUpvote className="w-5 h-5" />
             13
           </div>
-          <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
-            <FaRegComments className="w-5 h-5" />3
-          </div>
+          <Dialog>
+            <DialogTrigger>
+              <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
+                <FaRegComments className="w-5 h-5" />3
+              </div>
+            </DialogTrigger>
+            <CommentSection
+              status={props.newStatus}
+              walletAddress={props.walletAddress}
+              statusId={props.statusId}
+            />
+          </Dialog>
         </div>
       </CardContent>
     </Card>

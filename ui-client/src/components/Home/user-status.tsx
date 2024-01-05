@@ -66,13 +66,15 @@ export default function UserStatus({
   return (
     <div className="w-full">
       <Dialog>
-        <div className="flex gap-2 w-full flex-1">
-          <Input className="flex-grow" placeholder={myStatus} />
-          <Button variant="default" onClick={() => setDialogOnClose(false)}>
-            <DialogTrigger>Post</DialogTrigger>
+        <div className="w-full flex justify-center">
+          <Button
+            variant="default"
+            onClick={() => setDialogOnClose(false)}
+            className="w-[200px]"
+          >
+            <DialogTrigger>Posting</DialogTrigger>
           </Button>
         </div>
-
         <DialogContent>
           {dialogOnClose ? (
             <DialogHeader>
