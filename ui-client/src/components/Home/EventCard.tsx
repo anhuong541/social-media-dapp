@@ -58,7 +58,7 @@ export default function EventCard(props: EventCardProps) {
   const callLike = async () => {
     try {
       const data = await addLike({ args: [statusIdDeciaml] });
-      console.info("contract call successs", data);
+      // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);
     }
@@ -131,7 +131,7 @@ export default function EventCard(props: EventCardProps) {
               <Lottie
                 animationData={loadingLottie}
                 loop={true}
-                className="w-10 h-10 mx-auto"
+                className="w-10 h-10 p-0"
               />
             ) : (
               formatHexToDecimal(statusState[1]._hex)
@@ -145,7 +145,7 @@ export default function EventCard(props: EventCardProps) {
                   <Lottie
                     animationData={loadingLottie}
                     loop={true}
-                    className="w-10 h-10 mx-auto"
+                    className="w-10 h-10 p-0"
                   />
                 ) : (
                   formatHexToDecimal(statusState[2]._hex)

@@ -370,8 +370,6 @@ contract SocialMediaV3 {
     }
 
     function addLike(uint256 _statusId) public payable {
-        require(msg.value > 0, "Amount must be greater than 0");
-
         // Increase the likes count for the status
         likes[msg.sender][_statusId]++;
 
@@ -382,11 +380,6 @@ contract SocialMediaV3 {
             likes[msg.sender][_statusId],
             block.timestamp
         );
-
-        // Transfer the funds to the contract owner
-        payable(owner).transfer(msg.value);
-
-        emit TipReceived(msg.sender, owner, msg.value, block.timestamp);
     }
 
     function getLikes(uint256 _statusId) public view returns (uint256) {
