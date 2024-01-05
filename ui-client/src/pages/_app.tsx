@@ -39,7 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <main className={`sm:container max-h-screen ${inter.className}`}>
         <Header />
         <div className="max-w-screen-xl mx-auto">
-          <div className="grid xl:grid-cols-4 grid-cols-1">
+          <div className="grid lg:grid-cols-4 grid-cols-1">
             <SideBar />
             <div className="flex col-span-3 rounded-lg xl:h-[90vh] bg-gray-50">
               <Component {...pageProps} />

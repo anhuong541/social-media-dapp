@@ -5,12 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 
 const hashtagItems = [
-  { title: "crypto" },
+  { title: "growraduation thesis" },
   { title: "web3" },
   { title: "Nimbus" },
   { title: "vku university" },
   { title: "daihoc" },
   { title: "Viet Han" },
+  { title: "VKU" },
 ];
 
 export default function FollowBar() {

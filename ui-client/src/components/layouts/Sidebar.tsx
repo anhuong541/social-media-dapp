@@ -17,7 +17,7 @@ export default function SideBar() {
   const address = useAddress();
 
   return (
-    <nav className="bg-white px-2 py-3 xl:flex hidden flex-col gap-3 border-r">
+    <nav className="bg-white px-2 py-3 lg:flex hidden flex-col gap-3 border-r">
       <Link
         href="/"
         className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"

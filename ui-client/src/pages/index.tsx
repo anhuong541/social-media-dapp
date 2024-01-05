@@ -1,14 +1,11 @@
 import FollowBar from "@/components/Home/Followbar";
 import NewsFeed from "@/components/Home/NewsFeed";
 
-import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
-import { useAddress } from "@thirdweb-dev/react";
 
 export default function Home() {
-  const address = useAddress();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +31,7 @@ export default function Home() {
   }
 
   return (
-    <div className="grid grid-cols-3">
+    <div className="grid grid-cols-3 flex-grow">
       <NewsFeed />
       <FollowBar />
     </div>

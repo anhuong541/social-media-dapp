@@ -17,11 +17,6 @@ export default function AccountFeed() {
   const { data: userEvents, isLoading: isUserEventsLoading } =
     useContractEvents(contract, "StatusUpdated", {
       subscribe: true,
-      queryFilter: {
-        filters: {
-          user: walletAddress,
-        },
-      },
     });
 
   useEffect(() => {
@@ -48,11 +43,13 @@ export default function AccountFeed() {
     const userStatusFeeds =
       !isUserEventsLoading &&
       userEvents &&
-      filterStatusID(userEvents).sort(
-        (a: any, b: any) =>
-          formatHexToDecimal(b.data.statusId._hex) -
-          formatHexToDecimal(a.data.statusId._hex)
-      );
+      filterStatusID(userEvents)
+        .sort(
+          (a: any, b: any) =>
+            formatHexToDecimal(b.data.statusId._hex) -
+            formatHexToDecimal(a.data.statusId._hex)
+        )
+        .filter((item: any) => item.data.user == walletAddress);
 
     return (
       <div className="flex flex-col gap-4 pt-4 w-full">
