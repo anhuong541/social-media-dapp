@@ -6,6 +6,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { useEffect, useState } from "react";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import EventCard from "@/components/Home/EventCard";
+import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 
 export default function AcountFeed() {
   const router = useRouter();
@@ -43,26 +44,30 @@ export default function AcountFeed() {
         />
       </div>
     );
-  }
+  } else {
+    const userStatusFeeds =
+      !isUserEventsLoading && userEvents && filterStatusID(userEvents);
 
-  return (
-    <div className="flex flex-col gap-4 pt-4 w-full">
-      <h1 className="font-medium text-xl text-black px-4">
-        Account: {walletAddress}
-      </h1>
-      <div className="px-4 flex flex-col gap-2">
-        <h3>Latest Post:</h3>
-        {!isUserEventsLoading &&
-          userEvents &&
-          userEvents.map((event, index) => (
-            <EventCard
-              key={index}
-              walletAddress={event.data.user}
-              newStatus={event.data.newStatus}
-              timeStamp={event.data.timestamp}
-            />
-          ))}
+    return (
+      <div className="flex flex-col gap-4 pt-4 w-full">
+        <h1 className="font-medium text-xl text-black px-4">
+          Account: {walletAddress}
+        </h1>
+        <div className="px-4 flex flex-col gap-2">
+          <h3>Latest Post:</h3>
+          {!isUserEventsLoading &&
+            userEvents &&
+            userStatusFeeds.map((event: any, index: number) => (
+              <EventCard
+                key={formatHexToDecimal(event.data.statusId._hex)}
+                walletAddress={event.data.user}
+                newStatus={event.data.newStatus}
+                timeStamp={event.data.timestamp}
+                statusId={event.data.statusId}
+              />
+            ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
