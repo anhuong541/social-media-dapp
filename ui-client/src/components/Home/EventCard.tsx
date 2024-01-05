@@ -109,8 +109,14 @@ export default function EventCard(props: EventCardProps) {
         <p>{props.newStatus}</p>
         <div className="flex justify-end items-center gap-3 mt-1">
           <div
-            className="flex gap-1 items-center hover:text-green-700 cursor-pointer"
-            onClick={callLike}
+            className={`flex gap-1 items-center ${
+              !address ? "opacity-50" : "cursor-pointer hover:text-green-700"
+            }`}
+            onClick={() => {
+              if (address) {
+                callLike();
+              }
+            }}
           >
             <BiUpvote className="w-5 h-5" />
             {isMyStatusLoading ? (

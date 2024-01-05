@@ -38,29 +38,20 @@ export default function CommentSection({
   const statusIdDeciaml = formatHexToDecimal(statusId._hex);
   const [comment, setComment] = useState("");
 
-  const { data: myCommenst, isLoading: isMyStatusLoading } = useContractRead(
-    contract,
-    "getComments",
-    [statusIdDeciaml]
-  );
+  const { data: myCommenst, isLoading: isStatusCommentLoading } =
+    useContractRead(contract, "getComments", [statusIdDeciaml]);
 
   // console.log({ myCommenst, statusIdDeciaml, status });
 
-  if (!address) {
+  if (isStatusCommentLoading) {
     return (
-      <div className="text-red-500">
-        Your did not connected your wallet yet!
-      </div>
-    );
-  }
-
-  if (isMyStatusLoading) {
-    return (
-      <Lottie
-        animationData={loadingLottie}
-        loop={true}
-        className="w-24 h-24 mx-auto"
-      />
+      <DialogContent>
+        <Lottie
+          animationData={loadingLottie}
+          loop={true}
+          className="w-24 h-24 mx-auto"
+        />
+      </DialogContent>
     );
   }
 
@@ -78,42 +69,50 @@ export default function CommentSection({
           </div>
         </DialogTitle>
         <DialogDescription>{status}</DialogDescription>
-        <div className="flex flex-col gap-2 border-t py-2">
-          <h4 className="font-medium">Comments:</h4>
-
-          <div className="flex flex-col gap-4 border py-2 px-4 rounded-lg h-[50vh] overflow-y-auto">
-            {myCommenst.map((item: string) => {
-              return <div key={item}>{item}</div>;
-            })}
+        {!address ? (
+          <div className="text-red-500">
+            Your did not connected your wallet yet!
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Input
-            className="flex-grow"
-            placeholder="say something!!"
-            value={comment}
-            onChange={(e) => {
-              setComment(e.target.value);
-            }}
-          />
-          <Web3Button
-            className="cursor-pointer rounded-xl text-sm hover:opacity-80"
-            style={{
-              backgroundColor: "#2c9f41",
-              color: "white",
-              height: "0px",
-            }}
-            contractAddress={STATUS_CONTRACT_ADDRESS}
-            action={(contract) =>
-              contract.call("addComment", [statusIdDeciaml, comment])
-            }
-            onSuccess={() => {
-              setComment("");
-            }}
-          >
-            Add Comment
-          </Web3Button>
-        </div>
+        ) : (
+          <div>
+            <div className="flex flex-col gap-2 border-t py-2">
+              <h4 className="font-medium">Comments:</h4>
+
+              <div className="flex flex-col gap-4 border py-2 px-4 rounded-lg h-[50vh] overflow-y-auto">
+                {myCommenst.map((item: string) => {
+                  return <div key={item}>{item}</div>;
+                })}
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Input
+                className="flex-grow"
+                placeholder="say something!!"
+                value={comment}
+                onChange={(e) => {
+                  setComment(e.target.value);
+                }}
+              />
+              <Web3Button
+                className="cursor-pointer rounded-xl text-sm hover:opacity-80"
+                style={{
+                  backgroundColor: "#2c9f41",
+                  color: "white",
+                  height: "0px",
+                }}
+                contractAddress={STATUS_CONTRACT_ADDRESS}
+                action={(contract) =>
+                  contract.call("addComment", [statusIdDeciaml, comment])
+                }
+                onSuccess={() => {
+                  setComment("");
+                }}
+              >
+                Add Comment
+              </Web3Button>
+            </div>
+          </div>
+        )}
       </DialogHeader>
     </DialogContent>
   );

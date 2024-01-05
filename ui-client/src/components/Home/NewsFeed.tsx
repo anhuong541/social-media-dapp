@@ -29,7 +29,7 @@ export default function NewsFeed() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
+  if (isLoading || isStatusEventsLoading || statusEvents == undefined) {
     return (
       <div className="col-span-2">
         <Lottie
@@ -39,36 +39,36 @@ export default function NewsFeed() {
         />
       </div>
     );
-  } else {
-    const statusFeeds =
-      !isStatusEventsLoading && statusEvents && filterStatusID(statusEvents);
-
-    return (
-      <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
-        <UserStatus />
-        <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] w-full">
-          {!isStatusEventsLoading &&
-            statusEvents &&
-            statusFeeds
-              .slice(0, countFeed)
-              .map((event: any, index: number) => (
-                <EventCard
-                  key={formatHexToDecimal(event.data.statusId._hex)}
-                  walletAddress={event.data.user}
-                  newStatus={event.data.newStatus}
-                  timeStamp={event.data.timestamp}
-                  statusId={event.data.statusId}
-                />
-              ))}
-          {!isStatusEventsLoading &&
-            statusEvents &&
-            countFeed < statusEvents?.length && (
-              <button onClick={() => setCountFeed(() => countFeed + 10)}>
-                more
-              </button>
-            )}
-        </div>
-      </div>
-    );
   }
+
+  const statusFeeds =
+    !isStatusEventsLoading && statusEvents && filterStatusID(statusEvents);
+
+  return (
+    <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
+      <UserStatus />
+      <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] w-full">
+        {!isStatusEventsLoading &&
+          statusEvents &&
+          statusFeeds
+            .slice(0, countFeed)
+            .map((event: any) => (
+              <EventCard
+                key={formatHexToDecimal(event.data.statusId._hex)}
+                walletAddress={event.data.user}
+                newStatus={event.data.newStatus}
+                timeStamp={event.data.timestamp}
+                statusId={event.data.statusId}
+              />
+            ))}
+        {!isStatusEventsLoading &&
+          statusEvents &&
+          countFeed < statusEvents?.length && (
+            <button onClick={() => setCountFeed(() => countFeed + 10)}>
+              more
+            </button>
+          )}
+      </div>
+    </div>
+  );
 }
