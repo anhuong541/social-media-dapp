@@ -45,7 +45,7 @@ export default function NewsFeed() {
 
     return (
       <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
-        <UserStatus statusFeedsLengh={statusFeeds.length} />
+        <UserStatus />
         <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] w-full">
           {!isStatusEventsLoading &&
             statusEvents &&

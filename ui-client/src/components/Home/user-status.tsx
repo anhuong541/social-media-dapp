@@ -1,11 +1,5 @@
-import {
-  Web3Button,
-  useAddress,
-  useContract,
-  useContractRead,
-} from "@thirdweb-dev/react";
+import { Web3Button, useAddress } from "@thirdweb-dev/react";
 import { useState } from "react";
-import Lottie from "lottie-react";
 
 import {
   Dialog,
@@ -16,43 +10,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
 import { Button } from "../ui/button";
 
-export default function UserStatus({
-  statusFeedsLengh,
-}: {
-  statusFeedsLengh: number;
-}) {
+export default function UserStatus() {
   const address = useAddress();
   // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
   const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-
-  const { data: myStatus, isLoading: isMyStatusLoading } = useContractRead(
-    contract,
-    "getStatus",
-    [address, statusFeedsLengh + 1]
-  );
 
   if (!address) {
     return (
       <div className="text-red-500">
         Your did not connected your wallet yet!
       </div>
-    );
-  }
-
-  if (isMyStatusLoading) {
-    return (
-      <Lottie
-        animationData={loadingLottie}
-        loop={true}
-        className="w-24 h-24 mx-auto"
-      />
     );
   }
 
