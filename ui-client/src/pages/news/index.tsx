@@ -33,6 +33,7 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 export default function NewsPage({ listNews }: { listNews: any }) {
+  console.log(listNews);
   return (
     <div className="flex flex-col gap-4 pt-4 h-[90vh] w-full">
       <h2 className="font-medium text-xl text-black px-4">🔥 Trending News</h2>
@@ -41,7 +42,7 @@ export default function NewsPage({ listNews }: { listNews: any }) {
           return (
             <div className="flex flex-col gap-6" key={index}>
               <a
-                href={item.link}
+                href={item?.link}
                 target="_blank"
                 className="w-full h-[250px] overflow-hidden rounded-[10px]"
               >
@@ -70,12 +71,12 @@ export default function NewsPage({ listNews }: { listNews: any }) {
                         </span>
                       </div>
                       <div className="xl:text-sm text-2xl text_00000080">
-                        {dayjs(item.feedDate).format("MMM DD, YYYY")}
+                        {dayjs(item?.feedDate).format("MMM DD, YYYY") || ""}
                       </div>
                     </div>
                   </div>
                   <div className="xl:text-sm text-2xl font-normal text_00000099">
-                    {add3Dots(item.description || "", 150)}
+                    {add3Dots(item?.description || "", 150)}
                   </div>
                 </div>
               </div>

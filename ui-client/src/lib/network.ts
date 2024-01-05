@@ -11,7 +11,8 @@ export const coinmarketcap = axios.create({
 export const coinstats = axios.create({
   baseURL: "https://openapiv1.coinstats.app",
   headers: {
-    "X-API-KEY": "aho2yFAQMpdIq0Wznc8DWo2Rcb5LY8BsD8ps68bxlCE=",
+    // "X-API-KEY": "aho2yFAQMpdIq0Wznc8DWo2Rcb5LY8BsD8ps68bxlCE=",
+    "X-API-KEY": "h/XpTpw3ku8VtTkCtC2+t5A+8wnXZ1NBQBi4Ts0AvoU=",
     Accept: "application/json",
   },
 });
