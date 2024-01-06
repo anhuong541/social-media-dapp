@@ -14,6 +14,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { formatDateTimeHex, truncateAddress } from "@/lib/utils";
 import MessageContent from "./MessageContent";
 import { useState } from "react";
+import Link from "next/link";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -101,7 +102,13 @@ export default function ChatFeed({
   return (
     <div className="flex flex-col justify-between items-center xl:col-span-2 border-r h-full">
       <div className="py-3 px-6 border-b text-sm font-medium w-full">
-        Address: {directWallet}
+        Address:{" "}
+        <Link
+          href={`/profile/${directWallet}`}
+          className="hover:underline hover:font-semibold"
+        >
+          {directWallet}
+        </Link>
       </div>
       <div className="flex flex-col justify-between items-center flex-grow h-[80vh] w-full">
         <div className="flex flex-col w-full h-full overflow-y-auto">
