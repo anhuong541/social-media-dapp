@@ -6,17 +6,17 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Set a timeout for 2 seconds
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+  // useEffect(() => {
+  //   // Set a timeout for 2 seconds
+  //   const timer = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 1000);
 
-    // Cleanup the timer when the component is unmounted
-    return () => clearTimeout(timer);
-  }, []);
+  //   // Cleanup the timer when the component is unmounted
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   if (isLoading) {
     return (

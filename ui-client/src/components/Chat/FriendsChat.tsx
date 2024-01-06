@@ -125,11 +125,11 @@ export default function FriendsChat(props: FriendsChatType) {
       }
     });
 
-  console.log({
-    friendRequestListItem,
-    friendListItems,
-    formateventChatRequestSent,
-  });
+  // console.log({
+  //   friendRequestListItem,
+  //   friendListItems,
+  //   formateventChatRequestSent,
+  // });
 
   return (
     <div className="flex flex-col">

@@ -9,7 +9,7 @@ import EventCard from "./EventCard";
 import UserStatus from "./user-status";
 
 export default function NewsFeed() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [countFeed, setCountFeed] = useState(10);
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
   const { data: statusEvents, isLoading: isStatusEventsLoading } =
@@ -19,15 +19,15 @@ export default function NewsFeed() {
 
   // console.log({ statusEvents, isStatusEventsLoading });
 
-  useEffect(() => {
-    // Set a timeout for 2 seconds
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+  // useEffect(() => {
+  //   // Set a timeout for 2 seconds
+  //   const timer = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 1000);
 
-    // Cleanup the timer when the component is unmounted
-    return () => clearTimeout(timer);
-  }, []);
+  //   // Cleanup the timer when the component is unmounted
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   if (isLoading || isStatusEventsLoading || statusEvents == undefined) {
     return (

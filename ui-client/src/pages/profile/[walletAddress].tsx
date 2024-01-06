@@ -11,7 +11,7 @@ import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 export default function AccountFeed() {
   const router = useRouter();
   const { walletAddress } = router.query;
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
   const { data: userEvents, isLoading: isUserEventsLoading } =
@@ -19,15 +19,15 @@ export default function AccountFeed() {
       subscribe: true,
     });
 
-  useEffect(() => {
-    // Set a timeout for 2 seconds
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+  // useEffect(() => {
+  //   // Set a timeout for 2 seconds
+  //   const timer = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 1000);
 
-    // Cleanup the timer when the component is unmounted
-    return () => clearTimeout(timer);
-  }, []);
+  //   // Cleanup the timer when the component is unmounted
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   if (isLoading) {
     return (

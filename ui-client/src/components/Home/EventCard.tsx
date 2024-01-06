@@ -1,8 +1,8 @@
-import Lottie from "lottie-react";
 import Link from "next/link";
 import {
   useAddress,
   useContract,
+  useContractEvents,
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
@@ -30,15 +30,19 @@ import {
 } from "@/lib/utils";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
-import loadingLottie from "@/lib/loadingLottie.json";
+import {
+  CHAT_CONTRACT_ADDRESS,
+  STATUS_CONTRACT_ADDRESS,
+} from "../constants/addresses";
 import {
   ChangeStatusSection,
   CommentSection,
   TipsSection,
 } from "./PopupSection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CopyAddress from "../CopyAddress";
+import Lottie from "lottie-react";
+import loadingLottie from "@/lib/loadingLottie.json";
 
 type EventCardProps = {
   walletAddress: string;
@@ -64,11 +68,13 @@ export default function EventCard(props: EventCardProps) {
     state: false,
     title: "Edit",
   });
+  const [isAlreadyDM, setIsAlreadyDM] = useState(false);
   const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
   const date = formatDateTimeDecimal(
     formatHexToDecimal(props.timeStamp._hex) * 1000
   );
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
+  const { contract: chat_contract } = useContract(CHAT_CONTRACT_ADDRESS);
 
   const { data: statusState, isLoading: isMyStatusLoading } = useContractRead(
     contract,
@@ -76,10 +82,44 @@ export default function EventCard(props: EventCardProps) {
     [props.walletAddress, statusIdDeciaml]
   );
 
+  const { mutateAsync: sendChatRequest, isLoading: isLoadingChatRequest } =
+    useContractWrite(chat_contract, "sendChatRequest");
+
+  const { data: eventChatRequestSent, isLoading: isLoadingChatRequestSent } =
+    useContractEvents(chat_contract, "ChatRequestSent");
+
   const { mutateAsync: addLike, isLoading: isLikeLoading } = useContractWrite(
     contract,
     "addLike"
   );
+
+  const callChatRequestt = async () => {
+    try {
+      const data = await sendChatRequest({ args: [props.walletAddress] });
+      // console.info("contract call successs", data);
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
+
+  useEffect(() => {
+    if (eventChatRequestSent !== undefined) {
+      const haveBeenSentChatRequest: any = eventChatRequestSent?.map(
+        (item) => item.data
+      );
+
+      // console.log(haveBeenSentChatRequest);
+
+      for (let i = 0; i < haveBeenSentChatRequest.length; i++) {
+        if (
+          haveBeenSentChatRequest[i].sender == address &&
+          haveBeenSentChatRequest[i].receiver == props.walletAddress
+        ) {
+          setIsAlreadyDM(true);
+        }
+      }
+    }
+  }, [address]);
 
   const callLike = async () => {
     try {
@@ -91,6 +131,16 @@ export default function EventCard(props: EventCardProps) {
       console.error("contract call failure", err);
     }
   };
+
+  if (isLoadingChatRequestSent) {
+    <div>
+      <Lottie
+        animationData={loadingLottie}
+        loop={true}
+        className="w-24 h-24 mx-auto"
+      />
+    </div>;
+  }
 
   return (
     <Card className="w-full">
@@ -160,10 +210,17 @@ export default function EventCard(props: EventCardProps) {
         <p>{props.newStatus}</p>
         <div className="flex justify-end items-center gap-3 mt-1 font-medium">
           {/* DM  */}
-          {address !== props.walletAddress && (
-            <div className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer">
+          {address !== props.walletAddress && !isAlreadyDM && (
+            <div
+              className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer"
+              onClick={callChatRequestt}
+            >
               <FaRegComments className="w-5 h-5" />
-              DM
+              {!isLoadingChatRequest ? (
+                "DM"
+              ) : (
+                <ReloadIcon className="animate-spin" />
+              )}
             </div>
           )}
           {/* like  */}
@@ -178,7 +235,7 @@ export default function EventCard(props: EventCardProps) {
             }}
           >
             <BiUpvote className="w-5 h-5" />
-            {isLikeLoading ? (
+            {isLikeLoading || isMyStatusLoading ? (
               <ReloadIcon className="animate-spin" />
             ) : (
               formatHexToDecimal(statusState[1]._hex)

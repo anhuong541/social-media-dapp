@@ -15,7 +15,7 @@ export default function AddFriend() {
   const callChatRequestt = async () => {
     try {
       const data = await sendChatRequest({ args: [typeAddress] });
-      console.info("contract call successs", data);
+      // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);
     }
