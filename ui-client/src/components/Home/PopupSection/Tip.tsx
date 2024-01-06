@@ -27,7 +27,7 @@ export default function TipsSection({
 }: TipsType) {
   const [tip, setTip] = useState(0.01);
 
-  console.log(tip);
+  // console.log(tip);
 
   return (
     <DialogContent>

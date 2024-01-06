@@ -40,21 +40,37 @@ export function formatHexToDecimal(hexNumber: string): number {
   return decimalNumber;
 }
 
-export function formatTime(timestamp: number) {
-  const startTime: any = new Date(timestamp);
-  const currentTime: any = new Date();
-  const timeDifference = currentTime - startTime;
-  const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert milliseconds to hours
+// format time with input is hexNumber
+export function formatDateTimeHex(timestampHex: string): string {
+  // Convert hex timestamp to decimal
+  const timestamp = parseInt(timestampHex, 16) * 1000;
+  const now = Date.now();
+  const timeDifference = now - timestamp;
 
-  if (hoursDifference < 24) {
-    // If active for less than 24 hours, return "today"
-    return "today";
+  if (timeDifference >= 24 * 60 * 60 * 1000) {
+    // If the time difference is greater than or equal to 24 hours, format as DD - MM - YYYY
+    const formattedDate = new Date(timestamp).toLocaleDateString("en-GB");
+    return formattedDate;
   } else {
-    // If active for 24 hours or more, return the formatted date
-    const day = startTime.getDate();
-    const month = startTime.getMonth() + 1; // Months are 0-indexed
-    const year = startTime.getFullYear();
-    return `${day}/${month}/${year}`;
+    // If the time difference is less than 24 hours, format as "X hours ago"
+    const hoursAgo = Math.floor(timeDifference / (60 * 60 * 1000));
+    return `${hoursAgo} hour${hoursAgo > 1 ? "s" : ""} ago`;
+  }
+}
+
+// format time with input is decimal
+export function formatDateTimeDecimal(timestamp: number): string {
+  const now = Date.now();
+  const timeDifference = now - timestamp;
+
+  if (timeDifference >= 24 * 60 * 60 * 1000) {
+    // If the time difference is greater than or equal to 24 hours, format as DD - MM - YYYY
+    const formattedDate = new Date(timestamp).toLocaleDateString("en-GB");
+    return formattedDate;
+  } else {
+    // If the time difference is less than 24 hours, format as "X hours ago"
+    const hoursAgo = Math.floor(timeDifference / (60 * 60 * 1000));
+    return `${hoursAgo} hour${hoursAgo > 1 ? "s" : ""} ago`;
   }
 }
 

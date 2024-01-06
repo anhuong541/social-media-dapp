@@ -22,7 +22,11 @@ import {
   CardContent,
   Card,
 } from "@/components/ui/card";
-import { formatHexToDecimal, formatTime, truncateAddress } from "@/lib/utils";
+import {
+  formatDateTimeDecimal,
+  formatHexToDecimal,
+  truncateAddress,
+} from "@/lib/utils";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STATUS_CONTRACT_ADDRESS } from "../constants/addresses";
@@ -59,7 +63,9 @@ export default function EventCard(props: EventCardProps) {
     title: "Edit",
   });
   const statusIdDeciaml = formatHexToDecimal(props.statusId._hex);
-  const date = formatTime(formatHexToDecimal(props.timeStamp._hex) * 1000);
+  const date = formatDateTimeDecimal(
+    formatHexToDecimal(props.timeStamp._hex) * 1000
+  );
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
 
   const { data: statusState, isLoading: isMyStatusLoading } = useContractRead(

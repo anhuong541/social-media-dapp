@@ -976,22 +976,12 @@ contract ChatNewUpdated is Ownable {
 
         ChatMessageInfo memory messageInfo;
 
-        // Determine the role of the sender and receiver
-        // if (msg.sender < receiver) {
         messageInfo = ChatMessageInfo({
             user1: msg.sender,
             user2: receiver,
             timestamp: block.timestamp,
             message: message
         });
-        // } else {
-        //     messageInfo = ChatMessageInfo({
-        //         user1: receiver,
-        //         user2: msg.sender,
-        //         timestamp: block.timestamp,
-        //         message: message
-        //     });
-        // }
 
         chatMessages[messageInfo.user1][messageInfo.user2].push(messageInfo);
 
