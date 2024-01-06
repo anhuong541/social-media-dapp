@@ -35,15 +35,12 @@ export default function FriendsChat() {
               key={index}
             >
               <Avatar>
-                <AvatarImage
-                  src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-                  alt="user Avatar"
-                />
+                <AvatarImage src={item.img} alt="user Avatar" />
                 <AvatarFallback>AH</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-medium">Simon</p>
-                <p className="text-gray-500">@socodemaker</p>
+                <p className="font-medium">{item.title}</p>
+                <p className="text-gray-500">@{item.title}</p>
               </div>
             </div>
           );
