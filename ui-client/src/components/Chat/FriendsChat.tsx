@@ -7,6 +7,7 @@ import {
   useAddress,
   useContract,
   useContractEvents,
+  useContractWrite,
 } from "@thirdweb-dev/react";
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { truncateAddress } from "@/lib/utils";
@@ -38,18 +39,31 @@ type FriendsChatType = {
 
 export default function FriendsChat(props: FriendsChatType) {
   const address = useAddress();
-  const [typeAddress, setTypeAddress] = useState<string>("");
 
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
   // You can get a specific event
   const { data: eventChatRequestSent, isLoading: isLoadingChatRequestSent } =
     useContractEvents(contract, "ChatRequestSent");
 
+  const {
+    mutateAsync: acceptChatRequest,
+    isLoading: isLoadingAcceptChatRequest,
+  } = useContractWrite(contract, "acceptChatRequest");
+
   // You can get a specific event
   const {
     data: eventChatRequestAccepted,
     isLoading: isLoadingChatRequestAccepted,
   } = useContractEvents(contract, "ChatRequestAccepted");
+
+  const callAcceptChatRequest = async (sender: string) => {
+    try {
+      const data = await acceptChatRequest({ args: [sender] });
+      console.info("contract call successs", data);
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
 
   if (isLoadingChatRequestSent || isLoadingChatRequestAccepted) {
     return (
@@ -65,20 +79,22 @@ export default function FriendsChat(props: FriendsChatType) {
     !isLoadingChatRequestAccepted &&
     eventChatRequestAccepted &&
     eventChatRequestAccepted
-      .map((item) => item.data)
+      .map((item) => item?.data)
       .map((data) => {
         if (data.sender === address) {
           return { address: data.receiver };
         } else if (data.receiver === address) {
           return { address: data.sender };
         }
-      });
+        return { address: undefined };
+      })
+      .filter((item) => item?.address !== undefined);
 
   const friendRequestListItem =
     !isLoadingChatRequestSent &&
     eventChatRequestSent &&
     eventChatRequestSent
-      .map((item) => item.data)
+      .map((item) => item?.data)
       .filter((data) => data.receiver === address)
       .map((data) => {
         for (let i = 0; i < friendListItems.length; i++) {
@@ -106,56 +122,61 @@ export default function FriendsChat(props: FriendsChatType) {
         {!isLoadingChatRequestAccepted &&
           !isLoadingChatRequestSent &&
           eventChatRequestAccepted &&
-          eventChatRequestSent && (
-            <div className="flex flex-col gap-2">
-              <h2 className="font-medium text-sm px-4">
-                You have {friendRequestListItem?.length} friend request
+          eventChatRequestSent &&
+          friendRequestListItem!.length > 0 && (
+            <div className="flex flex-col gap-2 px-1">
+              <h2 className="font-medium text-sm px-3">
+                You have {friendRequestListItem?.length} chat request
               </h2>
               {friendRequestListItem?.map((item: any, index: number) => {
                 return (
                   <div
-                    className="flex items-center justify-between gap-2 px-4 py-3 bg-green-800 text-white"
+                    className="flex items-center justify-between gap-2 px-3 py-4 rounded-lg bg-green-600 text-white"
                     key={index}
                   >
                     {/* <Avatar>
-                  <AvatarImage src={item.img} alt="user Avatar" />
-                  <AvatarFallback>AH</AvatarFallback>
-                </Avatar> */}
+                          <AvatarImage src={item?.img} alt="user Avatar" />
+                          <AvatarFallback>AH</AvatarFallback>
+                        </Avatar> */}
                     <div>
-                      {/* <p className="font-medium">{item.data.title}</p> */}
+                      {/* <p className="font-medium">{item?.data.title}</p> */}
                       <p className="font-medium text-sm">
-                        {truncateAddress(item.address)}
+                        {truncateAddress(item?.address)}
                       </p>
                     </div>
-                    <div className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500">
-                      <FaCheck />
+                    <div
+                      className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500"
+                      onClick={async () => callAcceptChatRequest(item?.address)}
+                    >
+                      <FaCheck className="w-5 h-5" />
                     </div>
                   </div>
                 );
               })}
             </div>
           )}
-        <div className="flex flex-col gap-2">
-          <h2 className="font-medium text-sm px-4">Friend List:</h2>
+        <div className="flex flex-col gap-2 px-1">
+          <h2 className="font-medium text-sm px-3">Friends List:</h2>
           {!isLoadingChatRequestAccepted &&
             eventChatRequestAccepted &&
             friendListItems?.map((item: any, index: number) => {
               return (
                 <div
-                  className={`flex items-center gap-2 px-4 py-3 hover:bg-green-800 text-white cursor-pointer ${
-                    props.addressSelected === item.address && "bg-green-800"
+                  className={`flex items-center gap-2 px-3 py-5 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
+                    props?.addressSelected === item?.address &&
+                    "bg-green-600 text-white"
                   }`}
-                  onClick={() => props.onChangeAddress(item.address)}
+                  onClick={() => props.onChangeAddress(item?.address)}
                   key={index}
                 >
                   {/* <Avatar>
-                  <AvatarImage src={item.img} alt="user Avatar" />
+                  <AvatarImage src={item?.img} alt="user Avatar" />
                   <AvatarFallback>AH</AvatarFallback>
                 </Avatar> */}
                   <div>
-                    {/* <p className="font-medium">{item.data.title}</p> */}
+                    {/* <p className="font-medium">{item?.data.title}</p> */}
                     <p className="font-medium text-sm">
-                      {truncateAddress(item.address)}
+                      {truncateAddress(item?.address)}
                     </p>
                   </div>
                 </div>

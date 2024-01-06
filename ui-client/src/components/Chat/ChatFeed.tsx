@@ -4,14 +4,12 @@ import {
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { DirectWalletType } from "@/pages/room";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { formatDateTimeHex, truncateAddress } from "@/lib/utils";
 import MessageContent from "./MessageContent";
 import { useState } from "react";
 import Link from "next/link";
@@ -63,6 +61,14 @@ export default function ChatFeed({
     }
   };
 
+  if (directWallet == "unselected_wallet_@") {
+    return (
+      <div className="xl:col-span-2 border-r h-full text-center">
+        Please choose address
+      </div>
+    );
+  }
+
   if (isLoadingChatFeeds) {
     return (
       <div className="xl:col-span-2 border-r h-full">
@@ -71,14 +77,6 @@ export default function ChatFeed({
           loop={true}
           className="w-24 h-24 mx-auto"
         />
-      </div>
-    );
-  }
-
-  if (directWallet == "unselected_wallet_@") {
-    return (
-      <div className="xl:col-span-2 border-r h-full text-center">
-        Please choose address
       </div>
     );
   }
