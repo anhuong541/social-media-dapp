@@ -643,91 +643,6 @@ contract SocialMediaV4 {
     }
 }
 
-// simple chat
-contract SimpleChat is Ownable {
-    struct ChatRequest {
-        bool exists;
-        bool accepted;
-        bytes32 securityKey;
-    }
-
-    mapping(address => mapping(address => ChatRequest)) public chatRequests;
-    mapping(address => mapping(address => string[])) public chatMessages;
-
-    event ChatRequestSent(address indexed sender, address indexed receiver);
-    event ChatRequestAccepted(address indexed sender, address indexed receiver);
-    event MessageSent(
-        address indexed sender,
-        address indexed receiver,
-        string message
-    );
-
-    function sendChatRequest(address receiver) external {
-        require(
-            !chatRequests[msg.sender][receiver].exists,
-            "Chat request already sent"
-        );
-        require(
-            !chatRequests[receiver][msg.sender].exists,
-            "Chat request already received"
-        );
-
-        chatRequests[msg.sender][receiver] = ChatRequest(
-            true,
-            false,
-            bytes32(0)
-        );
-        emit ChatRequestSent(msg.sender, receiver);
-    }
-
-    function acceptChatRequest(address sender) external {
-        require(
-            chatRequests[sender][msg.sender].exists,
-            "No chat request from this user"
-        );
-        require(
-            !chatRequests[sender][msg.sender].accepted,
-            "Chat request already accepted"
-        );
-
-        chatRequests[sender][msg.sender].accepted = true;
-        chatRequests[sender][msg.sender].securityKey = keccak256(
-            abi.encodePacked(msg.sender, sender, block.timestamp)
-        );
-
-        emit ChatRequestAccepted(sender, msg.sender);
-    }
-
-    function sendMessage(address receiver, string calldata message) external {
-        require(
-            chatRequests[msg.sender][receiver].exists,
-            "No active chat with this user"
-        );
-        require(
-            chatRequests[msg.sender][receiver].accepted,
-            "Chat request not accepted"
-        );
-
-        chatMessages[msg.sender][receiver].push(message);
-        emit MessageSent(msg.sender, receiver, message);
-    }
-
-    function getChatMessages(
-        address sender,
-        address receiver
-    ) external view returns (string[] memory) {
-        return chatMessages[sender][receiver];
-    }
-
-    function hasPendingChatRequest(
-        address sender
-    ) external view returns (bool) {
-        return
-            chatRequests[sender][msg.sender].exists &&
-            !chatRequests[sender][msg.sender].accepted;
-    }
-}
-
 contract Chat is Ownable {
     /// @dev See `initializeUser` function
     struct UserInitialization {
@@ -851,4 +766,297 @@ contract Chat is Ownable {
     receive() external payable {}
 
     fallback() external payable {}
+}
+
+// simple chat
+contract SimpleChat is Ownable {
+    struct ChatRequest {
+        bool exists;
+        bool accepted;
+        bytes32 securityKey;
+    }
+
+    // Define a new struct for the structured message information
+    struct ChatMessageInfo {
+        address user1;
+        address user2;
+        uint256 timestamp;
+        string message;
+    }
+
+    mapping(address => mapping(address => ChatRequest)) public chatRequests;
+    mapping(address => mapping(address => string[])) public chatMessages;
+
+    event ChatRequestSent(address indexed sender, address indexed receiver);
+    event ChatRequestAccepted(address indexed sender, address indexed receiver);
+    event MessageSent(
+        address indexed sender,
+        address indexed receiver,
+        string message
+    );
+
+    function sendChatRequest(address receiver) external {
+        require(
+            !chatRequests[msg.sender][receiver].exists,
+            "Chat request already sent"
+        );
+        require(
+            !chatRequests[receiver][msg.sender].exists,
+            "Chat request already received"
+        );
+
+        chatRequests[msg.sender][receiver] = ChatRequest(
+            true,
+            false,
+            bytes32(0)
+        );
+        emit ChatRequestSent(msg.sender, receiver);
+    }
+
+    function acceptChatRequest(address sender) external {
+        require(
+            chatRequests[sender][msg.sender].exists,
+            "No chat request from this user"
+        );
+        require(
+            !chatRequests[sender][msg.sender].accepted,
+            "Chat request already accepted"
+        );
+
+        chatRequests[sender][msg.sender].accepted = true;
+        chatRequests[sender][msg.sender].securityKey = keccak256(
+            abi.encodePacked(msg.sender, sender, block.timestamp)
+        );
+
+        emit ChatRequestAccepted(sender, msg.sender);
+    }
+
+    function sendMessage(address receiver, string calldata message) external {
+        require(
+            chatRequests[msg.sender][receiver].exists ||
+                chatRequests[receiver][msg.sender].exists,
+            "No active chat with this user"
+        );
+        require(
+            chatRequests[msg.sender][receiver].accepted ||
+                chatRequests[receiver][msg.sender].accepted,
+            "Chat request not accepted"
+        );
+
+        chatMessages[msg.sender][receiver].push(message);
+        chatMessages[receiver][msg.sender].push(message); // Update receiver's chatMessages as well
+
+        emit MessageSent(msg.sender, receiver, message);
+    }
+
+    function getAllChatMessagesWithInfo(
+        address user1,
+        address user2
+    ) external view returns (ChatMessageInfo[] memory messagesInfo) {
+        uint256 numSenderMessages = chatMessages[user1][user2].length;
+        uint256 numReceiverMessages = chatMessages[user2][user1].length;
+
+        uint256 totalMessages = numSenderMessages + numReceiverMessages;
+
+        messagesInfo = new ChatMessageInfo[](totalMessages);
+
+        // Populate array with sender's messages
+        for (uint256 i = 0; i < numSenderMessages; i++) {
+            messagesInfo[i] = ChatMessageInfo({
+                user1: user1,
+                user2: user2,
+                timestamp: block.timestamp, // Use block timestamp or consider using a more secure timestamp source
+                message: chatMessages[user1][user2][i]
+            });
+        }
+
+        // Populate array with receiver's messages
+        for (uint256 i = 0; i < numReceiverMessages; i++) {
+            uint256 index = numSenderMessages + i;
+            messagesInfo[index] = ChatMessageInfo({
+                user1: user2,
+                user2: user1,
+                timestamp: block.timestamp, // Use block timestamp or consider using a more secure timestamp source
+                message: chatMessages[user2][user1][i]
+            });
+        }
+
+        return messagesInfo;
+    }
+
+    function getChatMessages(
+        address sender,
+        address receiver
+    ) external view returns (string[] memory) {
+        return chatMessages[sender][receiver];
+    }
+
+    function hasPendingChatRequest(
+        address sender
+    ) external view returns (bool) {
+        return
+            chatRequests[sender][msg.sender].exists &&
+            !chatRequests[sender][msg.sender].accepted;
+    }
+}
+
+contract ChatNewUpdated is Ownable {
+    struct ChatRequest {
+        bool exists;
+        bool accepted;
+        bytes32 securityKey;
+    }
+
+    struct ChatMessageInfo {
+        address user1;
+        address user2;
+        uint256 timestamp;
+        string message;
+    }
+
+    mapping(address => mapping(address => ChatRequest)) public chatRequests;
+    mapping(address => mapping(address => ChatMessageInfo[]))
+        public chatMessages;
+
+    event ChatRequestSent(address indexed sender, address indexed receiver);
+    event ChatRequestAccepted(address indexed sender, address indexed receiver);
+    event MessageSent(
+        address indexed sender,
+        address indexed receiver,
+        string message
+    );
+
+    function sendChatRequest(address receiver) external {
+        require(
+            !chatRequests[msg.sender][receiver].exists,
+            "Chat request already sent"
+        );
+        require(
+            !chatRequests[receiver][msg.sender].exists,
+            "Chat request already received"
+        );
+
+        chatRequests[msg.sender][receiver] = ChatRequest(
+            true,
+            false,
+            bytes32(0)
+        );
+        emit ChatRequestSent(msg.sender, receiver);
+    }
+
+    function acceptChatRequest(address sender) external {
+        require(
+            chatRequests[sender][msg.sender].exists,
+            "No chat request from this user"
+        );
+        require(
+            !chatRequests[sender][msg.sender].accepted,
+            "Chat request already accepted"
+        );
+
+        chatRequests[sender][msg.sender].accepted = true;
+        chatRequests[sender][msg.sender].securityKey = keccak256(
+            abi.encodePacked(msg.sender, sender, block.timestamp)
+        );
+
+        emit ChatRequestAccepted(sender, msg.sender);
+    }
+
+    function sendMessage(address receiver, string calldata message) external {
+        require(
+            chatRequests[msg.sender][receiver].exists ||
+                chatRequests[receiver][msg.sender].exists,
+            "No active chat with this user"
+        );
+        require(
+            chatRequests[msg.sender][receiver].accepted ||
+                chatRequests[receiver][msg.sender].accepted,
+            "Chat request not accepted"
+        );
+
+        ChatMessageInfo memory messageInfo;
+
+        // Determine the role of the sender and receiver
+        // if (msg.sender < receiver) {
+        messageInfo = ChatMessageInfo({
+            user1: msg.sender,
+            user2: receiver,
+            timestamp: block.timestamp,
+            message: message
+        });
+        // } else {
+        //     messageInfo = ChatMessageInfo({
+        //         user1: receiver,
+        //         user2: msg.sender,
+        //         timestamp: block.timestamp,
+        //         message: message
+        //     });
+        // }
+
+        chatMessages[messageInfo.user1][messageInfo.user2].push(messageInfo);
+
+        emit MessageSent(msg.sender, receiver, message);
+    }
+
+    function getAllChatMessagesWithInfo(
+        address user1,
+        address user2
+    ) external view returns (ChatMessageInfo[] memory messagesInfo) {
+        uint256 numSenderMessages = chatMessages[user1][user2].length;
+        uint256 numReceiverMessages = chatMessages[user2][user1].length;
+
+        uint256 totalMessages = numSenderMessages + numReceiverMessages;
+
+        messagesInfo = new ChatMessageInfo[](totalMessages);
+
+        // Populate array with sender's messages
+        for (uint256 i = 0; i < numSenderMessages; i++) {
+            messagesInfo[i] = chatMessages[user1][user2][i];
+        }
+
+        // Populate array with receiver's messages
+        for (uint256 i = 0; i < numReceiverMessages; i++) {
+            uint256 index = numSenderMessages + i;
+            messagesInfo[index] = chatMessages[user2][user1][i];
+        }
+
+        return messagesInfo;
+    }
+
+    function getChatMessages(
+        address sender,
+        address receiver
+    ) external view returns (ChatMessageInfo[] memory) {
+        ChatMessageInfo[] storage senderMessages = chatMessages[sender][
+            receiver
+        ];
+        ChatMessageInfo[] storage receiverMessages = chatMessages[receiver][
+            sender
+        ];
+
+        uint256 totalMessages = senderMessages.length + receiverMessages.length;
+        ChatMessageInfo[] memory messages = new ChatMessageInfo[](
+            totalMessages
+        );
+
+        // Copy sender's messages
+        for (uint256 i = 0; i < senderMessages.length; i++) {
+            messages[i] = senderMessages[i];
+        }
+
+        // Copy receiver's messages
+        for (uint256 i = 0; i < receiverMessages.length; i++) {
+            messages[senderMessages.length + i] = receiverMessages[i];
+        }
+
+        return messages;
+    }
+
+    function hasPendingChatRequest(
+        address sender
+    ) external view returns (bool) {
+        return
+            chatRequests[sender][msg.sender].exists &&
+            !chatRequests[sender][msg.sender].accepted;
+    }
 }
