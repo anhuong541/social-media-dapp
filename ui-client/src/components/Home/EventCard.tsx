@@ -6,6 +6,7 @@ import {
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 import {
   BiUpvote,
@@ -37,6 +38,7 @@ import {
   TipsSection,
 } from "./PopupSection";
 import { useState } from "react";
+import CopyAddress from "../CopyAddress";
 
 type EventCardProps = {
   walletAddress: string;
@@ -114,6 +116,7 @@ export default function EventCard(props: EventCardProps) {
                   >
                     {truncateAddress(props.walletAddress)}
                   </Link>
+                  <CopyAddress textToCopy={props.walletAddress} />
                   {/* {address !== props.walletAddress && (
                     <Dialog>
                       <DialogTrigger className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
@@ -175,12 +178,8 @@ export default function EventCard(props: EventCardProps) {
             }}
           >
             <BiUpvote className="w-5 h-5" />
-            {isMyStatusLoading ? (
-              <Lottie
-                animationData={loadingLottie}
-                loop={true}
-                className="w-10 h-10 p-0"
-              />
+            {isLikeLoading ? (
+              <ReloadIcon className="animate-spin" />
             ) : (
               formatHexToDecimal(statusState[1]._hex)
             )}
@@ -191,11 +190,7 @@ export default function EventCard(props: EventCardProps) {
               <div className="flex gap-1 items-center hover:text-green-700 cursor-pointer">
                 <BiMessageRounded className="w-5 h-5" />
                 {isMyStatusLoading ? (
-                  <Lottie
-                    animationData={loadingLottie}
-                    loop={true}
-                    className="w-10 h-10 p-0"
-                  />
+                  <ReloadIcon className="animate-spin" />
                 ) : (
                   formatHexToDecimal(statusState[2]._hex)
                 )}

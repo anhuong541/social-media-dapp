@@ -1,9 +1,13 @@
+import { useState } from "react";
+import Link from "next/link";
 import {
   useAddress,
   useContract,
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
+import { ReloadIcon } from "@radix-ui/react-icons";
+
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
@@ -11,8 +15,6 @@ import { DirectWalletType } from "@/pages/room";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import MessageContent from "./MessageContent";
-import { useState } from "react";
-import Link from "next/link";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -41,10 +43,8 @@ export default function ChatFeed({
     [address, directWallet]
   );
 
-  const { mutateAsync: sendMessage, isLoading } = useContractWrite(
-    contract,
-    "sendMessage"
-  );
+  const { mutateAsync: sendMessage, isLoading: isLoadingSendMessage } =
+    useContractWrite(contract, "sendMessage");
 
   const callSendMessage = async () => {
     if (message !== "") {
@@ -123,8 +123,16 @@ export default function ChatFeed({
             placeholder={inputPlaceholder}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <Button className="ml-2" onClick={callSendMessage}>
-            Send
+          <Button
+            className="ml-2"
+            onClick={callSendMessage}
+            disabled={isLoadingSendMessage}
+          >
+            {!isLoadingSendMessage ? (
+              "Send"
+            ) : (
+              <ReloadIcon className="animate-spin" />
+            )}
           </Button>
         </div>
       </div>

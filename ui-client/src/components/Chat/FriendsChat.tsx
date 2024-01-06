@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Input } from "../ui/input";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import {
   Web3Button,
   useAddress,
@@ -9,10 +8,12 @@ import {
   useContractEvents,
   useContractWrite,
 } from "@thirdweb-dev/react";
+
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { truncateAddress } from "@/lib/utils";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
+import AddFriend from "./AddFriend";
 
 // const friendListItems = [
 //   {
@@ -97,27 +98,42 @@ export default function FriendsChat(props: FriendsChatType) {
       .map((item) => item?.data)
       .filter((data) => data.receiver === address)
       .map((data) => {
+        let addressIsAlreadyAdded = false;
         for (let i = 0; i < friendListItems.length; i++) {
-          if (friendListItems[i].address !== data.sender) {
-            return { address: data.sender };
+          if (friendListItems[i].address === data.sender) {
+            addressIsAlreadyAdded = true;
           }
+        }
+        if (!addressIsAlreadyAdded) {
+          return { address: data.sender };
         }
       })
       .filter((item) => item?.address !== undefined);
 
-  console.log({ friendRequestListItem, friendListItems });
+  const formateventChatRequestSent = eventChatRequestSent
+    ?.map((item) => item.data)
+    .filter((data) => data.receiver === address)
+    .map((data) => {
+      let addressIsAlreadyAdded = false;
+      for (let i = 0; i < friendListItems.length; i++) {
+        if (friendListItems[i].address === data.sender) {
+          addressIsAlreadyAdded = true;
+        }
+      }
+      if (!addressIsAlreadyAdded) {
+        return { address: data.sender };
+      }
+    });
+
+  console.log({
+    friendRequestListItem,
+    friendListItems,
+    formateventChatRequestSent,
+  });
 
   return (
     <div className="flex flex-col">
-      <div className="py-3 px-4 border-b text-sm font-medium">
-        {/* <Input
-          onChange={(e) => {
-            setTypeAddress(e.target.value);
-          }}
-          placeholder="Type your address!!"
-        /> */}
-        &rdquo;Phần chọn địa chỉ ví để gửi kết nối&rdquo;
-      </div>
+      <AddFriend />
       <div className="flex flex-col py-2 gap-4">
         {!isLoadingChatRequestAccepted &&
           !isLoadingChatRequestSent &&
@@ -148,7 +164,11 @@ export default function FriendsChat(props: FriendsChatType) {
                       className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500"
                       onClick={async () => callAcceptChatRequest(item?.address)}
                     >
-                      <FaCheck className="w-5 h-5" />
+                      {!isLoadingAcceptChatRequest ? (
+                        <FaCheck className="w-5 h-5" />
+                      ) : (
+                        <ReloadIcon className="animate-spin" />
+                      )}
                     </div>
                   </div>
                 );
@@ -157,31 +177,33 @@ export default function FriendsChat(props: FriendsChatType) {
           )}
         <div className="flex flex-col gap-2 px-1">
           <h2 className="font-medium text-sm px-3">Friends List:</h2>
-          {!isLoadingChatRequestAccepted &&
-            eventChatRequestAccepted &&
-            friendListItems?.map((item: any, index: number) => {
-              return (
-                <div
-                  className={`flex items-center gap-2 px-3 py-5 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
-                    props?.addressSelected === item?.address &&
-                    "bg-green-600 text-white"
-                  }`}
-                  onClick={() => props.onChangeAddress(item?.address)}
-                  key={index}
-                >
-                  {/* <Avatar>
+          <div className="flex flex-col">
+            {!isLoadingChatRequestAccepted &&
+              eventChatRequestAccepted &&
+              friendListItems?.map((item: any, index: number) => {
+                return (
+                  <div
+                    className={`flex items-center gap-2 px-3 py-4 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
+                      props?.addressSelected === item?.address &&
+                      "bg-green-600 text-white"
+                    }`}
+                    onClick={() => props.onChangeAddress(item?.address)}
+                    key={index}
+                  >
+                    {/* <Avatar>
                   <AvatarImage src={item?.img} alt="user Avatar" />
                   <AvatarFallback>AH</AvatarFallback>
                 </Avatar> */}
-                  <div>
-                    {/* <p className="font-medium">{item?.data.title}</p> */}
-                    <p className="font-medium text-sm">
-                      {truncateAddress(item?.address)}
-                    </p>
+                    <div>
+                      {/* <p className="font-medium">{item?.data.title}</p> */}
+                      <p className="font-medium text-sm">
+                        {truncateAddress(item?.address)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       </div>
     </div>
