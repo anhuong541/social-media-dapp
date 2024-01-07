@@ -93,7 +93,7 @@ export default function EventCard(props: EventCardProps) {
     "addLike"
   );
 
-  const callChatRequestt = async () => {
+  const callChatRequest = async () => {
     try {
       const data = await sendChatRequest({ args: [props.walletAddress] });
       // console.info("contract call successs", data);
@@ -218,7 +218,7 @@ export default function EventCard(props: EventCardProps) {
           {address !== props.walletAddress && !isAlreadyDM && (
             <div
               className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer"
-              onClick={callChatRequestt}
+              onClick={callChatRequest}
             >
               <FaRegComments className="w-5 h-5" />
               {!isLoadingChatRequest ? (

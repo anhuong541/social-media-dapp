@@ -18,6 +18,8 @@ export default function AddFriend() {
       // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);
+    } finally {
+      setTypeAddress("");
     }
   };
 
@@ -29,6 +31,7 @@ export default function AddFriend() {
           setTypeAddress(e.target.value);
         }}
         placeholder="Type address!!"
+        disabled={isLoadingChatRequest}
       />
       <Button
         onClick={callChatRequestt}
