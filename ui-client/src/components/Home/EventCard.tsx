@@ -116,6 +116,11 @@ export default function EventCard(props: EventCardProps) {
           haveBeenSentChatRequest[i].receiver == props.walletAddress
         ) {
           setIsAlreadyDM(true);
+        } else if (
+          haveBeenSentChatRequest[i].sender == props.walletAddress &&
+          haveBeenSentChatRequest[i].receiver == address
+        ) {
+          setIsAlreadyDM(true);
         }
       }
     }
