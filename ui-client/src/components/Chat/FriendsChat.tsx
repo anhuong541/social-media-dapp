@@ -51,7 +51,7 @@ export default function FriendsChat(props: FriendsChatType) {
   if (!address) {
     return (
       <div className="h-full w-full px-4 py-4 text-sm text-center text-red-500">
-        Your did not connected your wallet yet!
+        You did not connected your wallet yet!
       </div>
     );
   }

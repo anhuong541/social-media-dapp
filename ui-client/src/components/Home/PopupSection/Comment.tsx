@@ -71,7 +71,7 @@ export default function CommentSection({
         <DialogDescription>{status}</DialogDescription>
         {!address ? (
           <div className="text-red-500">
-            Your did not connected your wallet yet!
+            You did not connected your wallet yet!
           </div>
         ) : (
           <div>
