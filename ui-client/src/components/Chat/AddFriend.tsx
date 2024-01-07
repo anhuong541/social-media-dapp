@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 
 export default function AddFriend() {
   const [typeAddress, setTypeAddress] = useState<string>("");
+  const [isError, setIsError] = useState(false);
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
 
   const { mutateAsync: sendChatRequest, isLoading: isLoadingChatRequest } =
@@ -18,6 +19,7 @@ export default function AddFriend() {
       // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);
+      setIsError(true);
     } finally {
       setTypeAddress("");
     }
@@ -44,6 +46,11 @@ export default function AddFriend() {
           <ReloadIcon className="animate-spin" />
         )}
       </Button>
+      {!isError && (
+        <div className="text-red-500 text-xs">
+          Something wrong happen or you already sentDM
+        </div>
+      )}
     </div>
   );
 }
