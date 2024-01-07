@@ -3,7 +3,7 @@ import Link from "next/link";
 import { badgeVariants } from "@/components/ui/badge";
 
 const hashtagItems = [
-  { title: "growraduation thesis" },
+  { title: "graduation thesis" },
   { title: "web3" },
   { title: "Nimbus" },
   { title: "vku university" },

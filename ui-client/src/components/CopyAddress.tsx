@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
 
@@ -17,6 +17,14 @@ export default function CopyAddress({ textToCopy }: CopyProps) {
       document.execCommand("copy");
     }
   };
+
+  useEffect(() => {
+    if (copySuccess) {
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 3000);
+    }
+  }, [copySuccess]);
 
   return (
     <div>
