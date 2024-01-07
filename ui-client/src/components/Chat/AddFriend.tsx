@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { useContract, useContractWrite } from "@thirdweb-dev/react";
+import { useAddress, useContract, useContractWrite } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { Button } from "../ui/button";
