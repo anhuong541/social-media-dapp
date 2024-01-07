@@ -46,7 +46,7 @@ export default function AddFriend() {
           <ReloadIcon className="animate-spin" />
         )}
       </Button>
-      {!isError && (
+      {isError && (
         <div className="text-red-500 text-xs">
           Something wrong happen or you already sentDM
         </div>

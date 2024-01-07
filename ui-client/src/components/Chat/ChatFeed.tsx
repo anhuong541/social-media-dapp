@@ -7,6 +7,15 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { FaUserFriends } from "react-icons/fa";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -15,6 +24,7 @@ import { DirectWalletType } from "@/pages/room";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import MessageContent from "./MessageContent";
+import { FriendsChat } from ".";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -29,8 +39,10 @@ export type chatFeedsFormatType = {
 
 export default function ChatFeed({
   directWallet,
+  onChangeAddress,
 }: {
   directWallet: DirectWalletType;
+  onChangeAddress: (value: string) => void;
 }) {
   const address = useAddress();
   const [message, setMessage] = useState("");
@@ -63,8 +75,21 @@ export default function ChatFeed({
 
   if (directWallet == "unselected_wallet_@") {
     return (
-      <div className="xl:col-span-2 border-r h-full text-center">
-        Please choose address
+      <div className="xl:col-span-2 border-r h-full">
+        <div className="py-3 px-6 border-b flex justify-between items-center w-full">
+          <div className="text-sm font-medium">Address: </div>
+          <Sheet>
+            <SheetTrigger className="xl:hidden">
+              <FaUserFriends className="w-5 h-5" />
+            </SheetTrigger>
+            <SheetContent>
+              <FriendsChat
+                onChangeAddress={onChangeAddress}
+                addressSelected={directWallet}
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     );
   }
@@ -99,14 +124,27 @@ export default function ChatFeed({
 
   return (
     <div className="flex flex-col justify-between items-center xl:col-span-2 border-r h-full">
-      <div className="py-3 px-6 border-b text-sm font-medium w-full">
-        Address:{" "}
-        <Link
-          href={`/profile/${directWallet}`}
-          className="hover:underline hover:font-semibold"
-        >
-          {directWallet}
-        </Link>
+      <div className="py-3 px-6 border-b flex justify-between items-center w-full">
+        <div className="text-sm font-medium">
+          Address:{" "}
+          <Link
+            href={`/profile/${directWallet}`}
+            className="hover:underline hover:font-semibold"
+          >
+            {directWallet}
+          </Link>
+        </div>
+        <Sheet>
+          <SheetTrigger className="xl:hidden">
+            <FaUserFriends className="w-5 h-5" />
+          </SheetTrigger>
+          <SheetContent>
+            <FriendsChat
+              onChangeAddress={onChangeAddress}
+              addressSelected={directWallet}
+            />
+          </SheetContent>
+        </Sheet>
       </div>
       <div className="flex flex-col justify-between items-center flex-grow h-[80vh] w-full">
         <div className="flex flex-col w-full h-full overflow-y-auto">
