@@ -31,7 +31,7 @@ export default function NewsFeed() {
 
   if (isLoading || isStatusEventsLoading || statusEvents == undefined) {
     return (
-      <div className="col-span-2">
+      <div className="col-span-2 h-[90vh]">
         <Lottie
           animationData={loadingLottie}
           loop={true}

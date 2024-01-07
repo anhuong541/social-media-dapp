@@ -20,7 +20,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="w-full">
+      <div className="w-full h-[90vh]">
         <Lottie
           animationData={loadingLottie}
           loop={true}
