@@ -28,16 +28,16 @@ export default function FriendsChat(props: FriendsChatType) {
   const { data: eventChatRequestSent, isLoading: isLoadingChatRequestSent } =
     useContractEvents(contract, "ChatRequestSent");
 
-  const {
-    mutateAsync: acceptChatRequest,
-    isLoading: isLoadingAcceptChatRequest,
-  } = useContractWrite(contract, "acceptChatRequest");
-
   // You can get a specific event
   const {
     data: eventChatRequestAccepted,
     isLoading: isLoadingChatRequestAccepted,
   } = useContractEvents(contract, "ChatRequestAccepted");
+
+  const {
+    mutateAsync: acceptChatRequest,
+    isLoading: isLoadingAcceptChatRequest,
+  } = useContractWrite(contract, "acceptChatRequest");
 
   const callAcceptChatRequest = async (sender: string) => {
     try {
