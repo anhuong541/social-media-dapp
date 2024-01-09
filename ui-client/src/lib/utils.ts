@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import EthCrypto, { Encrypted } from "eth-crypto";
 import numeral from "numeral";
 import dayjs from "dayjs";
 
@@ -193,3 +194,18 @@ export function truncateAddress(address: string) {
 
   return address.slice(0, 4) + "..." + address.slice(-4);
 }
+
+export const getPublicKeyByPrivate = (privateAdd: string) => {
+  return EthCrypto.publicKeyByPrivateKey(privateAdd);
+};
+
+export const encryptMsg = async (publicKey: string, secretMessage: string) => {
+  return await EthCrypto.encryptWithPublicKey(publicKey, secretMessage);
+};
+
+export const decryptMsg = async (
+  privateKey: string,
+  encryptedMsg: Encrypted
+) => {
+  return await EthCrypto.decryptWithPrivateKey(privateKey, encryptedMsg);
+};
