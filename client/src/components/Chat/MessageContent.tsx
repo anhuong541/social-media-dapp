@@ -10,7 +10,8 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
             <div className="flex items-start space-x-3 ml-auto" key={index}>
               <div className="bg-green-600 text-white rounded-lg p-3 w-[fit-content]">
                 <p className="font-medium text-sm">You</p>
-                <p>{item.message}</p>
+                <p>{item.message1}</p>
+                <p>{item.message2}</p>
                 <p className="text-xs text-white mt-2">
                   {formatDateTimeHex(item.timestamp._hex)}
                 </p>
@@ -39,7 +40,8 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
                   {truncateAddress(item.sender)}
                 </p>
                 <p className="text-gray-800 dark:text-gray-200">
-                  {item.message}
+                  {item.message1}
+                  {item.message2}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
                   {formatDateTimeHex(item.timestamp._hex)}

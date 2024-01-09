@@ -2,8 +2,9 @@ import { useContract, useContractEvents } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 
 import Lottie from "lottie-react";
-import loadingLottie from "@/lib/loadingLottie.json";
 import { useEffect, useState } from "react";
+
+import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import EventCard from "@/components/Home/EventCard";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";

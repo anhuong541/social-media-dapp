@@ -33,7 +33,8 @@ export type chatFeedsFormatType = {
     type: number;
     _hex: string;
   };
-  message: string;
+  message1: string;
+  message2: string;
   dataIndex: number;
 };
 
@@ -107,12 +108,13 @@ export default function ChatFeed({
   }
 
   const chatFeedsFormat = chatFeeds
-    .map((array: any, dataIndex: number) => {
+    .map((array: chatFeedsFormatType[], dataIndex: number) => {
       return {
         sender: array[0],
         receiver: array[1],
         timestamp: array[2],
-        message: array[3],
+        message1: array[3],
+        message2: array[4],
         dataIndex: dataIndex,
       };
     })
