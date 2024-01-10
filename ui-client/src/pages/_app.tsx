@@ -12,11 +12,14 @@ import {
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
+import Footer from "@/components/layouts/Footer";
+import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 const activeChain = "mumbai";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   //Set up smart wallet config
   const smartWalletConfig = {
     factoryAddress: "0xb073ab62195b46fd43ae74e86fb978f0a234d94b",
@@ -46,6 +49,7 @@ export default function App({ Component, pageProps }: AppProps) {
             </div>
           </div>
         </div>
+        {router.pathname !== "/room" && <Footer />}
       </main>
     </ThirdwebProvider>
   );
