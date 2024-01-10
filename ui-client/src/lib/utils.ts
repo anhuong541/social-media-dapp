@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
+import crypto from "crypto";
 import dayjs from "dayjs";
 
 const durationex = require("dayjs/plugin/duration");
@@ -192,4 +193,8 @@ export function truncateAddress(address: string) {
   }
 
   return address.slice(0, 4) + "..." + address.slice(-4);
+}
+
+export function shortenPrivateKey(privateKey: string): string {
+  return privateKey.slice(0, 40) + "..." + privateKey.slice(-6);
 }
