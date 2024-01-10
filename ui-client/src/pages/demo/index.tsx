@@ -1,64 +1,11 @@
-import { decryptMsg, encryptMsg, getPublicKeyByPrivate } from "@/lib/encodeMsg";
-import * as CryptoJS from "crypto-js";
+import {
+  decryptMsg,
+  decryptPrivateKey,
+  encryptMsg,
+  encryptPrivateKey,
+  getPublicKeyByPrivate,
+} from "@/lib/encodeMsg";
 import axios from "axios";
-
-// Function to encrypt private key with a password
-function encryptPrivateKey(
-  privateKey: string,
-  password: string
-): string | null {
-  try {
-    // Generate a key from the password
-    const key = CryptoJS.PBKDF2(password, CryptoJS.lib.WordArray.random(16), {
-      keySize: 32,
-      iterations: 100,
-    });
-
-    // Encrypt the private key using AES-GCM
-    const encryptedPrivateKey = CryptoJS.AES.encrypt(privateKey, key, {
-      iv: CryptoJS.lib.WordArray.random(12),
-      mode: CryptoJS.mode.GCM,
-    }).toString();
-
-    return encryptedPrivateKey;
-  } catch (error) {
-    console.error("Error encrypting private key. Please check the password.");
-    return null;
-  }
-}
-
-// Function to decrypt private key with a password
-function decryptPrivateKey(
-  encryptedPrivateKey: string,
-  password: string
-): string | null {
-  try {
-    // Generate a key from the password
-    const key = CryptoJS.PBKDF2(password, CryptoJS.lib.WordArray.random(16), {
-      keySize: 32,
-      iterations: 100,
-    });
-
-    // Decrypt the private key using AES-GCM
-    const decryptedBytes = CryptoJS.AES.decrypt(encryptedPrivateKey, key, {
-      iv: CryptoJS.lib.WordArray.random(12),
-      mode: CryptoJS.mode.GCM,
-    });
-
-    // Convert decrypted bytes to string
-    const decryptedPrivateKey = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-    return decryptedPrivateKey;
-  } catch (error) {
-    console.error("Error decrypting private key. Please check the password.");
-    return null;
-  }
-}
-
-// Example usage
-const privateKey =
-  "b20e2d801ffcc5cfb768a39bf2cc10671ca15b5c4ab2d374b067313afd0bcd16";
-const password = "0911342127mn";
 
 export default function DemoPage() {
   // Example usage
@@ -99,12 +46,12 @@ export default function DemoPage() {
 
       const alice = {
         address: "0xAd2a2F9132d475963453641a3680833c4A1Cd523",
-        // "d92fb664cd5390e5c0b314eabb88c8af06c43e156822fe20d29c8dab001c6a2290f3097f475e02b4b6237a70267eb87638785b1cfec00c53e90daffd0d1ac605"
         publicKey:
           "d92fb664cd5390e5c0b314eabb88c8af06c43e156822fe20d29c8dab001c6a2290f3097f475e02b4b6237a70267eb87638785b1cfec00c53e90daffd0d1ac605",
         privateKey:
           "66ddcea898d9ac261eac727fdda2bc024d47db54e66685c0db81471822b6ee3c",
       };
+
       // const alice = EthCrypto.createIdentity();
 
       const secretMessage = "My name is Satoshi Buterin";
@@ -124,35 +71,49 @@ export default function DemoPage() {
     }
   }
 
-  const encryptedPrivateKey = encryptPrivateKey(privateKey, password);
+  // Example usage
+  const privateKey =
+    "b20e2d801ffcc5cfb768a39bf2cc10671ca15b5c4ab2d374b067313afd0bcd16";
+  const password = "0911342127mn";
 
-  if (encryptedPrivateKey !== null) {
-    console.log("Encrypted Private Key:", encryptedPrivateKey);
+  const wrongPassword = "thisiswroog";
 
-    const decryptedPrivateKey = decryptPrivateKey(
-      encryptedPrivateKey,
-      password
-    );
+  const onEncryptKey = () => {
+    const encryptedPrivateKey = encryptPrivateKey(privateKey, password);
 
-    if (decryptedPrivateKey !== null) {
-      console.log("Decrypted Private Key:", decryptedPrivateKey);
+    if (encryptedPrivateKey !== null) {
+      console.log("Encrypted Private Key:", encryptedPrivateKey);
+
+      const decryptedPrivateKey = decryptPrivateKey(
+        encryptedPrivateKey,
+        wrongPassword
+      );
+
+      if (decryptedPrivateKey !== null) {
+        console.log("Decrypted Private Key:", decryptedPrivateKey);
+      }
     }
-  }
+  };
 
   return (
-    <>
-      <div className="">
-        <button className="py-1 px-3 rounded-lg bg-green-400" onClick={hendle}>
-          This is the demo click
-        </button>
+    <div className="">
+      <button className="py-1 px-3 rounded-lg bg-green-400" onClick={hendle}>
+        This is the demo click
+      </button>
 
-        <button
-          className="py-1 px-3 rounded-lg bg-purple-400"
-          onClick={() => getAddressInfo(ethereumAddress, etherscanApiKey)}
-        >
-          This is the demo call publickey
-        </button>
-      </div>
-    </>
+      <button
+        className="py-1 px-3 rounded-lg bg-purple-400"
+        onClick={() => getAddressInfo(ethereumAddress, etherscanApiKey)}
+      >
+        This is the demo call publickey
+      </button>
+
+      <button
+        onClick={onEncryptKey}
+        className="py-1 px-3 rounded-lg bg-yellow-800"
+      >
+        This is demo encrypt private address
+      </button>
+    </div>
   );
 }
