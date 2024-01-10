@@ -38,7 +38,7 @@ export default function AddFriend() {
       <Button
         onClick={callChatRequestt}
         className="text-white"
-        disabled={isLoadingChatRequest}
+        disabled={typeAddress.length < 24 || isLoadingChatRequest}
       >
         {!isLoadingChatRequest ? (
           "Send Chat Request"
