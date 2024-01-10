@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
 import TooltipNumber from "@/components/Tooltip/TooltipNumber";
 import Image from "next/image";
 
