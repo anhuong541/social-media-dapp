@@ -360,17 +360,33 @@ contract ChatPrivate is Ownable {
     mapping(address => mapping(address => ChatMessageInfo[]))
         public chatMessages;
 
-    // Events to log important contract state changes
-    event ChatRequestSent(address indexed sender, address indexed receiver);
-    event ChatRequestAccepted(address indexed sender, address indexed receiver);
+    // Add a public key parameter to the events
+    event ChatRequestSent(
+        address indexed sender,
+        address indexed receiver,
+        string publicKeySender
+    );
+    event ChatRequestAccepted(
+        address indexed sender,
+        address indexed receiver,
+        string publicKeySender,
+        string publicKeyReceiver
+    );
+
     event MessageSent(
         address indexed sender,
         address indexed receiver,
         string message
     );
 
-    // Function to send a chat request to a specified user
-    function sendChatRequest(address receiver) external {
+    // Mapping to store public keys associated with chat requests
+    mapping(address => mapping(address => string)) public publicKeySenders;
+
+    // Modify the sendChatRequest function
+    function sendChatRequest(
+        address receiver,
+        string calldata publicKeySender
+    ) external {
         require(
             !chatRequests[msg.sender][receiver].exists,
             "Chat request already sent"
@@ -380,17 +396,25 @@ contract ChatPrivate is Ownable {
             "Chat request already received"
         );
 
+        // Store the publicKeySender for later retrieval
+        publicKeySenders[msg.sender][receiver] = publicKeySender;
+
         // Create a new chat request and mark it as sent
         chatRequests[msg.sender][receiver] = ChatRequest(
             true,
             false,
             bytes32(0)
         );
-        emit ChatRequestSent(msg.sender, receiver);
+
+        // Emit the ChatRequestSent event with publicKeySender
+        emit ChatRequestSent(msg.sender, receiver, publicKeySender);
     }
 
-    // Function to accept a received chat request
-    function acceptChatRequest(address sender) external {
+    // Modify the acceptChatRequest function
+    function acceptChatRequest(
+        address sender,
+        string calldata publicKeyReceiver
+    ) external returns (string memory publicKeySender) {
         require(
             chatRequests[sender][msg.sender].exists,
             "No chat request from this user"
@@ -400,13 +424,26 @@ contract ChatPrivate is Ownable {
             "Chat request already accepted"
         );
 
+        // Retrieve the publicKeySender
+        publicKeySender = publicKeySenders[sender][msg.sender];
+        require(
+            bytes(publicKeySender).length > 0,
+            "Public key not found for sender"
+        );
+
         // Mark the chat request as accepted and generate a security key
         chatRequests[sender][msg.sender].accepted = true;
         chatRequests[sender][msg.sender].securityKey = keccak256(
             abi.encodePacked(msg.sender, sender, block.timestamp)
         );
 
-        emit ChatRequestAccepted(sender, msg.sender);
+        // Emit the ChatRequestAccepted event with publicKeySender and publicKeyReceiver
+        emit ChatRequestAccepted(
+            sender,
+            msg.sender,
+            publicKeySender,
+            publicKeyReceiver
+        );
     }
 
     // Function to send a message in an accepted chat
