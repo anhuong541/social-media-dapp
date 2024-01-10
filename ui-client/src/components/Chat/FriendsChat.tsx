@@ -14,6 +14,7 @@ import { truncateAddress } from "@/lib/utils";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import AddFriend from "./AddFriend";
+import AddPrivateKey from "./AddPrivateKey";
 
 type FriendsChatType = {
   addressSelected: string;
@@ -100,30 +101,31 @@ export default function FriendsChat(props: FriendsChatType) {
       })
       .filter((item) => item?.address !== undefined);
 
-  const formateventChatRequestSent = eventChatRequestSent
-    ?.map((item) => item.data)
-    .filter((data) => data.receiver === address)
-    .map((data) => {
-      let addressIsAlreadyAdded = false;
-      for (let i = 0; i < friendListItems.length; i++) {
-        if (friendListItems[i].address === data.sender) {
-          addressIsAlreadyAdded = true;
-        }
-      }
-      if (!addressIsAlreadyAdded) {
-        return { address: data.sender };
-      }
-    });
+  // const formateventChatRequestSent = eventChatRequestSent
+  //   ?.map((item) => item.data)
+  //   .filter((data) => data.receiver === address)
+  //   .map((data) => {
+  //     let addressIsAlreadyAdded = false;
+  //     for (let i = 0; i < friendListItems.length; i++) {
+  //       if (friendListItems[i].address === data.sender) {
+  //         addressIsAlreadyAdded = true;
+  //       }
+  //     }
+  //     if (!addressIsAlreadyAdded) {
+  //       return { address: data.sender };
+  //     }
+  //   });
 
-  // console.log({
-  //   friendRequestListItem,
-  //   friendListItems,
-  //   formateventChatRequestSent,
-  // });
+  console.log({
+    friendRequestListItem,
+    friendListItems,
+    // formateventChatRequestSent,
+  });
 
   return (
     <div className="flex-col h-full w-full">
       <AddFriend />
+      <AddPrivateKey />
       <div className="flex flex-col py-2 gap-4">
         {!isLoadingChatRequestAccepted &&
           !isLoadingChatRequestSent &&
@@ -181,9 +183,9 @@ export default function FriendsChat(props: FriendsChatType) {
                     key={index}
                   >
                     {/* <Avatar>
-                  <AvatarImage src={item?.img} alt="user Avatar" />
-                  <AvatarFallback>AH</AvatarFallback>
-                </Avatar> */}
+                          <AvatarImage src={item?.img} alt="user Avatar" />
+                          <AvatarFallback>AH</AvatarFallback>
+                        </Avatar> */}
                     <div>
                       {/* <p className="font-medium">{item?.data.title}</p> */}
                       <p className="font-medium text-sm">
