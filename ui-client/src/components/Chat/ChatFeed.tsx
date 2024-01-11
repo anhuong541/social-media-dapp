@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   useAddress,
   useContract,
+  useContractEvents,
   useContractRead,
   useContractWrite,
 } from "@thirdweb-dev/react";
@@ -25,6 +26,8 @@ import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import MessageContent from "./MessageContent";
 import { FriendsChat } from ".";
+import { MdInterpreterMode } from "react-icons/md";
+import { encryptMsg } from "@/lib/encodeMsg";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -50,11 +53,30 @@ export default function ChatFeed({
   const [inputPlaceholder, setInputPlaceholder] = useState("Type a message...");
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
 
+  // You can get a specific event
+  const {
+    data: eventChatRequestAccepted,
+    isLoading: isLoadingChatRequestAccepted,
+  } = useContractEvents(contract, "ChatRequestAccepted");
+
   const { data: chatFeeds, isLoading: isLoadingChatFeeds } = useContractRead(
     contract,
     "getAllChatMessagesWithInfo",
     [address, directWallet]
   );
+
+  const eventChatRequestUserisChatting =
+    !isLoadingChatRequestAccepted &&
+    eventChatRequestAccepted &&
+    eventChatRequestAccepted
+      ?.map((item) => item.data)
+      .filter(
+        (item) =>
+          (item.sender === address && item.receiver === directWallet) ||
+          (item.sender === directWallet && item.receiver === address)
+      );
+
+  console.log({ eventChatRequestUserisChatting });
 
   const { mutateAsync: sendMessage, isLoading: isLoadingSendMessage } =
     useContractWrite(contract, "sendMessage");
@@ -62,8 +84,26 @@ export default function ChatFeed({
   const callSendMessage = async () => {
     if (message !== "") {
       try {
-        const data = await sendMessage({ args: [directWallet, message] });
-        // console.info("contract call successs", data);
+        if (
+          !isLoadingChatRequestAccepted &&
+          eventChatRequestAccepted &&
+          eventChatRequestUserisChatting
+        ) {
+          const messageEnvryptReceiver = await encryptMsg(
+            eventChatRequestUserisChatting[0].publicKeyReceiver,
+            message
+          );
+          const messageEnvryptSender = await encryptMsg(
+            eventChatRequestUserisChatting[0].publicKeySender,
+            message
+          );
+
+          console.log({ messageEnvryptReceiver, messageEnvryptSender });
+          const data = await sendMessage({
+            args: [directWallet, messageEnvryptReceiver, messageEnvryptSender],
+          });
+          // console.info("contract call successs", data);
+        }
       } catch (err) {
         console.error("contract call failure", err);
       } finally {

@@ -12,9 +12,10 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { useAddress } from "@thirdweb-dev/react";
-import { decryptPrivateKey, encryptPrivateKey } from "@/lib/encodeMsg";
+
 import CopyAddress from "../CopyAddress";
 import { shortenPrivateKey } from "@/lib/utils";
+import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
 
 export default function AddPrivateKey() {
   const address = useAddress();
