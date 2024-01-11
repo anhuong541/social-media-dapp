@@ -32,6 +32,7 @@ export default function AddPrivateKey() {
         address,
         encryptPrivateKey(privateKeyTyping, password)
       );
+      localStorage.setItem("passs", encryptPrivateKey("123123", "123123"));
       setUserStorePrivateKey(true);
       setPrivateKeyTyping("");
       setPassword("");

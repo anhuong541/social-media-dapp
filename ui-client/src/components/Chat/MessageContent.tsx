@@ -8,7 +8,17 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
   const [messageContentRender, setMessageContentRender] = useState([]);
 
   const encryptedPrivateKey = localStorage.getItem(userAddress);
-  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
+  const passUser = localStorage.getItem("passs");
+
+  const userPrivateKey =
+    encryptedPrivateKey &&
+    passUser &&
+    decryptPrivateKey(
+      encryptedPrivateKey,
+      decryptPrivateKey(passUser, "123123")[0].message
+    );
+
+  console.log({ userPrivateKey });
 
   const messageContentFormatDataArr = useMemo(
     async () =>
