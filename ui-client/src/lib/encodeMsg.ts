@@ -13,6 +13,7 @@ export const decryptMsg = async (
   encryptedMsg: Encrypted
 ) => {
   try {
+    // console.log("is from this");
     return await EthCrypto.decryptWithPrivateKey(privateKey, encryptedMsg);
   } catch (error) {
     // console.log(error);

@@ -1,7 +1,7 @@
 import { formatDateTimeHex, truncateAddress } from "@/lib/utils";
 import { chatFeedsFormatType } from "./ChatFeed";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { decryptMsg } from "@/lib/encodeMsg";
 
 export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
@@ -10,31 +10,31 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
   const encryptedPrivateKey = localStorage.getItem(userAddress);
   const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
 
-  useEffect(() => {
-    const messageContentFormatDataArr = Promise.all(
-      chatFeedsFormat.map(async (item: chatFeedsFormatType) => {
-        const decryptedMessage1 = await decryptMsg(
-          userPrivateKey[0].message,
-          JSON.parse(item.message1)
-        );
-        const decryptedMessage2 = await decryptMsg(
-          userPrivateKey[0].message,
-          JSON.parse(item.message2)
-        );
+  const messageContentFormatDataArr = useMemo(
+    async () =>
+      Promise.all(
+        chatFeedsFormat.map(async (item: chatFeedsFormatType) => {
+          const decryptedMessage1 = await decryptMsg(
+            userPrivateKey[0].message,
+            JSON.parse(item.message1)
+          );
+          const decryptedMessage2 = await decryptMsg(
+            userPrivateKey[0].message,
+            JSON.parse(item.message2)
+          );
 
-        return {
-          sender: item.sender,
-          receiver: item.receiver,
-          timestamp: item.timestamp,
-          message1: decryptedMessage1,
-          message2: decryptedMessage2,
-          dataIndex: item.dataIndex,
-        };
-      })
-    ).then((value: any) => setMessageContentRender(value));
-
-    // console.log({ messageContentFormatDataArr });
-  }, [chatFeedsFormat, userAddress]);
+          return {
+            sender: item.sender,
+            receiver: item.receiver,
+            timestamp: item.timestamp,
+            message1: decryptedMessage1,
+            message2: decryptedMessage2,
+            dataIndex: item.dataIndex,
+          };
+        })
+      ).then((value: any) => setMessageContentRender(value)),
+    [userAddress, chatFeedsFormat.length]
+  );
 
   // console.log({ userPrivateKey });
 
@@ -46,8 +46,8 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
             <div className="flex items-start space-x-3 ml-auto" key={index}>
               <div className="bg-green-600 text-white rounded-lg p-3 w-[fit-content]">
                 <p className="font-medium text-sm">You</p>
-                <p>{item.message1}</p>
-                <p>{item.message2}</p>
+                <p className="break-all">{item.message1}</p>
+                <p className="break-all">{item.message2}</p>
                 <p className="text-xs text-white mt-2">
                   {formatDateTimeHex(item.timestamp._hex)}
                 </p>
@@ -61,8 +61,10 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
                 <p className="font-medium text-sm">
                   {truncateAddress(item.sender)}
                 </p>
-                <p className="text-gray-800 dark:text-gray-200">
+                <p className="text-gray-800 dark:text-gray-200 break-all">
                   {item.message1}
+                </p>
+                <p className="text-gray-800 dark:text-gray-200 break-all">
                   {item.message2}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
