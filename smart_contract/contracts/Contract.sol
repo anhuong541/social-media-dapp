@@ -349,8 +349,8 @@ contract ChatPrivate is Ownable {
         address user1;
         address user2;
         uint256 timestamp;
-        string message1;
-        string message2;
+        bytes message1;
+        bytes message2;
     }
 
     // Mapping to store chat requests between users
@@ -376,7 +376,7 @@ contract ChatPrivate is Ownable {
     event MessageSent(
         address indexed sender,
         address indexed receiver,
-        string message
+        bytes message
     );
 
     // Mapping to store public keys associated with chat requests
@@ -449,8 +449,8 @@ contract ChatPrivate is Ownable {
     // Function to send a message in an accepted chat
     function sendMessage(
         address receiver,
-        string calldata message1,
-        string calldata message2
+        bytes calldata message1,
+        bytes calldata message2
     ) external {
         require(
             chatRequests[msg.sender][receiver].exists ||

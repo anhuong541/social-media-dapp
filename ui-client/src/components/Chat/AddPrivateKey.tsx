@@ -19,7 +19,7 @@ import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
 
 export default function AddPrivateKey() {
   const address = useAddress();
-  const [privateKeyTyping, setPrivateKeyTyping] = useState("ạbaibfibaibfibasb");
+  const [privateKeyTyping, setPrivateKeyTyping] = useState("");
   const [password, setPassword] = useState("");
   const [reTypePassword, setReTypePassword] = useState("");
   const [userStorePrivateKey, setUserStorePrivateKey] = useState(false);

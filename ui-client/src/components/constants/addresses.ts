@@ -2,7 +2,7 @@ export const STATUS_CONTRACT_ADDRESS =
   "0x8a12311977eB1D0CA35458ccDF0959087f3337a1";
 
 export const CHAT_CONTRACT_ADDRESS =
-  "0x731156227d1ABC64E50C6b99aC6D28840Ceea3A5";
+  "0xeB86ad4A0004F1baBB92549D1e25323f308Ef02d";
 
 // "0x3744950A7aE5bA5644A2C76310613397C45c6a1f"; // demo contract address
 
@@ -15,6 +15,6 @@ export const CHAT_CONTRACT_ADDRESS =
 
 // "0x7E42f33d4eafa2E25339221380fef6396Fe3aa76"; // Chat Simple Ver
 
-// "0x731156227d1ABC64E50C6b99aC6D28840Ceea3A5"; // Chat Upgrate Private
+// "0xeB86ad4A0004F1baBB92549D1e25323f308Ef02d"; // Chat Upgrate Private
 
 // Link for tracking: https://thirdweb.com/mumbai/0x8a12311977eB1D0CA35458ccDF0959087f3337a1/events

@@ -27,7 +27,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import MessageContent from "./MessageContent";
 import { FriendsChat } from ".";
 import { MdInterpreterMode } from "react-icons/md";
-import { encryptMsg } from "@/lib/encodeMsg";
+import { alice, encryptMsg, johnny } from "@/lib/encodeMsg";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -76,7 +76,7 @@ export default function ChatFeed({
           (item.sender === directWallet && item.receiver === address)
       );
 
-  console.log({ eventChatRequestUserisChatting });
+  // console.log({ eventChatRequestUserisChatting });
 
   const { mutateAsync: sendMessage, isLoading: isLoadingSendMessage } =
     useContractWrite(contract, "sendMessage");
