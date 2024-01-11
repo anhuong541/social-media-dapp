@@ -47,6 +47,7 @@ import { toast } from "sonner";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 
 type EventCardProps = {
   walletAddress: string;
@@ -68,6 +69,7 @@ export type SuccesType = {
 
 export default function EventCard(props: EventCardProps) {
   const address = useAddress();
+  const router = useRouter();
   const encryptedPrivateKey = localStorage.getItem(address!);
   const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
   const [changeContentSuccess, setChangeContentSuccess] = useState<SuccesType>({
@@ -230,7 +232,7 @@ export default function EventCard(props: EventCardProps) {
             <div
               className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer"
               onClick={() => {
-                if (!localStorage.getItem(address!)) {
+                if (localStorage.getItem(address!)) {
                   callChatRequest();
                 } else {
                   toast("You need to type your private key!", {
@@ -238,8 +240,8 @@ export default function EventCard(props: EventCardProps) {
                       "dddd, MMMM DD, YYYY [at] h:mm A"
                     ),
                     action: {
-                      label: "Undo",
-                      onClick: () => console.log("Undo"),
+                      label: "Type PK",
+                      onClick: () => router.push("/room"),
                     },
                   });
                 }
