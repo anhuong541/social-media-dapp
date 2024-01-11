@@ -4,8 +4,13 @@ import { useAddress, useContract, useContractWrite } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { Button } from "../ui/button";
+import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
+import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
 
 export default function AddFriend() {
+  const address = useAddress();
+  const encryptedPrivateKey = localStorage.getItem(address!);
+  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
   const [typeAddress, setTypeAddress] = useState<string>("");
   const [isError, setIsError] = useState(false);
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
@@ -15,7 +20,13 @@ export default function AddFriend() {
 
   const callChatRequestt = async () => {
     try {
-      const data = await sendChatRequest({ args: [typeAddress] });
+      if (userPrivateKey[0].status === "success") {
+        const publicKey = getPublicKeyByPrivate(userPrivateKey[0].message);
+        const data = await sendChatRequest({
+          args: [typeAddress, publicKey],
+        });
+        setIsError(false);
+      }
       // console.info("contract call successs", data);
     } catch (err) {
       console.error("contract call failure", err);

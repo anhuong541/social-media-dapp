@@ -19,6 +19,7 @@ import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
 
 export default function AddPrivateKey() {
   const address = useAddress();
+  const userPrivateKey = address && localStorage.getItem(address);
   const [privateKeyTyping, setPrivateKeyTyping] = useState("");
   const [password, setPassword] = useState("");
   const [reTypePassword, setReTypePassword] = useState("");
@@ -62,6 +63,8 @@ export default function AddPrivateKey() {
       const userStorePrivateKey = localStorage.getItem(address);
       if (userStorePrivateKey) {
         setUserStorePrivateKey(true);
+      } else {
+        setUserStorePrivateKey(false);
       }
     }
   }, [address]);
@@ -84,7 +87,7 @@ export default function AddPrivateKey() {
               <IoWarning /> Type your private key
             </DialogDescription>
           </DialogHeader>
-          {!userStorePrivateKey ? (
+          {!userStorePrivateKey && !userPrivateKey ? (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <h5>PrivateKey:</h5>

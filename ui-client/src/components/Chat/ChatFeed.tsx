@@ -59,12 +59,6 @@ export default function ChatFeed({
     isLoading: isLoadingChatRequestAccepted,
   } = useContractEvents(contract, "ChatRequestAccepted");
 
-  const { data: chatFeeds, isLoading: isLoadingChatFeeds } = useContractRead(
-    contract,
-    "getAllChatMessagesWithInfo",
-    [address, directWallet]
-  );
-
   const eventChatRequestUserisChatting =
     !isLoadingChatRequestAccepted &&
     eventChatRequestAccepted &&
@@ -139,35 +133,6 @@ export default function ChatFeed({
     );
   }
 
-  if (isLoadingChatFeeds) {
-    return (
-      <div className="xl:col-span-2 border-r h-full">
-        <Lottie
-          animationData={loadingLottie}
-          loop={true}
-          className="w-24 h-24 mx-auto"
-        />
-      </div>
-    );
-  }
-
-  const chatFeedsFormat = chatFeeds
-    .map((array: chatFeedsFormatType[], dataIndex: number) => {
-      return {
-        sender: array[0],
-        receiver: array[1],
-        timestamp: array[2],
-        message1: array[3],
-        message2: array[4],
-        dataIndex: dataIndex,
-      };
-    })
-    .sort((a: chatFeedsFormatType, b: chatFeedsFormatType) => {
-      const decimalA = parseInt(a.timestamp._hex, 16);
-      const decimalB = parseInt(b.timestamp._hex, 16);
-      return decimalB - decimalA;
-    });
-
   return (
     <div className="flex flex-col justify-between items-center xl:col-span-2 border-r h-full">
       <div className="py-3 px-6 border-b flex justify-between items-center w-full">
@@ -194,10 +159,7 @@ export default function ChatFeed({
       </div>
       <div className="flex flex-col justify-between items-center flex-grow h-[80vh] w-full">
         <div className="flex flex-col w-full h-full overflow-y-auto">
-          <MessageContent
-            userAddress={address}
-            chatFeedsFormat={chatFeedsFormat}
-          />
+          <MessageContent userAddress={address} directWallet={directWallet} />
         </div>
         <div className="flex items-center p-3 border-t border-gray-300 w-full">
           {/* need emoji */}

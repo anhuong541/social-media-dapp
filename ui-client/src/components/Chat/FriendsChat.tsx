@@ -15,6 +15,8 @@ import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import AddFriend from "./AddFriend";
 import AddPrivateKey from "./AddPrivateKey";
+import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
 
 type FriendsChatType = {
   addressSelected: string;
@@ -23,6 +25,8 @@ type FriendsChatType = {
 
 export default function FriendsChat(props: FriendsChatType) {
   const address = useAddress();
+  const encryptedPrivateKey = address && localStorage.getItem(address);
+  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
 
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
   // You can get a specific event
@@ -42,8 +46,11 @@ export default function FriendsChat(props: FriendsChatType) {
 
   const callAcceptChatRequest = async (sender: string) => {
     try {
-      const data = await acceptChatRequest({ args: [sender] });
-      console.info("contract call successs", data);
+      if (userPrivateKey[0].status === "success") {
+        const publicKey = getPublicKeyByPrivate(userPrivateKey[0].message);
+        const data = await acceptChatRequest({ args: [sender, publicKey] });
+        console.info("contract call successs", data);
+      }
     } catch (err) {
       console.error("contract call failure", err);
     }
@@ -131,7 +138,8 @@ export default function FriendsChat(props: FriendsChatType) {
           !isLoadingChatRequestSent &&
           eventChatRequestAccepted &&
           eventChatRequestSent &&
-          friendRequestListItem!.length > 0 && (
+          friendRequestListItem!.length > 0 &&
+          userPrivateKey[0].status === "success" && (
             <div className="flex flex-col gap-2 px-1">
               <h2 className="font-medium text-sm px-3">
                 You have {friendRequestListItem?.length} chat request
@@ -171,7 +179,8 @@ export default function FriendsChat(props: FriendsChatType) {
           <h2 className="font-medium text-sm px-3">Friends List:</h2>
           <div className="flex flex-col">
             {!isLoadingChatRequestAccepted &&
-              eventChatRequestAccepted &&
+            eventChatRequestAccepted &&
+            userPrivateKey[0].status === "success" ? (
               friendListItems?.map((item: any, index: number) => {
                 return (
                   <div
@@ -194,7 +203,12 @@ export default function FriendsChat(props: FriendsChatType) {
                     </div>
                   </div>
                 );
-              })}
+              })
+            ) : (
+              <div className="text-sm text-red-500 text-center px-4">
+                You need to add your private key to connect chat
+              </div>
+            )}
           </div>
         </div>
       </div>
