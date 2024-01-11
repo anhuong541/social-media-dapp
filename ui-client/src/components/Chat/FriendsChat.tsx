@@ -132,7 +132,7 @@ export default function FriendsChat(props: FriendsChatType) {
   return (
     <div className="flex-col h-full w-full">
       <AddFriend />
-      <AddPrivateKey />
+      <AddPrivateKey address={address} />
       <div className="flex flex-col py-2 gap-4">
         {!isLoadingChatRequestAccepted &&
           !isLoadingChatRequestSent &&

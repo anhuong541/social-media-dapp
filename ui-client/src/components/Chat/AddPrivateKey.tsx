@@ -17,8 +17,7 @@ import CopyAddress from "../CopyAddress";
 import { shortenPrivateKey } from "@/lib/utils";
 import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
 
-export default function AddPrivateKey() {
-  const address = useAddress();
+export default function AddPrivateKey({ address }: any) {
   const userPrivateKey = address && localStorage.getItem(address);
   const [privateKeyTyping, setPrivateKeyTyping] = useState("");
   const [password, setPassword] = useState("");
