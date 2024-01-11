@@ -39,9 +39,9 @@ export default function CommentSection({
   const [comment, setComment] = useState("");
 
   const { data: myCommenst, isLoading: isStatusCommentLoading } =
-    useContractRead(contract, "getComments", [statusIdDeciaml]);
+    useContractRead(contract, "getComments", [statusIdDeciaml, address]);
 
-  // console.log({ myCommenst, statusIdDeciaml, status });
+  console.log({ myCommenst, statusIdDeciaml, status });
 
   if (isStatusCommentLoading) {
     return (
