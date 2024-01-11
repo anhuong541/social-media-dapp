@@ -98,7 +98,7 @@ export default function ChatFeed({
             message
           );
           // nó éo nhận op jẹt
-          console.log({ messageEnvryptReceiver, messageEnvryptSender });
+          // console.log({ messageEnvryptReceiver, messageEnvryptSender });
           const data = await sendMessage({
             args: [
               directWallet,

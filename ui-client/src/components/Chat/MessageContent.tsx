@@ -1,10 +1,46 @@
 import { formatDateTimeHex, truncateAddress } from "@/lib/utils";
 import { chatFeedsFormatType } from "./ChatFeed";
+import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { useEffect, useState } from "react";
+import { decryptMsg } from "@/lib/encodeMsg";
 
 export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
+  const [messageContentRender, setMessageContentRender] = useState([]);
+
+  const encryptedPrivateKey = localStorage.getItem(userAddress);
+  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
+
+  useEffect(() => {
+    const messageContentFormatDataArr = Promise.all(
+      chatFeedsFormat.map(async (item: chatFeedsFormatType) => {
+        const decryptedMessage1 = await decryptMsg(
+          userPrivateKey[0].message,
+          JSON.parse(item.message1)
+        );
+        const decryptedMessage2 = await decryptMsg(
+          userPrivateKey[0].message,
+          JSON.parse(item.message2)
+        );
+
+        return {
+          sender: item.sender,
+          receiver: item.receiver,
+          timestamp: item.timestamp,
+          message1: decryptedMessage1,
+          message2: decryptedMessage2,
+          dataIndex: item.dataIndex,
+        };
+      })
+    ).then((value: any) => setMessageContentRender(value));
+
+    // console.log({ messageContentFormatDataArr });
+  }, [chatFeedsFormat, userAddress]);
+
+  // console.log({ userPrivateKey });
+
   return (
     <div className="flex-grow flex flex-col-reverse gap-4 px-6 py-4">
-      {chatFeedsFormat.map((item: chatFeedsFormatType, index: number) => {
+      {messageContentRender.map((item: chatFeedsFormatType, index: number) => {
         if (item.sender === userAddress) {
           return (
             <div className="flex items-start space-x-3 ml-auto" key={index}>
@@ -16,25 +52,11 @@ export default function MessageContent({ chatFeedsFormat, userAddress }: any) {
                   {formatDateTimeHex(item.timestamp._hex)}
                 </p>
               </div>
-              {/* <Avatar className="h-9 w-9">
-                <AvatarImage
-                  alt="User avatar"
-                  src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-                />
-                <AvatarFallback>JP</AvatarFallback>
-              </Avatar> */}
             </div>
           );
         } else {
           return (
             <div className="flex items-start space-x-3" key={index}>
-              {/* <Avatar className="h-9 w-9">
-              <AvatarImage
-                alt="User avatar"
-                src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-              />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar> */}
               <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-3 w-[fit-content]">
                 <p className="font-medium text-sm">
                   {truncateAddress(item.sender)}

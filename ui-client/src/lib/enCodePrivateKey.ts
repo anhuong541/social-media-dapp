@@ -4,7 +4,6 @@ import * as sjcl from "sjcl";
 export function encryptPrivateKey(privateKey: string, password: string): any {
   const key = sjcl.misc.pbkdf2(password, "salt", 10000, 256);
   const cipherText = sjcl.encrypt(key, privateKey);
-
   return cipherText;
 }
 

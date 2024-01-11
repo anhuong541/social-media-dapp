@@ -12,7 +12,12 @@ export const decryptMsg = async (
   privateKey: string,
   encryptedMsg: Encrypted
 ) => {
-  return await EthCrypto.decryptWithPrivateKey(privateKey, encryptedMsg);
+  try {
+    return await EthCrypto.decryptWithPrivateKey(privateKey, encryptedMsg);
+  } catch (error) {
+    // console.log(error);
+    return [];
+  }
 };
 
 export const alice = {
