@@ -43,6 +43,10 @@ import { useEffect, useState } from "react";
 import CopyAddress from "../CopyAddress";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
+import { toast } from "sonner";
+import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
+import dayjs from "dayjs";
 
 type EventCardProps = {
   walletAddress: string;
@@ -64,6 +68,8 @@ export type SuccesType = {
 
 export default function EventCard(props: EventCardProps) {
   const address = useAddress();
+  const encryptedPrivateKey = localStorage.getItem(address!);
+  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
   const [changeContentSuccess, setChangeContentSuccess] = useState<SuccesType>({
     state: false,
     title: "Edit",
@@ -95,8 +101,13 @@ export default function EventCard(props: EventCardProps) {
 
   const callChatRequest = async () => {
     try {
-      const data = await sendChatRequest({ args: [props.walletAddress] });
-      // console.info("contract call successs", data);
+      if (userPrivateKey[0].status === "success") {
+        const publicKey = getPublicKeyByPrivate(userPrivateKey[0].message);
+        const data = await sendChatRequest({
+          args: [props.walletAddress, publicKey],
+        });
+        // console.info("contract call successs", data);
+      }
     } catch (err) {
       console.error("contract call failure", err);
     }
@@ -218,7 +229,21 @@ export default function EventCard(props: EventCardProps) {
           {address !== props.walletAddress && !isAlreadyDM && (
             <div
               className="flex gap-1 items-center text-sm hover:text-green-700 cursor-pointer"
-              onClick={callChatRequest}
+              onClick={() => {
+                if (!localStorage.getItem(address!)) {
+                  callChatRequest();
+                } else {
+                  toast("You need to type your private key!", {
+                    description: dayjs().format(
+                      "dddd, MMMM DD, YYYY [at] h:mm A"
+                    ),
+                    action: {
+                      label: "Undo",
+                      onClick: () => console.log("Undo"),
+                    },
+                  });
+                }
+              }}
             >
               <FaRegComments className="w-5 h-5" />
               {!isLoadingChatRequest ? (

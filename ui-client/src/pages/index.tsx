@@ -1,7 +1,7 @@
 import FollowBar from "@/components/Home/Followbar";
 import NewsFeed from "@/components/Home/NewsFeed";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import Lottie from "lottie-react";
 
