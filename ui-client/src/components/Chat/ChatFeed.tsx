@@ -97,10 +97,14 @@ export default function ChatFeed({
             eventChatRequestUserisChatting[0].publicKeySender,
             message
           );
-
+          // nó éo nhận op jẹt
           console.log({ messageEnvryptReceiver, messageEnvryptSender });
           const data = await sendMessage({
-            args: [directWallet, messageEnvryptReceiver, messageEnvryptSender],
+            args: [
+              directWallet,
+              JSON.stringify(messageEnvryptReceiver),
+              JSON.stringify(messageEnvryptSender),
+            ],
           });
           // console.info("contract call successs", data);
         }
