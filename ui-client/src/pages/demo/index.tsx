@@ -24,7 +24,7 @@ export default function DemoPage() {
         console.error(`Error: ${response.data.message}`);
       }
     } catch (error) {
-      console.error(`Error fetching address information: ${error.message}`);
+      console.error(`Error fetching address information: ${error}`);
     }
   }
 
