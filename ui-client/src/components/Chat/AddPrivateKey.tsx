@@ -64,6 +64,9 @@ export default function AddPrivateKey() {
     }
   }, [address]);
 
+  // vẫn cần code tạo private key nếu chưa có nữa
+  // detect xem người dùng đã có private key từ trước hay chưa
+
   return (
     <div className="flex flex-col gap-2 justify-between items-center py-3 px-4 border-b text-sm font-medium">
       <Dialog>
