@@ -1,10 +1,5 @@
-import {
-  decryptMsg,
-  decryptPrivateKey,
-  encryptMsg,
-  encryptPrivateKey,
-  getPublicKeyByPrivate,
-} from "@/lib/encodeMsg";
+import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { decryptMsg, encryptMsg, getPublicKeyByPrivate } from "@/lib/encodeMsg";
 import axios from "axios";
 
 export default function DemoPage() {
