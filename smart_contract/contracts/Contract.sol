@@ -343,7 +343,8 @@ contract SocialMediaV6 {
     mapping(address => mapping(uint256 => string)) public statuses;
     mapping(uint256 => mapping(address => string[])) public comments;
     mapping(address => mapping(uint256 => uint256)) public likes;
-    mapping(address => mapping(address => uint256)) public tips; // New mapping for tips
+    mapping(address => mapping(address => uint256)) public tips;
+    mapping(address => uint256) public totalTipsReceived;
 
     event StatusUpdated(
         address indexed user,
@@ -492,8 +493,6 @@ contract SocialMediaV6 {
 
     function tipUser(address _user) public payable {
         require(msg.value > 0, "Tip amount must be greater than 0");
-
-        // Ensure the recipient has enough balance to receive the tip
         require(
             payable(_user).balance >= msg.value,
             "Recipient has insufficient balance for the tip"
@@ -502,12 +501,20 @@ contract SocialMediaV6 {
         // Increase the tip amount for the receiver
         tips[_user][msg.sender] += msg.value;
 
+        // Increase the total tips received by the user
+        totalTipsReceived[_user] += msg.value;
+
         // Transfer the tip amount to the user
         (bool success, ) = payable(_user).call{value: msg.value}("");
         require(success, "Tip transfer to recipient failed");
 
         // Emit TipSent event
         emit TipSent(msg.sender, _user, msg.value, block.timestamp);
+    }
+
+    function getTotalTipsReceived(address _user) public view returns (uint256) {
+        // Retrieve the total tip count for a specific user
+        return totalTipsReceived[_user];
     }
 }
 
