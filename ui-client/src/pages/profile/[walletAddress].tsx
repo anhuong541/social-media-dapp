@@ -1,4 +1,8 @@
-import { useContract, useContractEvents } from "@thirdweb-dev/react";
+import {
+  useContract,
+  useContractEvents,
+  useContractRead,
+} from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 
 import Lottie from "lottie-react";
@@ -8,6 +12,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
 import EventCard from "@/components/Home/EventCard";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
+import { ethers, utils } from "ethers";
 
 export default function AccountFeed() {
   const router = useRouter();
@@ -19,6 +24,12 @@ export default function AccountFeed() {
     useContractEvents(contract, "StatusUpdated", {
       subscribe: true,
     });
+
+  const { data: totalTiped, isLoading: isLoadingTiped } = useContractRead(
+    contract,
+    "getTotalTipsReceived",
+    [walletAddress]
+  );
 
   // useEffect(() => {
   //   // Set a timeout for 2 seconds
@@ -52,11 +63,23 @@ export default function AccountFeed() {
         )
         .filter((item: any) => item.data.user == walletAddress);
 
+    const tipInWei =
+      totalTiped &&
+      utils.formatUnits(
+        formatHexToDecimal(totalTiped._hex).toString(),
+        "ether"
+      );
+
     return (
       <div className="flex flex-col gap-4 pt-4 w-full">
-        <h1 className="font-semibold text-black px-4">
-          Account: {walletAddress}
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="font-semibold text-black px-4">
+            Account: {walletAddress}
+          </h1>
+          {!isLoadingTiped && totalTiped && (
+            <h2 className="pr-4">He/She got tipped {tipInWei} MATIC</h2>
+          )}
+        </div>
         <div className="px-4 flex flex-col gap-2">
           <h3>Latest Post:</h3>
           <div className="flex flex-col gap-4 border-y rounded-lg overflow-y-auto h-[78vh]">
