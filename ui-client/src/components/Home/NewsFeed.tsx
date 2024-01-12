@@ -17,7 +17,7 @@ export default function NewsFeed() {
       subscribe: true,
     });
 
-  console.log({ statusEvents, isStatusEventsLoading });
+  // console.log({ statusEvents, isStatusEventsLoading });
 
   // useEffect(() => {
   //   // Set a timeout for 2 seconds
