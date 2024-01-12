@@ -237,6 +237,12 @@ export default function EventCard(props: EventCardProps) {
               onClick={() => {
                 if (localStorage.getItem(address!)) {
                   callChatRequest();
+                } else if (!address) {
+                  toast("You didn't connect your wallet yet!", {
+                    description: dayjs().format(
+                      "dddd, MMMM DD, YYYY [at] h:mm A"
+                    ),
+                  });
                 } else {
                   toast("You need to type your private key!", {
                     description: dayjs().format(
