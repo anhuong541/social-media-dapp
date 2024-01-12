@@ -7,6 +7,7 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { GiPayMoney } from "react-icons/gi";
 
 import {
   BiUpvote,
@@ -177,18 +178,20 @@ export default function EventCard(props: EventCardProps) {
             </Avatar>
             <div>
               <CardTitle className="text-base">
-                <div className="flex items-center gap-3">
-                  <Link
-                    href={`/profile/${props.walletAddress}`}
-                    className="hover:underline"
-                  >
-                    {truncateAddress(props.walletAddress)}
-                  </Link>
-                  <CopyAddress textToCopy={props.walletAddress} />
-                  {/* {address !== props.walletAddress && (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <Link
+                      href={`/profile/${props.walletAddress}`}
+                      className="hover:underline"
+                    >
+                      {truncateAddress(props.walletAddress)}
+                    </Link>
+                    <CopyAddress textToCopy={props.walletAddress} />
+                  </div>
+                  {address !== props.walletAddress && (
                     <Dialog>
                       <DialogTrigger className="flex gap-1 items-center hover:text-green-700 cursor-pointer font-medium">
-                        <PiHandshakeFill className="w-5 h-5" />
+                        <GiPayMoney className="w-5 h-5" />
                       </DialogTrigger>
                       <TipsSection
                         status={props.newStatus}
@@ -196,7 +199,7 @@ export default function EventCard(props: EventCardProps) {
                         statusId={props.statusId}
                       />
                     </Dialog>
-                  )} */}
+                  )}
                 </div>
               </CardTitle>
               <CardDescription>

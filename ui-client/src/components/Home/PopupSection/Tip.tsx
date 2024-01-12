@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Web3Button } from "@thirdweb-dev/react";
+import { ethers } from "ethers";
 import { useState } from "react";
 
 type TipsType = {
@@ -25,7 +26,7 @@ export default function TipsSection({
   walletAddress,
   statusId,
 }: TipsType) {
-  const [tip, setTip] = useState(0.01);
+  const [tip, setTip] = useState(0.0);
 
   // console.log(tip);
 
@@ -50,6 +51,7 @@ export default function TipsSection({
             }}
             type="number"
             placeholder="!!!!"
+            step="0.01"
           />
         </div>
         <div className="flex justify-end items-center gap-2">
@@ -61,10 +63,15 @@ export default function TipsSection({
               height: "0px",
             }}
             contractAddress={STATUS_CONTRACT_ADDRESS}
-            action={(contract) => contract.call("tip", [walletAddress, tip])}
-            // isDisabled={characterCount === 0 || characterCount > 140}
+            action={(contract) => {
+              // Convert tip amount to wei
+              const tipInWei = ethers.utils.parseEther(tip.toString());
+              contract.call("tipUser", [walletAddress], {
+                value: tipInWei,
+              });
+            }}
             onSuccess={() => {
-              setTip(0.01);
+              setTip(0.0);
             }}
           >
             Post
