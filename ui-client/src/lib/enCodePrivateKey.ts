@@ -18,7 +18,7 @@ export function decryptPrivateKey(
 
     return [{ message: decryptedPrivateKey, status: "success" }];
   } catch (error) {
-    console.error("Error decrypting private key. Please check the password.");
+    // console.error("Error decrypting private key. Please check the password.");
     return [{ message: null, status: "wrong_password_error" }];
   }
 }
