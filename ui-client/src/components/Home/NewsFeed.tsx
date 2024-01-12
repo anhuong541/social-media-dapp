@@ -41,17 +41,19 @@ export default function NewsFeed() {
     );
   }
 
-  const statusFeeds =
-    !isStatusEventsLoading && statusEvents && filterStatusID(statusEvents);
-
   return (
     <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
       <UserStatus />
       <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] w-full">
         {!isStatusEventsLoading &&
           statusEvents &&
-          statusFeeds
+          filterStatusID(statusEvents)
             .slice(0, countFeed)
+            .sort((a: any, b: any) => {
+              const decimalA = parseInt(a.data.timestamp._hex, 16);
+              const decimalB = parseInt(b.data.timestamp._hex, 16);
+              return decimalB - decimalA;
+            })
             .map((event: any) => (
               <EventCard
                 key={formatHexToDecimal(event.data.statusId._hex)}
@@ -63,7 +65,7 @@ export default function NewsFeed() {
             ))}
         {!isStatusEventsLoading &&
           statusEvents &&
-          countFeed < statusFeeds?.length && (
+          countFeed < statusEvents?.length && (
             <button onClick={() => setCountFeed(() => countFeed + 10)}>
               more
             </button>

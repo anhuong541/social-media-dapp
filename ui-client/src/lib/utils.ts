@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function filterStatusID(data: any): any {
-  const uniqueUpdates: { [key: string]: any } = {};
+  let uniqueUpdates: { [key: string]: any } = {};
 
   for (const update of data) {
     const key = `${update.data.user}-${update.data.statusId._hex}`;
