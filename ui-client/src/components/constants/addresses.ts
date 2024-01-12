@@ -6,13 +6,13 @@ export const CHAT_CONTRACT_ADDRESS =
 
 // "0x3744950A7aE5bA5644A2C76310613397C45c6a1f"; // demo contract address
 
-// "0xCD097f9dDAC0E5ce3f1282AC7A088CB310cf3653"; // SocialMediaV3
-
 // "0x8a12311977eB1D0CA35458ccDF0959087f3337a1"; // SocialMediaV4
 
 // "0x48efDc3a859d0484B4A73C67c3E8aEEdb6BF242C"; // SocialMediaV5
 
 // "0x254F569a1A82b0066e1d4BDFdb18a71e19d621F1"; // SocialMediaV6
+
+// "0xE11B6bc208B2Db1beacB23811f5E460C82fcaEf5"  // SocialMediaV6 n2 // for back up
 
 // "0x7E42f33d4eafa2E25339221380fef6396Fe3aa76"; // Chat Simple Ver
 
