@@ -27,7 +27,7 @@ export default function CopyAddress({ textToCopy }: CopyProps) {
   }, [copySuccess]);
 
   return (
-    <div>
+    <div className="flex items-center">
       <textarea
         ref={textAreaRef}
         value={textToCopy}
