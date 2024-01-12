@@ -39,7 +39,7 @@ export default function CommentSection({
   const [comment, setComment] = useState("");
 
   const { data: myCommenst, isLoading: isStatusCommentLoading } =
-    useContractRead(contract, "getComments", [statusIdDeciaml, address]);
+    useContractRead(contract, "getComments", [statusIdDeciaml, walletAddress]);
 
   // console.log({ myCommenst, statusIdDeciaml, status });
 
@@ -102,7 +102,11 @@ export default function CommentSection({
                 }}
                 contractAddress={STATUS_CONTRACT_ADDRESS}
                 action={(contract) =>
-                  contract.call("addComment", [statusIdDeciaml, comment])
+                  contract.call("addComment", [
+                    walletAddress,
+                    statusIdDeciaml,
+                    comment,
+                  ])
                 }
                 onSuccess={() => {
                   setComment("");

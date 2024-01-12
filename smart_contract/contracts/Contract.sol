@@ -399,13 +399,18 @@ contract SocialMediaV6 {
         emit StatusUpdated(msg.sender, statusId, _status, block.timestamp);
     }
 
-    function addComment(uint256 _statusId, string memory _comment) public {
+    function addComment(
+        address _user,
+        uint256 _statusId,
+        string memory _comment
+    ) public {
         require(
             bytes(_comment).length <= MAX_CHARACTER_AMOUNT,
             "Comment is too long"
         );
+        require(_statusId <= lastStatusId[_user], "Invalid status ID");
 
-        comments[_statusId][msg.sender].push(_comment);
+        comments[_statusId][_user].push(_comment);
 
         emit CommentAdded(msg.sender, _statusId, _comment, block.timestamp);
     }
