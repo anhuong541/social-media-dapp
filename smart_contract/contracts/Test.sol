@@ -4,19 +4,12 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-// Error codes
-uint8 constant ErrUserAlreadyInitialized = 1;
-uint8 constant ErrChatNotInitialized = 2;
-uint8 constant ErrUserNotInitialized = 3;
-uint8 constant ErrPeerNotInitialized = 4;
-uint8 constant ErrIncorrectEntryFee = 5;
-error BlockchattingError(uint8 code);
-
-contract SocialMediaV6 {
+contract SocialMediaV7 {
     uint256 constant MAX_CHARACTER_AMOUNT = 140;
 
     mapping(address => uint256) public lastStatusId;
     mapping(address => mapping(uint256 => string)) public statuses;
+    mapping(address => mapping(uint256 => string[])) public hashtags; // New mapping for hashtags
     mapping(uint256 => mapping(address => string[])) public comments;
     mapping(address => mapping(uint256 => uint256)) public likes;
     mapping(address => mapping(address => uint256)) public tips;
@@ -50,6 +43,13 @@ contract SocialMediaV6 {
         uint256 timestamp
     );
 
+    event HashtagAdded(
+        address indexed user,
+        uint256 indexed statusId,
+        string hashtag,
+        uint256 timestamp
+    );
+
     address public owner;
 
     modifier onlyOwner() {
@@ -61,7 +61,10 @@ contract SocialMediaV6 {
         owner = msg.sender;
     }
 
-    function setStatus(string memory _status) public {
+    function setStatus(
+        string memory _status,
+        string[] memory _hashtags
+    ) public {
         require(
             bytes(_status).length <= MAX_CHARACTER_AMOUNT,
             "Status is too long"
@@ -72,46 +75,18 @@ contract SocialMediaV6 {
 
         statuses[msg.sender][statusId] = _status;
 
+        // Add hashtags to the status
+        for (uint256 i = 0; i < _hashtags.length; i++) {
+            hashtags[msg.sender][statusId].push(_hashtags[i]);
+            emit HashtagAdded(
+                msg.sender,
+                statusId,
+                _hashtags[i],
+                block.timestamp
+            );
+        }
+
         emit StatusUpdated(msg.sender, statusId, _status, block.timestamp);
-    }
-
-    function addComment(
-        address _user,
-        uint256 _statusId,
-        string memory _comment
-    ) public {
-        require(
-            bytes(_comment).length <= MAX_CHARACTER_AMOUNT,
-            "Comment is too long"
-        );
-        require(_statusId <= lastStatusId[_user], "Invalid status ID");
-
-        comments[_statusId][_user].push(_comment);
-
-        emit CommentAdded(msg.sender, _statusId, _comment, block.timestamp);
-    }
-
-    function addLike(address _user, uint256 _statusId) public {
-        likes[_user][_statusId]++;
-        emit LikeAdded(
-            _user,
-            _statusId,
-            likes[_user][_statusId],
-            block.timestamp
-        );
-    }
-
-    function getLikes(uint256 _statusId) public view returns (uint256) {
-        // Retrieve likes count from the calling user's address
-        return likes[msg.sender][_statusId];
-    }
-
-    function getComments(
-        uint256 _statusId,
-        address _user
-    ) public view returns (string[] memory) {
-        // Retrieve comments from the specific statusId and user address
-        return comments[_statusId][_user];
     }
 
     function getStatus(
@@ -128,6 +103,44 @@ contract SocialMediaV6 {
                 comments[_statusId][_user].length
             );
         }
+    }
+
+    function getHashtags(
+        address _user,
+        uint256 _statusId
+    ) public view returns (string[] memory) {
+        // Retrieve hashtags for a specific statusId and user address
+        return hashtags[_user][_statusId];
+    }
+
+    function filterStatusByHashtag(
+        address _user,
+        string memory _hashtag
+    ) public view returns (uint256[] memory) {
+        uint256 lastId = lastStatusId[_user];
+        uint256[] memory matchingStatusIds = new uint256[](lastId);
+
+        uint256 count = 0;
+        for (uint256 i = 1; i <= lastId; i++) {
+            string[] memory statusHashtags = hashtags[_user][i];
+            for (uint256 j = 0; j < statusHashtags.length; j++) {
+                if (
+                    keccak256(abi.encodePacked(statusHashtags[j])) ==
+                    keccak256(abi.encodePacked(_hashtag))
+                ) {
+                    matchingStatusIds[count] = i;
+                    count++;
+                    break; // Found the hashtag in this status, move to the next status
+                }
+            }
+        }
+
+        // Resize the array to remove any unused slots
+        assembly {
+            mstore(matchingStatusIds, count)
+        }
+
+        return matchingStatusIds;
     }
 
     function editStatus(
@@ -199,57 +212,33 @@ contract SocialMediaV6 {
     }
 }
 
-contract ChatPrivate is Ownable {
-    // Struct representing a chat request
+contract ChatNewUpdated is Ownable {
     struct ChatRequest {
-        bool exists; // Flag indicating if the chat request exists
-        bool accepted; // Flag indicating if the chat request has been accepted
-        bytes32 securityKey; // Security key for secure communication
+        bool exists;
+        bool accepted;
+        bytes32 securityKey;
     }
 
-    // Struct representing information about a chat message
     struct ChatMessageInfo {
         address user1;
         address user2;
         uint256 timestamp;
-        string message1;
-        string message2;
+        string message;
     }
 
-    // Mapping to store chat requests between users
     mapping(address => mapping(address => ChatRequest)) public chatRequests;
-
-    // Mapping to store chat messages between users
     mapping(address => mapping(address => ChatMessageInfo[]))
         public chatMessages;
 
-    // Add a public key parameter to the events
-    event ChatRequestSent(
-        address indexed sender,
-        address indexed receiver,
-        string publicKeySender
-    );
-    event ChatRequestAccepted(
-        address indexed sender,
-        address indexed receiver,
-        string publicKeySender,
-        string publicKeyReceiver
-    );
-
+    event ChatRequestSent(address indexed sender, address indexed receiver);
+    event ChatRequestAccepted(address indexed sender, address indexed receiver);
     event MessageSent(
         address indexed sender,
         address indexed receiver,
         string message
     );
 
-    // Mapping to store public keys associated with chat requests
-    mapping(address => mapping(address => string)) public publicKeySenders;
-
-    // Modify the sendChatRequest function
-    function sendChatRequest(
-        address receiver,
-        string calldata publicKeySender
-    ) external {
+    function sendChatRequest(address receiver) external {
         require(
             !chatRequests[msg.sender][receiver].exists,
             "Chat request already sent"
@@ -259,25 +248,15 @@ contract ChatPrivate is Ownable {
             "Chat request already received"
         );
 
-        // Store the publicKeySender for later retrieval
-        publicKeySenders[msg.sender][receiver] = publicKeySender;
-
-        // Create a new chat request and mark it as sent
         chatRequests[msg.sender][receiver] = ChatRequest(
             true,
             false,
             bytes32(0)
         );
-
-        // Emit the ChatRequestSent event with publicKeySender
-        emit ChatRequestSent(msg.sender, receiver, publicKeySender);
+        emit ChatRequestSent(msg.sender, receiver);
     }
 
-    // Modify the acceptChatRequest function
-    function acceptChatRequest(
-        address sender,
-        string calldata publicKeyReceiver
-    ) external returns (string memory publicKeySender) {
+    function acceptChatRequest(address sender) external {
         require(
             chatRequests[sender][msg.sender].exists,
             "No chat request from this user"
@@ -287,34 +266,15 @@ contract ChatPrivate is Ownable {
             "Chat request already accepted"
         );
 
-        // Retrieve the publicKeySender
-        publicKeySender = publicKeySenders[sender][msg.sender];
-        require(
-            bytes(publicKeySender).length > 0,
-            "Public key not found for sender"
-        );
-
-        // Mark the chat request as accepted and generate a security key
         chatRequests[sender][msg.sender].accepted = true;
         chatRequests[sender][msg.sender].securityKey = keccak256(
             abi.encodePacked(msg.sender, sender, block.timestamp)
         );
 
-        // Emit the ChatRequestAccepted event with publicKeySender and publicKeyReceiver
-        emit ChatRequestAccepted(
-            sender,
-            msg.sender,
-            publicKeySender,
-            publicKeyReceiver
-        );
+        emit ChatRequestAccepted(sender, msg.sender);
     }
 
-    // Function to send a message in an accepted chat
-    function sendMessage(
-        address receiver,
-        string calldata message1,
-        string calldata message2
-    ) external {
+    function sendMessage(address receiver, string calldata message) external {
         require(
             chatRequests[msg.sender][receiver].exists ||
                 chatRequests[receiver][msg.sender].exists,
@@ -327,21 +287,19 @@ contract ChatPrivate is Ownable {
         );
 
         ChatMessageInfo memory messageInfo;
+
         messageInfo = ChatMessageInfo({
             user1: msg.sender,
             user2: receiver,
             timestamp: block.timestamp,
-            message1: message1,
-            message2: message2
+            message: message
         });
 
         chatMessages[messageInfo.user1][messageInfo.user2].push(messageInfo);
 
-        emit MessageSent(msg.sender, receiver, message1);
-        emit MessageSent(msg.sender, receiver, message2);
+        emit MessageSent(msg.sender, receiver, message);
     }
 
-    // Function to get all chat messages with detailed information
     function getAllChatMessagesWithInfo(
         address user1,
         address user2
@@ -367,7 +325,6 @@ contract ChatPrivate is Ownable {
         return messagesInfo;
     }
 
-    // Function to get all chat messages between two users without detailed information
     function getChatMessages(
         address sender,
         address receiver
@@ -397,12 +354,31 @@ contract ChatPrivate is Ownable {
         return messages;
     }
 
-    // Function to check if there is a pending chat request from a specific sender
     function hasPendingChatRequest(
         address sender
     ) external view returns (bool) {
         return
             chatRequests[sender][msg.sender].exists &&
             !chatRequests[sender][msg.sender].accepted;
+    }
+}
+
+contract ImageNFT is ERC721, Ownable {
+    uint256 public nextTokenId;
+
+    constructor(string memory name, string memory symbol) ERC721(name, symbol) {
+        nextTokenId = 1;
+    }
+
+    function mint() external onlyOwner {
+        uint256 tokenId = nextTokenId;
+        _safeMint(msg.sender, tokenId);
+        nextTokenId++;
+    }
+
+    function mintTo(address to) external onlyOwner {
+        uint256 tokenId = nextTokenId;
+        _safeMint(to, tokenId);
+        nextTokenId++;
     }
 }

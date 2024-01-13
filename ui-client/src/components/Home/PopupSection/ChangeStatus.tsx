@@ -90,15 +90,24 @@ export default function ChangeStatusSection({
 
   return (
     <DialogContent>
-      {!success?.state && (
-        <DialogHeader>
-          <DialogTitle>Are you sure you want to edit your status?</DialogTitle>
-          <DialogDescription>Your old status: {status}</DialogDescription>
-        </DialogHeader>
-      )}
+      {!success?.state &&
+        (address === walletAddress ? (
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to edit your status?
+            </DialogTitle>
+            <DialogDescription>Your old status: {status}</DialogDescription>
+          </DialogHeader>
+        ) : (
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to block this person?
+            </DialogTitle>
+          </DialogHeader>
+        ))}
       {!success?.state ? (
         <div className="flex flex-col gap-4 pt-4">
-          <div>
+          <div className={`${address !== walletAddress && "hidden"}`}>
             <Input
               value={edit}
               onChange={(e) => {
@@ -108,22 +117,25 @@ export default function ChangeStatusSection({
               disabled={isLoadingDelete || isLoadingEdit}
             />
           </div>
-          <div className="flex justify-end items-center gap-2">
-            <Button
-              variant="default"
-              onClick={callEditStatus}
-              disabled={isLoadingDelete || isLoadingEdit}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={callDeleteStatus}
-              disabled={isLoadingDelete || isLoadingEdit}
-            >
-              Delete
-            </Button>
-            <DialogClose>
+          {address === walletAddress ? (
+            <div className="flex justify-end items-center gap-2">
+              <Button
+                variant="default"
+                onClick={callEditStatus}
+                disabled={isLoadingDelete || isLoadingEdit}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={callDeleteStatus}
+                disabled={isLoadingDelete || isLoadingEdit}
+              >
+                Delete
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end items-center gap-2">
               <Button
                 className="bg-yellow-400 hover:bg-yellow-300"
                 onClick={callDeleteStatus}
@@ -131,8 +143,8 @@ export default function ChangeStatusSection({
               >
                 Block
               </Button>
-            </DialogClose>
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center text-green-600 font-medium text-lg">

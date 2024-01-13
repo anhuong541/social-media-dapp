@@ -210,7 +210,6 @@ export default function EventCard(props: EventCardProps) {
           </div>
           <Dialog>
             <DialogTrigger
-              className={`${address !== props.walletAddress && "hidden"}`}
               onClick={() =>
                 setChangeContentSuccess({ state: false, title: "" })
               }
