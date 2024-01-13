@@ -76,6 +76,21 @@ export default function ChangeStatusSection({
     }
   };
 
+  const callBlockStatus = async () => {
+    try {
+      const data = await deleteStatus({
+        args: [walletAddress, statusIdDeciaml],
+      });
+      // console.info("contract call successs", data);
+      onChangeSuccess({
+        state: true,
+        title: "Removed",
+      });
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
+
   // if () {
   //   return (
   //     <DialogContent>
@@ -138,7 +153,7 @@ export default function ChangeStatusSection({
             <div className="flex justify-end items-center gap-2">
               <Button
                 className="bg-yellow-400 hover:bg-yellow-300"
-                onClick={callDeleteStatus}
+                onClick={callBlockStatus}
                 disabled={isLoadingDelete || isLoadingEdit}
               >
                 Block
