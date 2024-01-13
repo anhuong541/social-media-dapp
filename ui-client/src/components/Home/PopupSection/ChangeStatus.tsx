@@ -69,7 +69,7 @@ export default function ChangeStatusSection({
       // console.info("contract call successs", data);
       onChangeSuccess({
         state: true,
-        title: "Delete",
+        title: "Removed",
       });
     } catch (err) {
       console.error("contract call failure", err);
@@ -124,7 +124,13 @@ export default function ChangeStatusSection({
               Delete
             </Button>
             <DialogClose>
-              <Button variant="secondary">Cancel</Button>
+              <Button
+                className="bg-yellow-400 hover:bg-yellow-300"
+                onClick={callDeleteStatus}
+                disabled={isLoadingDelete || isLoadingEdit}
+              >
+                Block
+              </Button>
             </DialogClose>
           </div>
         </div>
