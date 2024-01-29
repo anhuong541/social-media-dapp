@@ -79,8 +79,8 @@ export default function CommentSection({
               <h4 className="font-medium">Comments:</h4>
 
               <div className="flex flex-col gap-4 border py-2 px-4 rounded-lg h-[50vh] overflow-y-auto">
-                {myCommenst.map((item: string) => {
-                  return <div key={item}>{item}</div>;
+                {myCommenst.map((item: string, index: number) => {
+                  return <div key={index}>{item}</div>;
                 })}
               </div>
             </div>
