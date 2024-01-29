@@ -12,10 +12,13 @@ export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(false);
   const [countFeed, setCountFeed] = useState(10);
   const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-  const { data: statusEvents, isLoading: isStatusEventsLoading } =
-    useContractEvents(contract, "StatusUpdated", {
-      subscribe: true,
-    });
+  const {
+    data: statusEvents,
+    isLoading: isStatusEventsLoading,
+    refetch: refetchStatusEvent,
+  } = useContractEvents(contract, "StatusUpdated", {
+    subscribe: true,
+  });
 
   // console.log({ statusEvents, isStatusEventsLoading });
 
@@ -54,9 +57,9 @@ export default function NewsFeed() {
               const decimalB = parseInt(b.data.timestamp._hex, 16);
               return decimalB - decimalA;
             })
-            .map((event: any) => (
+            .map((event: any, index: number) => (
               <EventCard
-                key={formatHexToDecimal(event.data.statusId._hex)}
+                key={index}
                 walletAddress={event.data.user}
                 newStatus={event.data.newStatus}
                 timeStamp={event.data.timestamp}

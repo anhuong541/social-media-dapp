@@ -15,7 +15,6 @@ import { Button } from "../ui/button";
 
 export default function UserStatus() {
   const address = useAddress();
-  // const disconnect = useDisconnect();
   const [newStatus, setNewStatus] = useState("");
   const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);

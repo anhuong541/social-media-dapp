@@ -76,21 +76,6 @@ export default function ChangeStatusSection({
     }
   };
 
-  const callBlockStatus = async () => {
-    try {
-      const data = await deleteStatus({
-        args: [walletAddress, statusIdDeciaml],
-      });
-      // console.info("contract call successs", data);
-      onChangeSuccess({
-        state: true,
-        title: "Removed",
-      });
-    } catch (err) {
-      console.error("contract call failure", err);
-    }
-  };
-
   // if () {
   //   return (
   //     <DialogContent>
@@ -132,34 +117,23 @@ export default function ChangeStatusSection({
               disabled={isLoadingDelete || isLoadingEdit}
             />
           </div>
-          {address === walletAddress ? (
-            <div className="flex justify-end items-center gap-2">
-              <Button
-                variant="default"
-                onClick={callEditStatus}
-                disabled={isLoadingDelete || isLoadingEdit}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={callDeleteStatus}
-                disabled={isLoadingDelete || isLoadingEdit}
-              >
-                Delete
-              </Button>
-            </div>
-          ) : (
-            <div className="flex justify-end items-center gap-2">
-              <Button
-                className="bg-yellow-400 hover:bg-yellow-300"
-                onClick={callBlockStatus}
-                disabled={isLoadingDelete || isLoadingEdit}
-              >
-                Block
-              </Button>
-            </div>
-          )}
+
+          <div className="flex justify-end items-center gap-2">
+            <Button
+              variant="default"
+              onClick={callEditStatus}
+              disabled={isLoadingDelete || isLoadingEdit}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={callDeleteStatus}
+              disabled={isLoadingDelete || isLoadingEdit}
+            >
+              Delete
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="text-center text-green-600 font-medium text-lg">

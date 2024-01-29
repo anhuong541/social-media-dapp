@@ -15,7 +15,6 @@ import {
   BiMessageRounded,
 } from "react-icons/bi";
 import { FaRegComments } from "react-icons/fa";
-import { PiHandshakeFill } from "react-icons/pi";
 
 import {
   CardTitle,
@@ -167,13 +166,7 @@ export default function EventCard(props: EventCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Avatar>
-              <AvatarImage
-                // src="https://lh3.googleusercontent.com/a/ACg8ocLHk9kGwF1qNBU3t3xIMY_BmtjbgTlZNjR4gc26zbP5TP8=s360-c-no"
-                // src="/nekocat_a_thanos.gif"
-                // src="/PepeScared.png"
-                src="/PepeNoHappy.gif"
-                alt="user Avatar"
-              />
+              <AvatarImage src="/PepeNoHappy.gif" alt="user Avatar" />
               <AvatarFallback>AH</AvatarFallback>
             </Avatar>
             <div>
@@ -202,28 +195,27 @@ export default function EventCard(props: EventCardProps) {
                   )}
                 </div>
               </CardTitle>
-              <CardDescription>
-                {date.toLocaleString()}
-                {/* - {formatHexToDecimal(props.statusId._hex)} */}
-              </CardDescription>
+              <CardDescription>{date.toLocaleString()}</CardDescription>
             </div>
           </div>
-          <Dialog>
-            <DialogTrigger
-              onClick={() =>
-                setChangeContentSuccess({ state: false, title: "" })
-              }
-            >
-              <BiDotsVerticalRounded className="w-5 h-5" />
-            </DialogTrigger>
-            <ChangeStatusSection
-              success={changeContentSuccess}
-              onChangeSuccess={setChangeContentSuccess}
-              status={props.newStatus}
-              walletAddress={props.walletAddress}
-              statusId={props.statusId}
-            />
-          </Dialog>
+          {address === props.walletAddress && (
+            <Dialog>
+              <DialogTrigger
+                onClick={() =>
+                  setChangeContentSuccess({ state: false, title: "" })
+                }
+              >
+                <BiDotsVerticalRounded className="w-5 h-5" />
+              </DialogTrigger>
+              <ChangeStatusSection
+                success={changeContentSuccess}
+                onChangeSuccess={setChangeContentSuccess}
+                status={props.newStatus}
+                walletAddress={props.walletAddress}
+                statusId={props.statusId}
+              />
+            </Dialog>
+          )}
         </div>
       </CardHeader>
       <CardContent>
