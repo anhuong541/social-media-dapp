@@ -122,7 +122,7 @@ export default function Header() {
                   side: "bottom",
                   align: "start",
                 }}
-                className="bg-[#2c9f41] cursor-pointer rounded-xl p-2 w-full h-10 text-sm hover:opacity-90"
+                className="bg-[#2c9f41] cursor-pointer rounded-2xl p-2 w-full h-10 text-sm hover:opacity-90"
                 style={{
                   backgroundColor: "#2c9f41",
                   color: "white",

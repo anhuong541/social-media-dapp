@@ -7,6 +7,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 import EventCard from "./EventCard";
 import UserStatus from "./user-status";
+import { Button } from "../ui/button";
 
 export default function NewsFeed() {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,9 +46,9 @@ export default function NewsFeed() {
   }
 
   return (
-    <div className="flex-grow p-4 lg:col-span-2 col-span-3 space-y-4">
+    <div className="flex-grow py-4 lg:col-span-2 col-span-3 space-y-4">
       <UserStatus />
-      <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] w-full">
+      <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] px-4 w-full app_scroll_bar">
         {!isStatusEventsLoading &&
           statusEvents &&
           filterStatusID(statusEvents)
@@ -69,9 +70,12 @@ export default function NewsFeed() {
         {!isStatusEventsLoading &&
           statusEvents &&
           countFeed < statusEvents?.length && (
-            <button onClick={() => setCountFeed(() => countFeed + 10)}>
+            <Button
+              onClick={() => setCountFeed(() => countFeed + 10)}
+              className="h-10 opacity-70 hover:opacity-100"
+            >
               more
-            </button>
+            </Button>
           )}
       </div>
     </div>

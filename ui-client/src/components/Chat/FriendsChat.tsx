@@ -17,6 +17,7 @@ import AddFriend from "./AddFriend";
 import AddPrivateKey from "./AddPrivateKey";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
+import Footer from "../layouts/Footer";
 
 type FriendsChatType = {
   addressSelected: string;
@@ -130,88 +131,93 @@ export default function FriendsChat(props: FriendsChatType) {
   // });
 
   return (
-    <div className="flex-col h-full w-full">
-      <AddFriend />
-      <AddPrivateKey address={address} />
-      <div className="flex flex-col py-2 gap-4">
-        {!isLoadingChatRequestAccepted &&
-          !isLoadingChatRequestSent &&
-          eventChatRequestAccepted &&
-          eventChatRequestSent &&
-          friendRequestListItem!.length > 0 &&
-          userPrivateKey[0].status === "success" && (
-            <div className="flex flex-col gap-2 px-1">
-              <h2 className="font-medium text-sm px-3">
-                You have {friendRequestListItem?.length} chat request
-              </h2>
-              {friendRequestListItem?.map((item: any, index: number) => {
-                return (
-                  <div
-                    className="flex items-center justify-between gap-2 px-3 py-4 rounded-lg bg-green-600 text-white"
-                    key={index}
-                  >
-                    {/* <Avatar>
-                          <AvatarImage src={item?.img} alt="user Avatar" />
-                          <AvatarFallback>AH</AvatarFallback>
-                        </Avatar> */}
-                    <div>
-                      {/* <p className="font-medium">{item?.data.title}</p> */}
-                      <p className="font-medium text-sm">
-                        {truncateAddress(item?.address)}
-                      </p>
-                    </div>
-                    <div
-                      className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500"
-                      onClick={async () => callAcceptChatRequest(item?.address)}
-                    >
-                      {!isLoadingAcceptChatRequest ? (
-                        <FaCheck className="w-5 h-5" />
-                      ) : (
-                        <ReloadIcon className="animate-spin" />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        <div className="flex flex-col gap-2 px-1">
-          <h2 className="font-medium text-sm px-3">Friends List:</h2>
-          <div className="flex flex-col">
-            {!isLoadingChatRequestAccepted &&
+    <div className="flex flex-col justify-between">
+      <div className="flex flex-col">
+        <AddFriend />
+        <AddPrivateKey address={address} />
+        <div className="flex flex-col py-2 gap-4">
+          {!isLoadingChatRequestAccepted &&
+            !isLoadingChatRequestSent &&
             eventChatRequestAccepted &&
-            userPrivateKey[0].status === "success" ? (
-              friendListItems?.map((item: any, index: number) => {
-                return (
-                  <div
-                    className={`flex items-center gap-2 px-3 py-4 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
-                      props?.addressSelected === item?.address &&
-                      "bg-green-600 text-white"
-                    }`}
-                    onClick={() => props.onChangeAddress(item?.address)}
-                    key={index}
-                  >
-                    {/* <Avatar>
+            eventChatRequestSent &&
+            friendRequestListItem!.length > 0 &&
+            userPrivateKey[0].status === "success" && (
+              <div className="flex flex-col gap-2 px-1">
+                <h2 className="font-medium text-sm px-3">
+                  You have {friendRequestListItem?.length} chat request
+                </h2>
+                {friendRequestListItem?.map((item: any, index: number) => {
+                  return (
+                    <div
+                      className="flex items-center justify-between gap-2 px-3 py-4 rounded-lg bg-green-600 text-white"
+                      key={index}
+                    >
+                      {/* <Avatar>
                           <AvatarImage src={item?.img} alt="user Avatar" />
                           <AvatarFallback>AH</AvatarFallback>
                         </Avatar> */}
-                    <div>
-                      {/* <p className="font-medium">{item?.data.title}</p> */}
-                      <p className="font-medium text-sm">
-                        {truncateAddress(item?.address)}
-                      </p>
+                      <div>
+                        {/* <p className="font-medium">{item?.data.title}</p> */}
+                        <p className="font-medium text-sm">
+                          {truncateAddress(item?.address)}
+                        </p>
+                      </div>
+                      <div
+                        className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500"
+                        onClick={async () =>
+                          callAcceptChatRequest(item?.address)
+                        }
+                      >
+                        {!isLoadingAcceptChatRequest ? (
+                          <FaCheck className="w-5 h-5" />
+                        ) : (
+                          <ReloadIcon className="animate-spin" />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-sm text-red-500 text-center px-4">
-                You need to add your private key to connect chat
+                  );
+                })}
               </div>
             )}
+          <div className="flex flex-col gap-2 px-1">
+            <h2 className="font-medium text-sm px-3">Friends List:</h2>
+            <div className="flex flex-col">
+              {!isLoadingChatRequestAccepted &&
+              eventChatRequestAccepted &&
+              userPrivateKey[0].status === "success" ? (
+                friendListItems?.map((item: any, index: number) => {
+                  return (
+                    <div
+                      className={`flex items-center gap-2 px-3 py-4 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
+                        props?.addressSelected === item?.address &&
+                        "bg-green-600 text-white"
+                      }`}
+                      onClick={() => props.onChangeAddress(item?.address)}
+                      key={index}
+                    >
+                      {/* <Avatar>
+                          <AvatarImage src={item?.img} alt="user Avatar" />
+                          <AvatarFallback>AH</AvatarFallback>
+                        </Avatar> */}
+                      <div>
+                        {/* <p className="font-medium">{item?.data.title}</p> */}
+                        <p className="font-medium text-sm">
+                          {truncateAddress(item?.address)}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-sm text-red-500 text-center px-4">
+                  You need to add your private key to connect chat
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

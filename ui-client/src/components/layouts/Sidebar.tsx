@@ -1,5 +1,6 @@
 import { useAddress } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { PiNewspaper } from "react-icons/pi";
 import { BiImageAdd } from "react-icons/bi";
 import { HiOutlineStatusOnline } from "react-icons/hi";
@@ -7,7 +8,6 @@ import { MdOutlineCurrencyBitcoin } from "react-icons/md";
 import { IoPersonOutline } from "react-icons/io5";
 
 import { Button } from "../ui/button";
-import Link from "next/link";
 import { FaRegComments } from "react-icons/fa";
 
 export default function SideBar() {

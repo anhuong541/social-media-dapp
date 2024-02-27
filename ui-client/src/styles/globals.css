@@ -72,6 +72,7 @@ body::-webkit-scrollbar-thumb {
 
 .app_scroll_bar::-webkit-scrollbar {
   width: 6px;
+  border-radius: 20px;
 }
 
 .app_scroll_bar::-webkit-scrollbar-track {

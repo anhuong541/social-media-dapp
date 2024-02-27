@@ -161,7 +161,7 @@ export default function EventCard(props: EventCardProps) {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full rounded-2xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
