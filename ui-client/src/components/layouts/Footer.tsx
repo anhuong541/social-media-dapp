@@ -7,9 +7,9 @@ import { FaXTwitter, FaReact, FaFacebookF, FaLinkedin } from "react-icons/fa6";
 export default function Footer() {
   return (
     <footer>
-      <div className="max-w-screen-xl h-full mx-auto border-t px-3">
+      <div className="max-w-screen-xl h-full mx-auto border-t-2">
         {/* <!-- Footer Bottom --> */}
-        <div className="flex flex-col items-center justify-center gap-4 border-t border-dark-500 py-5 w-full mx-auto">
+        <div className="flex flex-col items-center justify-center gap-3 border-dark-500 py-2 px-3 w-full mx-auto">
           <div className="flex">
             <ul className="flex items-center gap-8 text-sm">
               <li>
