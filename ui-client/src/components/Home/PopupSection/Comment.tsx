@@ -41,8 +41,6 @@ export default function CommentSection({
   const { data: myCommenst, isLoading: isStatusCommentLoading } =
     useContractRead(contract, "getComments", [statusIdDeciaml, walletAddress]);
 
-  // console.log({ myCommenst, statusIdDeciaml, status });
-
   if (isStatusCommentLoading) {
     return (
       <DialogContent>
