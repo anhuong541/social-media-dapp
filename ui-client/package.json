@@ -20,6 +20,7 @@
     "clsx": "^2.0.0",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
+    "emoji-picker-react": "^4.8.0",
     "eth-crypto": "^2.6.0",
     "ethers": "^5",
     "lottie-react": "^2.4.0",

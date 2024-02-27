@@ -8,6 +8,7 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { FaUserFriends } from "react-icons/fa";
 import {
   Sheet,
@@ -28,6 +29,7 @@ import MessageContent from "./MessageContent";
 import { FriendsChat } from ".";
 import { MdInterpreterMode } from "react-icons/md";
 import { alice, encryptMsg, johnny } from "@/lib/encodeMsg";
+import Image from "next/image";
 
 export type chatFeedsFormatType = {
   sender: string;
@@ -50,6 +52,7 @@ export default function ChatFeed({
 }) {
   const address = useAddress();
   const [message, setMessage] = useState("");
+  const [isOpenEmoji, setIsOpenEmoji] = useState<boolean>(false);
   const [inputPlaceholder, setInputPlaceholder] = useState("Type a message...");
   const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
 
@@ -161,19 +164,33 @@ export default function ChatFeed({
         <div className="flex flex-col w-full h-full overflow-y-auto">
           <MessageContent userAddress={address} directWallet={directWallet} />
         </div>
-        <div className="flex items-center p-3 border-t border-gray-300 w-full">
+        <div className="flex items-center justify-between p-3 border-t border-gray-300 w-full relative">
           {/* need emoji */}
           <Input
-            className="flex-1"
+            className="flex-1 rounded-[14px] h-10 py-2"
             value={message}
             placeholder={inputPlaceholder}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <Button
-            className="ml-2"
-            onClick={callSendMessage}
-            disabled={isLoadingSendMessage}
+          {/* <div
+            className="flex justify-center items-center px-2 h-full"
+            onClick={() => setIsOpenEmoji(!isOpenEmoji)}
           >
+            <Image src="/emoji.svg" alt="" width={25} height={25} />
+            <div
+              className={`absolute bottom-20 right-5 ${
+                isOpenEmoji ? "block" : "hidden"
+              }`}
+            >
+              <EmojiPicker
+                onEmojiClick={(emojiData: EmojiClickData) => {
+                  console.log({ emojiData });
+                  setMessage(message + " " + emojiData.emoji);
+                }}
+              />
+            </div>
+          </div> */}
+          <Button onClick={callSendMessage} disabled={isLoadingSendMessage}>
             {!isLoadingSendMessage ? (
               "Send"
             ) : (

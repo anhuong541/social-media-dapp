@@ -15,7 +15,7 @@ const hashtagItems = [
 
 export default function FollowBar() {
   return (
-    <div className="pt-4 lg:flex flex-col justify-between hidden border border-red-500">
+    <div className="pt-4 lg:flex hidden flex-col justify-between">
       <div className="bg-white p-4 rounded-lg space-y-2">
         <h2 className="text-lg font-semibold">Trending 🔥</h2>
         <div className="flex flex-wrap gap-2">

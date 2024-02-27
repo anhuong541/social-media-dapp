@@ -131,7 +131,7 @@ export default function FriendsChat(props: FriendsChatType) {
   // });
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-between w-full">
       <div className="flex flex-col">
         <AddFriend />
         <AddPrivateKey address={address} />
