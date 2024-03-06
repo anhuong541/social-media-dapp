@@ -8,6 +8,7 @@ import {
   smartWallet,
   trustWallet,
   walletConnect,
+  phantomWallet,
 } from "@thirdweb-dev/react";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
@@ -32,6 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
       activeChain={activeChain}
       supportedWallets={[
         smartWallet(embeddedWallet(), smartWalletConfig),
+        phantomWallet(),
         metamaskWallet(),
         coinbaseWallet(),
         walletConnect(),
