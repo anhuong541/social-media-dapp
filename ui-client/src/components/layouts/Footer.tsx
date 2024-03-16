@@ -9,7 +9,7 @@ export default function Footer() {
     <footer>
       <div className="max-w-screen-xl h-full mx-auto border-t-2">
         {/* <!-- Footer Bottom --> */}
-        <div className="flex flex-col items-center justify-center gap-3 border-dark-500 py-2 px-3 w-full mx-auto">
+        <div className="flex flex-col items-center justify-center gap-4 border-dark-500 py-4 px-3 w-full mx-auto">
           <div className="flex">
             <ul className="flex items-center gap-8 text-sm">
               <li>
@@ -36,17 +36,17 @@ export default function Footer() {
             <ul className="flex items-center gap-4">
               <li>
                 <Link href="https://github.com/anhuong541" target="_blank">
-                  <FaGithub className="w-5 h-5" />
+                  <FaGithub className="w-6 h-6" />
                 </Link>
               </li>
               <li>
                 <Link href="https://twitter.com/nguynxunnhng1" target="_blank">
-                  <FaXTwitter className="w-5 h-5" />
+                  <FaXTwitter className="w-6 h-6" />
                 </Link>
               </li>
               <li>
                 <Link href="https://www.facebook.com/" target="_blank">
-                  <FaFacebookF className="w-5 h-5" />
+                  <FaFacebookF className="w-6 h-6" />
                 </Link>
               </li>
               <li>
@@ -54,12 +54,12 @@ export default function Footer() {
                   href="https://www.linkedin.com/in/huong-nguyen-xuan/"
                   target="_blank"
                 >
-                  <FaLinkedin className="w-5 h-5" />
+                  <FaLinkedin className="w-6 h-6" />
                 </Link>
               </li>
               <li>
                 <Link href="https://react.dev/" target="_blank">
-                  <FaReact className="w-5 h-5" />
+                  <FaReact className="w-6 h-6" />
                 </Link>
               </li>
             </ul>

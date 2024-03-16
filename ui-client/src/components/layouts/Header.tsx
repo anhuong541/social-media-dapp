@@ -86,30 +86,14 @@ export default function Header() {
                       Feed History
                     </span>
                   </button>
-                  <Link
-                    href="/crypto"
-                    className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-                  >
-                    <MdOutlineCurrencyBitcoin className="h-6 w-6 text-green-700" />
-                    <span className="font-medium text-gray-900">
-                      Crypto Trends
-                    </span>
-                  </Link>
-                  <Link
-                    href="/news"
-                    className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-                  >
-                    <PiNewspaper className="h-6 w-6 text-green-700" />
-                    <span className="font-medium text-gray-900">News</span>
-                  </Link>
-                  <div>
+                  {/* <div>
                     <Button
                       className="text-white dark:text-green-700"
                       variant="default"
                     >
                       <BiImageAdd className="mr-2 h-6 w-6" /> Mint NFT Image
                     </Button>
-                  </div>
+                  </div> */}
                 </nav>
               </SheetContent>
             </Sheet>

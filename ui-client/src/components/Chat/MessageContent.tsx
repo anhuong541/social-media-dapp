@@ -66,6 +66,8 @@ export default function MessageContent({ userAddress, directWallet }: any) {
     }
   }, [userAddress, chatFeedsFormat.length]);
 
+  console.log("tthis is the message conttent");
+
   if (isLoadingChatFeeds) {
     return (
       <div className="xl:col-span-2 border-r h-full">
@@ -77,48 +79,52 @@ export default function MessageContent({ userAddress, directWallet }: any) {
       </div>
     );
   }
-  // console.log({ userPrivateKey });
 
   if (userPrivateKey[0].status === "success")
     return (
-      <div className="flex-grow flex flex-col-reverse gap-4 px-6 py-4">
-        {messageContentRender.map(
-          (item: chatFeedsFormatType, index: number) => {
-            if (item.sender === userAddress) {
-              return (
-                <div className="flex items-start space-x-3 ml-auto" key={index}>
-                  <div className="bg-green-600 text-white rounded-lg p-3 w-[fit-content]">
-                    <p className="font-medium text-sm">You</p>
-                    <p className="break-all">{item.message1}</p>
-                    <p className="break-all">{item.message2}</p>
-                    <p className="text-xs text-white mt-2">
-                      {formatDateTimeHex(item.timestamp._hex)}
-                    </p>
+      <div className="flex flex-col w-full h-full overflow-y-auto">
+        <div className="flex-grow flex flex-col-reverse gap-4 px-6 py-4">
+          {messageContentRender.map(
+            (item: chatFeedsFormatType, index: number) => {
+              if (item.sender === userAddress) {
+                return (
+                  <div
+                    className="flex items-start space-x-3 ml-auto"
+                    key={index}
+                  >
+                    <div className="bg-green-600 text-white rounded-lg p-3 w-[fit-content]">
+                      <p className="font-medium text-sm">You</p>
+                      <p className="break-all">{item.message1}</p>
+                      <p className="break-all">{item.message2}</p>
+                      <p className="text-xs text-white mt-2">
+                        {formatDateTimeHex(item.timestamp._hex)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            } else {
-              return (
-                <div className="flex items-start space-x-3" key={index}>
-                  <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-3 w-[fit-content]">
-                    <p className="font-medium text-sm">
-                      {truncateAddress(item.sender)}
-                    </p>
-                    <p className="text-gray-800 dark:text-gray-200 break-all">
-                      {item.message1}
-                    </p>
-                    <p className="text-gray-800 dark:text-gray-200 break-all">
-                      {item.message2}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {formatDateTimeHex(item.timestamp._hex)}
-                    </p>
+                );
+              } else {
+                return (
+                  <div className="flex items-start space-x-3" key={index}>
+                    <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-3 w-[fit-content]">
+                      <p className="font-medium text-sm">
+                        {truncateAddress(item.sender)}
+                      </p>
+                      <p className="text-gray-800 dark:text-gray-200 break-all">
+                        {item.message1}
+                      </p>
+                      <p className="text-gray-800 dark:text-gray-200 break-all">
+                        {item.message2}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {formatDateTimeHex(item.timestamp._hex)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
+                );
+              }
             }
-          }
-        )}
+          )}
+        </div>
       </div>
     );
 }
