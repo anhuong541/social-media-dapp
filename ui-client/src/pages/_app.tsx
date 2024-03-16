@@ -13,7 +13,7 @@ import {
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
-import Footer from "@/components/layouts/Footer";
+import Footer from "@/components/layouts/footer";
 import { useRouter } from "next/router";
 import { Toaster } from "@/components/ui/sonner";
 
