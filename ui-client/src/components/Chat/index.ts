@@ -1,6 +1,4 @@
-import ChatFeed from "./ChatFeed";
 import FriendsChat from "./FriendsChat";
+import ChatFeed from "./ChatFeed";
 
-
-
-export {ChatFeed, FriendsChat}
+export { ChatFeed, FriendsChat };

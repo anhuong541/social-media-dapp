@@ -18,18 +18,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
 import { DirectWalletType } from "@/pages/room";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
-import MessageContent from "./MessageContent";
-import { FriendsChat } from ".";
 import { MdInterpreterMode } from "react-icons/md";
 import { alice, encryptMsg, johnny } from "@/lib/encodeMsg";
 import Image from "next/image";
-import SendMessage from "./SendMsg";
+import { MessageContent, SendMessage } from "./ChatFeedCom";
+import FriendsChat from "../FriendsChat";
 
 export type chatFeedsFormatType = {
   sender: string;

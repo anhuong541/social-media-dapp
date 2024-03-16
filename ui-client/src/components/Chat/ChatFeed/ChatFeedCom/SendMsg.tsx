@@ -1,13 +1,13 @@
-import { Button } from "../ui/button";
+import { Button } from "../../../ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Input } from "../ui/input";
+import { Input } from "../../../ui/input";
 import { useState } from "react";
 import {
   useContract,
   useContractEvents,
   useContractWrite,
 } from "@thirdweb-dev/react";
-import { CHAT_CONTRACT_ADDRESS } from "../constants/addresses";
+import { CHAT_CONTRACT_ADDRESS } from "../../../constants/addresses";
 import { DirectWalletType } from "@/pages/room";
 import { encryptMsg } from "@/lib/encodeMsg";
 

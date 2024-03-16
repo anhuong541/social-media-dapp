@@ -1,5 +1,4 @@
-import ChatFeed from "@/components/Chat/ChatFeed";
-import FriendsChat from "@/components/Chat/FriendsChat";
+import { ChatFeed, FriendsChat } from "@/components/Chat";
 import { useAddress } from "@thirdweb-dev/react";
 import { useEffect, useState } from "react";
 
