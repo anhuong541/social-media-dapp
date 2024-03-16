@@ -1,6 +1,6 @@
 import { formatDateTimeHex, truncateAddress } from "@/lib/utils";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { decryptMsg } from "@/lib/encodeMsg";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
@@ -66,11 +66,9 @@ export default function MessageContent({ userAddress, directWallet }: any) {
     }
   }, [userAddress, chatFeedsFormat.length]);
 
-  console.log("tthis is the message conttent");
-
   if (isLoadingChatFeeds) {
     return (
-      <div className="xl:col-span-2 border-r h-full">
+      <div className="h-full w-full">
         <Lottie
           animationData={loadingLottie}
           loop={true}

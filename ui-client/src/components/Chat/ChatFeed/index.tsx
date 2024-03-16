@@ -1,29 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
-import {
-  useAddress,
-  useContract,
-  useContractEvents,
-  useContractRead,
-  useContractWrite,
-} from "@thirdweb-dev/react";
+import { useAddress } from "@thirdweb-dev/react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { FaUserFriends } from "react-icons/fa";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DirectWalletType } from "@/pages/room";
-import Lottie from "lottie-react";
-import loadingLottie from "@/lib/loadingLottie.json";
-import { MdInterpreterMode } from "react-icons/md";
-import { alice, encryptMsg, johnny } from "@/lib/encodeMsg";
-import Image from "next/image";
 import { MessageContent, SendMessage } from "./ChatFeedCom";
 import FriendsChat from "../FriendsChat";
 

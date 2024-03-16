@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import {
   useAddress,
@@ -8,6 +10,7 @@ import {
 } from "@thirdweb-dev/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { GiPayMoney } from "react-icons/gi";
+import dayjs from "dayjs";
 
 import {
   BiUpvote,
@@ -33,21 +36,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   CHAT_CONTRACT_ADDRESS,
   STATUS_CONTRACT_ADDRESS,
-} from "../constants/addresses";
+} from "../../constants/addresses";
 import {
   ChangeStatusSection,
   CommentSection,
   TipsSection,
-} from "./PopupSection";
-import { useEffect, useState } from "react";
-import CopyAddress from "../CopyAddress";
+} from "../PopupSection";
+import CopyAddress from "../../CopyAddress";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { toast } from "sonner";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
-import dayjs from "dayjs";
-import { useRouter } from "next/router";
 
 type EventCardProps = {
   walletAddress: string;
@@ -67,7 +67,7 @@ export type SuccesType = {
   title: string;
 };
 
-export default function EventCard(props: EventCardProps) {
+export default function EventCardItem(props: EventCardProps) {
   const address = useAddress();
   const router = useRouter();
   const encryptedPrivateKey = localStorage.getItem(address!);

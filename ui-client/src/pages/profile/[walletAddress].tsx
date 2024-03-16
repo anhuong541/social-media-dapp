@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 import loadingLottie from "@/lib/loadingLottie.json";
 import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
-import EventCard from "@/components/Home/EventCard";
+import EventCard from "@/components/Home/NewFeed/eventCardItem";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 import { ethers, utils } from "ethers";
 

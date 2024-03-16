@@ -1,7 +1,7 @@
 import { useAddress } from "@thirdweb-dev/react";
 
 import Footer from "../../layouts/Footer";
-import { AddFriend, AddPrivateKey, FriendList } from "./FriendsChatCom";
+import { AddFriend, AddPrivateKey, FriendList } from "./friendsChatCom";
 
 export type FriendsChatType = {
   addressSelected: string;

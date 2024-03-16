@@ -11,7 +11,6 @@ import { IoWarning } from "react-icons/io5";
 import { Button } from "../../../ui/button";
 import { Input } from "../../../ui/input";
 import { useEffect, useState } from "react";
-import { useAddress } from "@thirdweb-dev/react";
 
 import CopyAddress from "../../../CopyAddress";
 import { shortenPrivateKey } from "@/lib/utils";
