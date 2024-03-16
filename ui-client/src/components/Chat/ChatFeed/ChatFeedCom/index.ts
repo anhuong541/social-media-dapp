@@ -1,4 +1,4 @@
-import MessageContent from "./MessageContent";
-import SendMessage from "./SendMsg";
+import MessageContent from "./messageContent";
+import SendMessage from "./sendMsg";
 
 export { MessageContent, SendMessage };
