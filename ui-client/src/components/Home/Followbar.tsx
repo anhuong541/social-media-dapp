@@ -9,7 +9,8 @@ const hashtagItems = [
   { title: "Nimbus" },
   { title: "vku university" },
   { title: "daihoc" },
-  { title: "Viet Han" },
+  // { title: "Viet Han" },
+
   { title: "VKU" },
 ];
 
