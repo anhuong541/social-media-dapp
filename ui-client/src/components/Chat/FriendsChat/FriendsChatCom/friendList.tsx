@@ -10,7 +10,7 @@ import Lottie from "lottie-react";
 import { truncateAddress } from "@/lib/utils";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
-import { CHAT_CONTRACT_ADDRESS } from "../../../constants/addresses";
+import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { FriendsChatType } from "..";
 

@@ -1,4 +1,4 @@
-import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
 import {
   Dialog,
   DialogContent,

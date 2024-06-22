@@ -6,7 +6,7 @@ import {
 } from "@thirdweb-dev/react";
 import { utils } from "ethers";
 
-import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
 import { filterStatusID, formatHexToDecimal } from "@/lib/utils";
 import EventCardItem from "@/components/Home/NewFeed/eventCardItem";
 

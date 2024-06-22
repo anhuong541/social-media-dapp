@@ -7,7 +7,7 @@ import {
   useContractEvents,
   useContractWrite,
 } from "@thirdweb-dev/react";
-import { CHAT_CONTRACT_ADDRESS } from "../../../constants/addresses";
+import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
 import { DirectWalletType } from "@/pages/room";
 import { encryptMsg } from "@/lib/encodeMsg";
 

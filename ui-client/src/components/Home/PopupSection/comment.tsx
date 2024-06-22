@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import loadingLottie from "@/lib/loadingLottie.json";
-import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
 import { formatHexToDecimal, truncateAddress } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 

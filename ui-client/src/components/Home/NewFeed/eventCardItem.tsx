@@ -36,7 +36,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   CHAT_CONTRACT_ADDRESS,
   STATUS_CONTRACT_ADDRESS,
-} from "../../constants/addresses";
+} from "../../../constants/addresses";
 import {
   ChangeStatusSection,
   CommentSection,

@@ -5,7 +5,7 @@ import { decryptMsg } from "@/lib/encodeMsg";
 import Lottie from "lottie-react";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { useContract, useContractRead } from "@thirdweb-dev/react";
-import { CHAT_CONTRACT_ADDRESS } from "../../../constants/addresses";
+import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
 import { chatFeedsFormatType } from "..";
 
 export default function MessageContent({ userAddress, directWallet }: any) {

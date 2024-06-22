@@ -3,7 +3,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 
 import { Input } from "../../../ui/input";
 import { useAddress, useContract, useContractWrite } from "@thirdweb-dev/react";
-import { CHAT_CONTRACT_ADDRESS } from "../../../constants/addresses";
+import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
 import { Button } from "../../../ui/button";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
 import { decryptPrivateKey } from "@/lib/enCodePrivateKey";

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { STATUS_CONTRACT_ADDRESS } from "@/components/constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
 import { formatHexToDecimal } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

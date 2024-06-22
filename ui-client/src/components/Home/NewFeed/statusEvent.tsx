@@ -2,7 +2,7 @@ import { useState } from "react";
 import Lottie from "lottie-react";
 import { useContract, useContractEvents } from "@thirdweb-dev/react";
 
-import { STATUS_CONTRACT_ADDRESS } from "../../constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "../../../constants/addresses";
 import loadingLottie from "@/lib/loadingLottie.json";
 import { filterStatusID } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

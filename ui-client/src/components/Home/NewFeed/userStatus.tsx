@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { STATUS_CONTRACT_ADDRESS } from "../../constants/addresses";
+import { STATUS_CONTRACT_ADDRESS } from "../../../constants/addresses";
 import { Button } from "../../ui/button";
 
 export default function UserStatus() {
