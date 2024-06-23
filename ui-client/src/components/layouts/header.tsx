@@ -2,8 +2,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ConnectWallet, useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { PiNewspaper } from "react-icons/pi";
-import { BiImageAdd } from "react-icons/bi";
 import { truncateAddress } from "@/lib/utils";
 
 import { Button } from "../ui/button";
@@ -16,12 +14,12 @@ import {
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { FaRegComments } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
-import { MdOutlineCurrencyBitcoin } from "react-icons/md";
+
+const demoHandler = async () => {};
 
 export default function Header() {
   const router = useRouter();
   const address = useAddress();
-  const disconnect = useDisconnect();
 
   return (
     <header className="w-full h-[10vh]">
@@ -54,7 +52,7 @@ export default function Header() {
                       }}
                     />
                   ) : (
-                    <Button variant="destructive" onClick={() => disconnect()}>
+                    <Button variant="destructive" onClick={useDisconnect}>
                       Disconnect
                     </Button>
                   )}
@@ -98,7 +96,9 @@ export default function Header() {
               </SheetContent>
             </Sheet>
           </div>
-          <div className="lg:block hidden">
+          <div className="lg:flex hidden items-center justify-end gap-4">
+            {/* <Button onClick={demoHandler}>Click Demo</Button> */}
+
             {!address ? (
               <ConnectWallet
                 modalSize="compact"
@@ -113,7 +113,7 @@ export default function Header() {
                 }}
               />
             ) : (
-              <Button variant="destructive" onClick={() => disconnect()}>
+              <Button variant="destructive" onClick={useDisconnect}>
                 Disconnect
               </Button>
             )}

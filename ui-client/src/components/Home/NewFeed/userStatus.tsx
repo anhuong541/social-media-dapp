@@ -21,7 +21,9 @@ export default function UserStatus() {
 
   if (!address) {
     return (
-      <div className="text-red-500">You did not connected your wallet yet!</div>
+      <div className="text-red-500 px-4">
+        You did not connected your wallet yet!
+      </div>
     );
   }
 
