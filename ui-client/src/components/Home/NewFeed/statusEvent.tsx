@@ -7,7 +7,7 @@ import loadingLottie from "@/lib/loadingLottie.json";
 import { filterStatusID } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import EventCardItem from "./eventCardItem";
-import VirtualList from "@/components/Virtuallist";
+// import VirtualList from "@/components/Virtuallist";
 
 export default function StatusEvents() {
   const [countFeed, setCountFeed] = useState(10);
@@ -44,7 +44,7 @@ export default function StatusEvents() {
 
   return (
     <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] px-4 w-full app_scroll_bar">
-      {!isStatusEventsLoading && statusEvents && (
+      {/* {!isStatusEventsLoading && statusEvents && (
         <VirtualList
           itemCount={filterListStatus?.length}
           height={document.documentElement.clientHeight * 0.8}
@@ -60,7 +60,19 @@ export default function StatusEvents() {
             />
           ))}
         </VirtualList>
-      )}
+      )} */}
+
+      {!isStatusEventsLoading &&
+        statusEvents &&
+        filterListStatus.map((event: any, index: number) => (
+          <EventCardItem
+            key={index}
+            walletAddress={event.data.user}
+            newStatus={event.data.newStatus}
+            timeStamp={event.data.timestamp}
+            statusId={event.data.statusId}
+          />
+            ))}
 
       {!isStatusEventsLoading &&
         statusEvents &&
