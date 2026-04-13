@@ -25,11 +25,11 @@
     "ethers": "^5",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.299.0",
-    "next": "14.0.4",
+    "next": "14.2.35",
     "next-themes": "^0.2.1",
     "numeral": "^2.0.6",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-icons": "^4.12.0",
     "react-virtualized": "^9.22.5",
     "sjcl": "^1.0.8",
@@ -40,14 +40,18 @@
   "devDependencies": {
     "@types/crypto-js": "^4.2.1",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7",
     "@types/sjcl": "^1.0.34",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7"
   }
 }

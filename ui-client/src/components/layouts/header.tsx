@@ -1,31 +1,31 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { ConnectWallet, useAddress, useDisconnect } from "@thirdweb-dev/react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { truncateAddress } from "@/lib/utils";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { ConnectWallet, useAddress, useDisconnect } from '@thirdweb-dev/react'
+import { GiHamburgerMenu } from 'react-icons/gi'
+import { truncateAddress } from '@/lib/utils'
 
-import { Button } from "../ui/button";
+import { Button } from '../ui/button'
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { HiOutlineStatusOnline } from "react-icons/hi";
-import { FaRegComments } from "react-icons/fa";
-import { IoPersonOutline } from "react-icons/io5";
+} from '@/components/ui/sheet'
+import { HiOutlineStatusOnline } from 'react-icons/hi'
+import { FaRegComments } from 'react-icons/fa'
+import { IoPersonOutline } from 'react-icons/io5'
 
-const demoHandler = async () => {};
+const demoHandler = async () => {}
 
 export default function Header() {
-  const router = useRouter();
-  const address = useAddress();
+  const router = useRouter()
+  const address = useAddress()
 
   return (
     <header className="w-full h-[10vh]">
       <div className="max-w-screen-xl h-full mx-auto flex items-center justify-between border-b px-3">
         <div className="font-medium text-2xl">
-          Social Media <br className="sm:hidden" />{" "}
+          Social Media <br className="sm:hidden" />{' '}
           <sup className="text-xs sm:block hidden">( Graduation thesis )</sup>
         </div>
 
@@ -46,10 +46,12 @@ export default function Header() {
                   {!address ? (
                     <ConnectWallet
                       modalSize="compact"
-                      dropdownPosition={{
-                        side: "bottom",
-                        align: "start",
-                      }}
+                      style={{}}
+                      // TODO: edit the position at style
+                      // dropdownPosition={{
+                      //   side: "bottom",
+                      //   align: "start",
+                      // }}
                     />
                   ) : (
                     <Button variant="destructive" onClick={useDisconnect}>
@@ -76,7 +78,7 @@ export default function Header() {
                     onClick={() => router.push(`/profile/${address}`)}
                     disabled={!address}
                     className={`flex items-center gap-3 rounded-lg hover:bg-green-200 p-3 ${
-                      !address ? "opacity-40" : ""
+                      !address ? 'opacity-40' : ''
                     }`}
                   >
                     <IoPersonOutline className="h-6 w-6 text-green-700" />
@@ -102,14 +104,15 @@ export default function Header() {
             {!address ? (
               <ConnectWallet
                 modalSize="compact"
-                dropdownPosition={{
-                  side: "bottom",
-                  align: "start",
-                }}
+                // TODO: edit the position at style
+                // dropdownPosition={{
+                //   side: "bottom",
+                //   align: "start",
+                // }}
                 className="bg-[#2c9f41] cursor-pointer rounded-2xl p-2 w-full h-10 text-sm hover:opacity-90"
                 style={{
-                  backgroundColor: "#2c9f41",
-                  color: "white",
+                  backgroundColor: '#2c9f41',
+                  color: 'white',
                 }}
               />
             ) : (
@@ -121,5 +124,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
