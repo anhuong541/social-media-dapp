@@ -1,18 +1,18 @@
-import { ChatFeed, FriendsChat } from "@/components/Chat";
-import { useAddress } from "@thirdweb-dev/react";
-import { useEffect, useState } from "react";
+import { ChatFeed, FriendsChat } from '@/components/Chat'
+import { useAddress } from '@thirdweb-dev/react'
+import { useEffect, useState } from 'react'
 
-export type DirectWalletType = "unselected_wallet_@" | string;
+export type DirectWalletType = 'unselected_wallet_@' | string
 
 export default function CharRoom() {
-  const address = useAddress();
+  const address = useAddress()
   const [directWallet, setDirectWallet] = useState<DirectWalletType>(
-    "unselected_wallet_@"
-  );
+    'unselected_wallet_@',
+  )
 
   useEffect(() => {
-    setDirectWallet("unselected_wallet_@");
-  }, [useAddress()]);
+    setDirectWallet('unselected_wallet_@')
+  }, [useAddress()])
 
   return (
     <div className="grid xl:grid-cols-3 grid-cols-1 w-full h-[90vh]">
@@ -24,5 +24,5 @@ export default function CharRoom() {
         />
       </div>
     </div>
-  );
+  )
 }
