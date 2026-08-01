@@ -1,122 +1,120 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { ConnectWallet, useAddress, useDisconnect } from '@thirdweb-dev/react'
-import { GiHamburgerMenu } from 'react-icons/gi'
-import { truncateAddress } from '@/lib/utils'
+"use client";
 
-import { Button } from '../ui/button'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useDisconnect } from "wagmi";
+import { Menu, MessageCircle, Radio, User } from "lucide-react";
+
+import { truncateAddress } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { HiOutlineStatusOnline } from 'react-icons/hi'
-import { FaRegComments } from 'react-icons/fa'
-import { IoPersonOutline } from 'react-icons/io5'
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { NAV_ITEMS } from "@/constants/navigation";
+import { ThemeToggle } from "./theme-toggle";
 
-const demoHandler = async () => {}
+const iconMap = {
+  radio: Radio,
+  "message-circle": MessageCircle,
+  user: User,
+} as const;
 
 export default function Header() {
-  const router = useRouter()
-  const address = useAddress()
+  const router = useRouter();
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   return (
-    <header className="w-full h-[10vh]">
-      <div className="max-w-screen-xl h-full mx-auto flex items-center justify-between border-b px-3">
-        <div className="font-medium text-2xl">
-          Social Media <br className="sm:hidden" />{' '}
-          <sup className="text-xs sm:block hidden">( Graduation thesis )</sup>
+    <header className="h-[10vh] w-full">
+      <div className="mx-auto flex h-full max-w-screen-xl items-center justify-between border-b px-3">
+        <div className="text-2xl font-medium">
+          Social Media <br className="sm:hidden" />{" "}
+          <sup className="hidden text-xs sm:inline">( Graduation thesis )</sup>
         </div>
 
-        <div className="flex justify-end items-center md:gap-5 gap-1">
-          <Link
-            href={`/profile/${address}`}
-            className="text-center py-1 px-3 hover:underline text-green-700 md:text-base text-sm"
-          >
-            <p>{truncateAddress(address!)}</p>
-          </Link>
-          <div className="lg:hidden flex justify-center items-center">
+        <div className="flex items-center justify-end gap-1 md:gap-5">
+          <div className="lg:hidden">
+            <ThemeToggle />
+          </div>
+          {address && (
+            <Link
+              href={`/profile/${address}`}
+              className="px-3 py-1 text-center text-sm text-primary hover:underline md:text-base"
+            >
+              <p>{truncateAddress(address)}</p>
+            </Link>
+          )}
+
+          <div className="flex items-center justify-center lg:hidden">
             <Sheet>
-              <SheetTrigger>
-                <GiHamburgerMenu className="w-5 h-5" />
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open menu">
+                  <Menu className="size-5" />
+                </Button>
               </SheetTrigger>
               <SheetContent className="pt-12">
                 <SheetHeader>
+                  <SheetTitle className="sr-only">Navigation</SheetTitle>
                   {!address ? (
-                    <ConnectWallet
-                      modalSize="compact"
-                      style={{}}
-                      // TODO: edit the position at style
-                      // dropdownPosition={{
-                      //   side: "bottom",
-                      //   align: "start",
-                      // }}
-                    />
+                    <ConnectButton chainStatus="icon" showBalance={false} />
                   ) : (
-                    <Button variant="destructive" onClick={useDisconnect}>
+                    <Button variant="destructive" onClick={() => disconnect()}>
                       Disconnect
                     </Button>
                   )}
                 </SheetHeader>
-                <nav className="bg-white px-2 py-3 flex flex-col gap-3 border-r">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-                  >
-                    <HiOutlineStatusOnline className="h-6 w-6 text-green-700" />
-                    <span className="font-medium text-gray-900">Stream</span>
-                  </Link>
-                  <Link
-                    href="/room"
-                    className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-                  >
-                    <FaRegComments className="h-6 w-6 text-green-700" />
-                    <span className="font-medium text-gray-900">Hi!</span>
-                  </Link>
-                  <button
-                    onClick={() => router.push(`/profile/${address}`)}
-                    disabled={!address}
-                    className={`flex items-center gap-3 rounded-lg hover:bg-green-200 p-3 ${
-                      !address ? 'opacity-40' : ''
-                    }`}
-                  >
-                    <IoPersonOutline className="h-6 w-6 text-green-700" />
-                    <span className="font-medium text-gray-900">
-                      Feed History
-                    </span>
-                  </button>
-                  {/* <div>
-                    <Button
-                      className="text-white dark:text-green-700"
-                      variant="default"
-                    >
-                      <BiImageAdd className="mr-2 h-6 w-6" /> Mint NFT Image
-                    </Button>
-                  </div> */}
+                <Separator className="my-4" />
+                <nav className="flex flex-col gap-2">
+                  {NAV_ITEMS.map((item) => {
+                    const Icon = iconMap[item.icon];
+                    if (item.href === "profile") {
+                      return (
+                        <Button
+                          key={item.label}
+                          variant="ghost"
+                          className="justify-start gap-3"
+                          disabled={!address}
+                          onClick={() =>
+                            address && router.push(`/profile/${address}`)
+                          }
+                        >
+                          <Icon className="size-5 text-primary" />
+                          {item.label}
+                        </Button>
+                      );
+                    }
+
+                    return (
+                      <Button
+                        key={item.label}
+                        variant="ghost"
+                        className="justify-start gap-3"
+                        asChild
+                      >
+                        <Link href={item.href}>
+                          <Icon className="size-5 text-primary" />
+                          {item.label}
+                        </Link>
+                      </Button>
+                    );
+                  })}
                 </nav>
               </SheetContent>
             </Sheet>
           </div>
-          <div className="lg:flex hidden items-center justify-end gap-4">
-            {/* <Button onClick={demoHandler}>Click Demo</Button> */}
 
+          <div className="hidden items-center justify-end gap-4 lg:flex">
+            <ThemeToggle />
             {!address ? (
-              <ConnectWallet
-                modalSize="compact"
-                // TODO: edit the position at style
-                // dropdownPosition={{
-                //   side: "bottom",
-                //   align: "start",
-                // }}
-                className="bg-[#2c9f41] cursor-pointer rounded-2xl p-2 w-full h-10 text-sm hover:opacity-90"
-                style={{
-                  backgroundColor: '#2c9f41',
-                  color: 'white',
-                }}
-              />
+              <ConnectButton chainStatus="icon" showBalance={false} />
             ) : (
-              <Button variant="destructive" onClick={useDisconnect}>
+              <Button variant="destructive" onClick={() => disconnect()}>
                 Disconnect
               </Button>
             )}
@@ -124,5 +122,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

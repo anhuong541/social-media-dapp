@@ -1,50 +1,79 @@
-import { useAddress } from "@thirdweb-dev/react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { PiNewspaper } from "react-icons/pi";
-import { BiImageAdd } from "react-icons/bi";
-import { HiOutlineStatusOnline } from "react-icons/hi";
-import { MdOutlineCurrencyBitcoin } from "react-icons/md";
-import { IoPersonOutline } from "react-icons/io5";
+"use client";
 
-import { Button } from "../ui/button";
-import { FaRegComments } from "react-icons/fa";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
+import { MessageCircle, Radio, User } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { NAV_ITEMS } from "@/constants/navigation";
+import { cn } from "@/lib/utils";
+
+const iconMap = {
+  radio: Radio,
+  "message-circle": MessageCircle,
+  user: User,
+} as const;
 
 export default function SideBar() {
   const router = useRouter();
-  const address = useAddress();
+  const pathname = usePathname();
+  const { address } = useAccount();
 
   return (
-    <nav className="bg-white px-2 py-3 lg:flex hidden flex-col gap-3 border-r">
-      <Link
-        href="/"
-        className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-      >
-        <HiOutlineStatusOnline className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Stream</span>
-      </Link>
-      <Link
-        href="/room"
-        className="flex items-center gap-3 rounded-lg hover:bg-green-200 p-3"
-      >
-        <FaRegComments className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Hi!</span>
-      </Link>
-      <button
-        onClick={() => router.push(`/profile/${address}`)}
-        disabled={!address}
-        className={`flex items-center gap-3 rounded-lg hover:bg-green-200 p-3 ${
-          !address ? "opacity-40" : ""
-        }`}
-      >
-        <IoPersonOutline className="h-6 w-6 text-green-700" />
-        <span className="font-medium text-gray-900">Feed History</span>
-      </button>
-      {/* <div>
-        <Button className="text-white dark:text-green-700" variant="default">
-          <BiImageAdd className="mr-2 h-6 w-6" /> Mint NFT Image
-        </Button>
-      </div> */}
+    <nav className="hidden flex-col gap-2 border-r bg-background px-2 py-3 lg:flex">
+      {NAV_ITEMS.map((item) => {
+        const Icon = iconMap[item.icon];
+        const href =
+          item.href === "profile"
+            ? address
+              ? `/profile/${address}`
+              : "#"
+            : item.href;
+        const isActive =
+          item.href === "/"
+            ? pathname === "/"
+            : item.href === "profile"
+              ? pathname.startsWith("/profile")
+              : pathname.startsWith(item.href);
+
+        if (item.href === "profile") {
+          return (
+            <Button
+              key={item.label}
+              variant="ghost"
+              className={cn(
+                "justify-start gap-3",
+                isActive && "bg-muted text-foreground"
+              )}
+              disabled={!address}
+              onClick={() => address && router.push(`/profile/${address}`)}
+            >
+              <Icon className="size-5 text-primary" />
+              {item.label}
+            </Button>
+          );
+        }
+
+        return (
+          <Button
+            key={item.label}
+            variant="ghost"
+            className={cn(
+              "justify-start gap-3",
+              isActive && "bg-muted text-foreground"
+            )}
+            asChild
+          >
+            <Link href={href}>
+              <Icon className="size-5 text-primary" />
+              {item.label}
+            </Link>
+          </Button>
+        );
+      })}
+      <Separator className="my-2" />
     </nav>
   );
 }

@@ -1,89 +1,107 @@
-import { useState } from "react";
-import Lottie from "lottie-react";
-import { useContract, useContractEvents } from "@thirdweb-dev/react";
+"use client";
 
-import { STATUS_CONTRACT_ADDRESS } from "../../../constants/addresses";
-import loadingLottie from "@/lib/loadingLottie.json";
+import { useState } from "react";
+
+import { FEED_PAGE_SIZE, SOCIAL_COPY } from "@/constants/social";
+import { isStatusContractConfigured } from "@/constants/addresses";
 import { filterStatusID } from "@/lib/utils";
+import { useStatusUpdatedEvents } from "@/hooks/useStatusUpdatedEvents";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import EventCardItem from "./eventCardItem";
-// import VirtualList from "@/components/Virtuallist";
 
 export default function StatusEvents() {
-  const [countFeed, setCountFeed] = useState(10);
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-  const {
-    data: statusEvents,
-    isLoading: isStatusEventsLoading,
-    refetch: refetchStatusEvent,
-  } = useContractEvents(contract, "StatusUpdated", {
-    subscribe: true,
-  });
+  const [countFeed, setCountFeed] = useState<number>(FEED_PAGE_SIZE);
+  const { events, isLoading, error } = useStatusUpdatedEvents();
 
-  // console.log({ statusEvents, isStatusEventsLoading });
-
-  if (isStatusEventsLoading || statusEvents == undefined) {
+  if (!isStatusContractConfigured) {
     return (
-      <div className="col-span-2 h-[90vh]">
-        <Lottie
-          animationData={loadingLottie}
-          loop={true}
-          className="w-24 h-24 mx-auto"
-        />
+      <div className="flex h-full items-center justify-center p-4">
+        <Alert className="max-w-md">
+          <AlertTitle>Status contract not configured</AlertTitle>
+          <AlertDescription>
+            Set NEXT_PUBLIC_STATUS_CONTRACT_ADDRESS after deploying SocialMedia
+            to Polygon Amoy.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
 
-  const filterListStatus = filterStatusID(statusEvents)
-    .slice(0, countFeed)
-    .sort((a: any, b: any) => {
-      const decimalA = parseInt(a.data.timestamp._hex, 16);
-      const decimalB = parseInt(b.data.timestamp._hex, 16);
-      return decimalB - decimalA;
-    });
+  if (isLoading) {
+    return (
+      <div className="flex h-full flex-col gap-3">
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertTitle>Failed to load feed</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  const filterListStatus = filterStatusID(events)
+    .slice()
+    .sort((a, b) => Number(b.timestamp - a.timestamp))
+    .slice(0, countFeed);
+
+  if (filterListStatus.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Card className="max-w-sm border-dashed shadow-none">
+          <CardHeader className="text-center">
+            <CardTitle className="text-base">
+              {SOCIAL_COPY.emptyFeedTitle}
+            </CardTitle>
+            <CardDescription>
+              {SOCIAL_COPY.emptyFeedDescription}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-3 overflow-y-auto h-[80vh] px-4 w-full app_scroll_bar">
-      {/* {!isStatusEventsLoading && statusEvents && (
-        <VirtualList
-          itemCount={filterListStatus?.length}
-          height={document.documentElement.clientHeight * 0.8}
-          width={400}
-        >
-          {filterListStatus.map((event: any, index: number) => (
-            <EventCardItem
-              key={index}
-              walletAddress={event.data.user}
-              newStatus={event.data.newStatus}
-              timeStamp={event.data.timestamp}
-              statusId={event.data.statusId}
-            />
-          ))}
-        </VirtualList>
-      )} */}
-
-      {!isStatusEventsLoading &&
-        statusEvents &&
-        filterListStatus.map((event: any, index: number) => (
+    <ScrollArea className="h-full w-full">
+      <div className="flex flex-col gap-3 pb-4">
+        {filterListStatus.map((event) => (
           <EventCardItem
-            key={index}
-            walletAddress={event.data.user}
-            newStatus={event.data.newStatus}
-            timeStamp={event.data.timestamp}
-            statusId={event.data.statusId}
+            key={`${event.user}-${event.statusId.toString()}-${event.transactionHash ?? ""}-${event.logIndex ?? 0}`}
+            walletAddress={event.user}
+            newStatus={event.newStatus}
+            timeStamp={event.timestamp}
+            statusId={event.statusId}
           />
-            ))}
+        ))}
 
-      {!isStatusEventsLoading &&
-        statusEvents &&
-        countFeed < statusEvents?.length && (
+        {countFeed < filterStatusID(events).length && (
           <Button
-            onClick={() => setCountFeed(() => countFeed + 10)}
-            className="h-10 opacity-70 hover:opacity-100"
+            onClick={() => setCountFeed((prev) => prev + FEED_PAGE_SIZE)}
+            variant="secondary"
+            className="w-full"
           >
-            more
+            {SOCIAL_COPY.loadMore}
           </Button>
         )}
-    </div>
+      </div>
+    </ScrollArea>
   );
 }

@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import numeral from "numeral";
-import TooltipDetail from "../TooltipDetail/TooltipDetail";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   formatCurrency,
   formatCurrencyV2,
@@ -18,7 +23,6 @@ interface Props {
 export default function TooltipNumber({ number, type = "balance" }: Props) {
   const [numberFormat, setNumberFormat] = useState<number | string>(0);
   const [numberSize, setNumberSize] = useState<string>("");
-  const [isShowTooltip, setIsShowTooltip] = useState<boolean>(false);
 
   useEffect(() => {
     const { number_format, number_size } = formatBigBalance(number);
@@ -34,50 +38,34 @@ export default function TooltipNumber({ number, type = "balance" }: Props) {
     );
   }
 
+  const compactLabel =
+    type === "amount" && number < 100000
+      ? numeral(number).format("0,0.000000") === "NaN"
+        ? number
+        : numeral(number).format("0,0.000000")
+      : `${
+          numeral(numberFormat).format("0,0.00") === "NaN"
+            ? numberFormat
+            : numeral(numberFormat).format("0,0.00")
+        }${numberSize}`;
+
+  if (
+    (numberSize && numberSize !== "K") ||
+    checkFormatBalance(number) === "NaN"
+  ) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="w-max cursor-default">{compactLabel}</span>
+        </TooltipTrigger>
+        <TooltipContent>{formatCurrency(number)}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <span className="w-max">
-      {(numberSize && numberSize !== "K") ||
-      checkFormatBalance(number) === "NaN" ? (
-        <span
-          onMouseOver={() => {
-            setIsShowTooltip(true);
-          }}
-          onMouseLeave={() => {
-            setIsShowTooltip(false);
-          }}
-          className="relative"
-        >
-          {type === "amount" && number < 100000 ? (
-            <span>
-              {numeral(number).format("0,0.000000") === "NaN"
-                ? number
-                : numeral(number).format("0,0.000000")}
-            </span>
-          ) : (
-            <span>
-              <span>
-                {numeral(numberFormat).format("0,0.00") === "NaN"
-                  ? numberFormat
-                  : numeral(numberFormat).format("0,0.00")}
-              </span>
-              <span>{numberSize}</span>
-            </span>
-          )}
-
-          {isShowTooltip && (
-            <div
-              className="absolute -left-[50%] -top-8"
-              style={{ zIndex: "2147483648" }}
-            >
-              <TooltipDetail text={formatCurrency(number)} />
-            </div>
-          )}
-        </span>
-      ) : (
-        <span>
-          {number > 1 ? formatCurrencyV2(number) : formatCurrency(number)}
-        </span>
-      )}
+      {number > 1 ? formatCurrencyV2(number) : formatCurrency(number)}
     </span>
   );
 }

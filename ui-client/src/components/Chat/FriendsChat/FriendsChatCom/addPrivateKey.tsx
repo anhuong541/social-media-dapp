@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { KeyRound, TriangleAlert } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -6,157 +11,171 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { IoWarning } from "react-icons/io5";
-
-import { Button } from "../../../ui/button";
-import { Input } from "../../../ui/input";
-import { useEffect, useState } from "react";
-
-import CopyAddress from "../../../copyAddress";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import CopyAddress from "@/components/copyAddress";
+import { CHAT_COPY } from "@/constants/chat";
+import { WALLET_ADDRESS_MIN_LENGTH } from "@/constants/app";
 import { shortenPrivateKey } from "@/lib/utils";
-import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { useChatKey } from "@/providers/ChatKeyProvider";
 
-export default function AddPrivateKey({ address }: any) {
-  const userPrivateKey = address && localStorage.getItem(address);
+export default function AddPrivateKey({ address }: { address: string }) {
+  const {
+    hasStoredKey,
+    isUnlocked,
+    privateKey,
+    isBusy,
+    error,
+    saveAndRegisterKey,
+    unlockKey,
+    lockKey,
+  } = useChatKey();
+
   const [privateKeyTyping, setPrivateKeyTyping] = useState("");
   const [password, setPassword] = useState("");
   const [reTypePassword, setReTypePassword] = useState("");
-  const [userStorePrivateKey, setUserStorePrivateKey] = useState(false);
-  const [passwordSuccess, setPasswordSuccess] = useState(false);
-  const [wrongPassword, setWrongPassword] = useState(false);
+  const [showUnlockedKey, setShowUnlockedKey] = useState(false);
 
-  const handleStoreUserPrivateKey = () => {
-    if (address) {
-      localStorage.setItem(
-        address,
-        encryptPrivateKey(privateKeyTyping, password)
-      );
-      localStorage.setItem("passs", encryptPrivateKey("123123", "123123"));
-      setUserStorePrivateKey(true);
+  const handleStoreUserPrivateKey = async () => {
+    const ok = await saveAndRegisterKey(privateKeyTyping, password);
+    if (ok) {
       setPrivateKeyTyping("");
       setPassword("");
       setReTypePassword("");
+      setShowUnlockedKey(true);
     }
   };
 
-  const onCheckingCorrectPassword = async () => {
-    if (address) {
-      const encryptedPrivateKey = localStorage.getItem(address);
-      if (encryptedPrivateKey) {
-        const decrypted = decryptPrivateKey(encryptedPrivateKey, password);
-        if (decrypted[0].status == "success") {
-          setPasswordSuccess(true);
-          setPrivateKeyTyping(decrypted[0].message);
-          setPassword("");
-        } else {
-          setWrongPassword(true);
-          setPassword("");
-        }
-      }
+  const onUnlock = async () => {
+    const ok = await unlockKey(password);
+    if (ok) {
+      setPassword("");
+      setShowUnlockedKey(true);
     }
   };
-
-  useEffect(() => {
-    if (address) {
-      const userStorePrivateKey = localStorage.getItem(address);
-      if (userStorePrivateKey) {
-        setUserStorePrivateKey(true);
-      } else {
-        setUserStorePrivateKey(false);
-      }
-    }
-  }, [address]);
-
-  // vẫn cần code tạo private key nếu chưa có nữa
-  // detect xem người dùng đã có private key từ trước hay chưa
 
   return (
-    <div className="flex flex-col gap-2 justify-between items-center py-3 px-4 border-b text-sm font-medium">
-      <Dialog>
-        <DialogTrigger>
-          <Button>See Your Private Key</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              You didn&apos;t have your private key yet!
-            </DialogTitle>
-            <DialogDescription className="text-yellow-400 flex items-center gap-2">
-              <IoWarning /> Type your private key
-            </DialogDescription>
-          </DialogHeader>
-          {!userStorePrivateKey && !userPrivateKey ? (
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <h5>PrivateKey:</h5>
-                <Input
-                  value={privateKeyTyping}
-                  onChange={(e) => setPrivateKeyTyping(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <h5>Your Password:</h5>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <h5>Retyping Your Password:</h5>
-                <Input
-                  type="password"
-                  value={reTypePassword}
-                  onChange={(e) => setReTypePassword(e.target.value)}
-                />
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-1.5">
+          <KeyRound className="size-3.5" />
+          {CHAT_COPY.privateKeyAction}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{CHAT_COPY.privateKeyDialogTitle}</DialogTitle>
+          <DialogDescription className="flex items-center gap-2">
+            <TriangleAlert className="size-4 text-amber-500" />
+            {CHAT_COPY.privateKeyMissingDescription}
+          </DialogDescription>
+        </DialogHeader>
 
-                {password !== reTypePassword && (
-                  <p className="text-red-500">
-                    Two password are not the same!!!
-                  </p>
-                )}
-              </div>
-              <Button
-                variant={
-                  password !== reTypePassword || privateKeyTyping.length < 24
-                    ? "ghost"
-                    : "default"
-                }
-                onClick={handleStoreUserPrivateKey}
-                disabled={
-                  password !== reTypePassword || privateKeyTyping.length < 24
-                }
-              >
-                Submit your Key for Chatting
-              </Button>
-            </div>
-          ) : passwordSuccess ? (
-            <div className="flex flex-col gap-1">
-              <h5>Your Private Key is: </h5>
-              <div className="flex items-center gap-2 relative">
-                <p>{shortenPrivateKey(privateKeyTyping)}</p>
-                <CopyAddress textToCopy={privateKeyTyping} />
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {!hasStoredKey ? (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="chat-private-key">Private key</Label>
               <Input
+                id="chat-private-key"
+                value={privateKeyTyping}
+                onChange={(e) => setPrivateKeyTyping(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="chat-password">Password</Label>
+              <Input
+                id="chat-password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {wrongPassword && (
-                <p className="text-red-500 text-sm">Typing Wrong Password</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="chat-password-confirm">Confirm password</Label>
+              <Input
+                id="chat-password-confirm"
+                type="password"
+                value={reTypePassword}
+                onChange={(e) => setReTypePassword(e.target.value)}
+              />
+              {password !== reTypePassword && (
+                <Alert variant="destructive">
+                  <AlertDescription>Passwords do not match.</AlertDescription>
+                </Alert>
               )}
-              <Button
-                onClick={onCheckingCorrectPassword}
-                disabled={password.length <= 0}
-              >
-                Type Your Password to see your Private Key
+            </div>
+            <Button
+              onClick={() => void handleStoreUserPrivateKey()}
+              disabled={
+                isBusy ||
+                password !== reTypePassword ||
+                privateKeyTyping.length < WALLET_ADDRESS_MIN_LENGTH ||
+                password.length <= 0
+              }
+            >
+              Save key for chatting
+            </Button>
+          </div>
+        ) : isUnlocked && showUnlockedKey && privateKey ? (
+          <div className="flex flex-col gap-3">
+            <Alert>
+              <AlertDescription>{CHAT_COPY.privateKeyUnlocked}</AlertDescription>
+            </Alert>
+            <div className="flex flex-col gap-2">
+              <Label>Your private key</Label>
+              <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2">
+                <p className="font-mono text-sm">
+                  {shortenPrivateKey(privateKey)}
+                </p>
+                <CopyAddress textToCopy={privateKey} />
+              </div>
+            </div>
+            <Button variant="outline" onClick={lockKey}>
+              Lock key
+            </Button>
+          </div>
+        ) : isUnlocked ? (
+          <div className="flex flex-col gap-3">
+            <Alert>
+              <AlertDescription>{CHAT_COPY.privateKeyUnlocked}</AlertDescription>
+            </Alert>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setShowUnlockedKey(true)}>
+                Reveal key
+              </Button>
+              <Button variant="outline" onClick={lockKey}>
+                Lock key
               </Button>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="unlock-password">Password</Label>
+              <Input
+                id="unlock-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button
+              onClick={() => void onUnlock()}
+              disabled={isBusy || password.length <= 0 || !address}
+            >
+              Unlock private key
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

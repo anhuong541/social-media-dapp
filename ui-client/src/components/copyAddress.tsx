@@ -1,6 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { MdContentCopy } from "react-icons/md";
-import { FaCheck } from "react-icons/fa6";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Check, Copy } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CopyProps {
   textToCopy: string;
@@ -8,35 +16,42 @@ interface CopyProps {
 
 export default function CopyAddress({ textToCopy }: CopyProps) {
   const [copySuccess, setCopySuccess] = useState(false);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const copyToClipboard = () => {
-    setCopySuccess(true);
-    if (textAreaRef.current) {
-      textAreaRef.current.select();
-      document.execCommand("copy");
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopySuccess(true);
+    } catch {
+      setCopySuccess(false);
     }
   };
 
   useEffect(() => {
-    if (copySuccess) {
-      setTimeout(() => {
-        setCopySuccess(false);
-      }, 3000);
-    }
+    if (!copySuccess) return;
+    const timer = setTimeout(() => setCopySuccess(false), 3000);
+    return () => clearTimeout(timer);
   }, [copySuccess]);
 
   return (
-    <div className="flex items-center">
-      <textarea
-        ref={textAreaRef}
-        value={textToCopy}
-        style={{ position: "absolute", left: "-9999px" }}
-        readOnly
-      />
-      <button onClick={copyToClipboard}>
-        {copySuccess ? <FaCheck /> : <MdContentCopy />}
-      </button>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          onClick={copyToClipboard}
+          aria-label="Copy address"
+        >
+          {copySuccess ? (
+            <Check className="size-3.5 text-primary" />
+          ) : (
+            <Copy className="size-3.5" />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        {copySuccess ? "Copied" : "Copy address"}
+      </TooltipContent>
+    </Tooltip>
   );
 }

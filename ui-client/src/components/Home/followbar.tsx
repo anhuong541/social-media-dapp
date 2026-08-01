@@ -1,40 +1,41 @@
+"use client";
+
 import Link from "next/link";
 
-import { badgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { HASHTAG_ITEMS } from "@/constants/navigation";
+import { SOCIAL_COPY } from "@/constants/social";
 import Footer from "../layouts/footer";
-
-const hashtagItems = [
-  { title: "graduation thesis" },
-  { title: "web3" },
-  { title: "Nimbus" },
-  { title: "vku university" },
-  { title: "daihoc" },
-  // { title: "Viet Han" },
-
-  { title: "VKU" },
-];
 
 export default function FollowBar() {
   return (
-    <div className="pt-4 lg:flex hidden flex-col justify-between">
-      <div className="bg-white p-4 rounded-lg space-y-2">
-        <h2 className="text-lg font-semibold">Trending 🔥</h2>
-        <div className="flex flex-wrap gap-2">
-          {hashtagItems.map((item, index) => {
-            return (
-              <Link
-                key={index}
-                href="/"
-                className={`${badgeVariants({ variant: "outline" })} shrink`}
-              >
+    <div className="flex h-full min-h-0 w-full flex-col justify-between gap-4 overflow-hidden px-4 py-4">
+      <Card className="shadow-xs">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">{SOCIAL_COPY.trendingTitle}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {HASHTAG_ITEMS.map((item) => (
+            <Link key={item.title} href="/">
+              <Badge variant="outline" className="font-normal">
                 #{item.title}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+              </Badge>
+            </Link>
+          ))}
+        </CardContent>
+      </Card>
 
-      <Footer />
+      <div>
+        <Separator className="mb-2" />
+        <Footer />
+      </div>
     </div>
   );
 }

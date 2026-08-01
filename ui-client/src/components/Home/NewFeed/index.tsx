@@ -1,11 +1,15 @@
+"use client";
+
 import StatusEvents from "./statusEvent";
 import UserStatus from "./userStatus";
 
 export default function NewsFeed() {
   return (
-    <div className="flex-grow py-4 lg:col-span-2 col-span-3 space-y-4">
+    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden px-4 py-4">
       <UserStatus />
-      <StatusEvents />
+      <div className="min-h-0 flex-1">
+        <StatusEvents />
+      </div>
     </div>
   );
 }
