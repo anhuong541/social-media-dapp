@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useAccount } from "wagmi";
-import { MessageSquarePlus, Users } from "lucide-react";
+import Link from 'next/link'
+import { useAccount } from 'wagmi'
+import { MessageSquarePlus, Users } from 'lucide-react'
 
 import {
   Sheet,
@@ -10,44 +10,44 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import CopyAddress from "@/components/copyAddress";
-import { DirectWalletType, UNSELECTED_WALLET } from "@/constants/navigation";
-import { CHAT_COPY } from "@/constants/chat";
-import { truncateAddress } from "@/lib/utils";
-import { MessageContent, SendMessage } from "./ChatFeedCom";
-import FriendsChat from "../FriendsChat";
-import { WalletAvatar } from "../wallet-avatar";
+} from '@/components/ui/card'
+import CopyAddress from '@/components/copyAddress'
+import { DirectWalletType, UNSELECTED_WALLET } from '@/constants/navigation'
+import { CHAT_COPY } from '@/constants/chat'
+import { truncateAddress } from '@/lib/utils'
+import { MessageContent, SendMessage } from './ChatFeedCom'
+import FriendsChat from '../FriendsChat'
+import { WalletAvatar } from '../wallet-avatar'
 
 export type chatFeedsFormatType = {
-  sender: string;
-  receiver: string;
+  sender: string
+  receiver: string
   timestamp: {
-    type: number;
-    _hex: string;
-  };
-  message1: string;
-  message2: string;
-  dataIndex: number;
-};
+    type: number
+    _hex: string
+  }
+  message1: string
+  message2: string
+  dataIndex: number
+}
 
 export default function ChatFeed({
   directWallet,
   onChangeAddress,
 }: {
-  directWallet: DirectWalletType;
-  onChangeAddress: (value: string) => void;
+  directWallet: DirectWalletType
+  onChangeAddress: (value: string) => void
 }) {
-  const { address } = useAccount();
-  const hasConversation = directWallet !== UNSELECTED_WALLET;
+  const { address } = useAccount()
+  const hasConversation = directWallet !== UNSELECTED_WALLET
 
   const friendsSheet = (
     <Sheet>
@@ -73,7 +73,7 @@ export default function ChatFeed({
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 
   if (!hasConversation) {
     return (
@@ -88,8 +88,8 @@ export default function ChatFeed({
           {friendsSheet}
         </div>
         <div className="flex flex-1 items-center justify-center p-6">
-          <Card className="max-w-md border-dashed shadow-none">
-            <CardHeader className="items-center text-center">
+          <Card className="w-full max-w-md border-dashed shadow-none">
+            <CardHeader className="flex flex-col items-center text-center">
               <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <MessageSquarePlus className="size-6" />
               </div>
@@ -103,7 +103,7 @@ export default function ChatFeed({
           </Card>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,5 +138,5 @@ export default function ChatFeed({
         <SendMessage address={address} directWallet={directWallet} />
       </div>
     </div>
-  );
+  )
 }

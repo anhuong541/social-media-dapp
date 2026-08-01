@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { AtSign, ExternalLink, Globe, Share2 } from "lucide-react";
+import Link from 'next/link'
+import { AtSign, ExternalLink, Globe, Share2 } from 'lucide-react'
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { FOOTER_LINKS, SOCIAL_LINKS } from "@/constants/navigation";
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { FOOTER_LINKS, SOCIAL_LINKS } from '@/constants/navigation'
 
 const socialIconMap = {
   github: ExternalLink,
@@ -11,12 +11,12 @@ const socialIconMap = {
   facebook: Globe,
   linkedin: Share2,
   react: Globe,
-} as const;
+} as const
 
 export default function Footer() {
   return (
     <footer>
-      <div className="mx-auto h-full max-w-screen-xl">
+      <div className="mx-auto h-full">
         <Separator />
         <div className="mx-auto flex w-full flex-col items-center justify-center gap-4 px-3 py-4">
           <ul className="flex items-center gap-8 text-sm">
@@ -35,7 +35,7 @@ export default function Footer() {
             {SOCIAL_LINKS.map((item) => {
               const Icon =
                 socialIconMap[item.icon as keyof typeof socialIconMap] ??
-                ExternalLink;
+                ExternalLink
               return (
                 <li key={item.label}>
                   <Button variant="ghost" size="icon" asChild>
@@ -49,11 +49,11 @@ export default function Footer() {
                     </Link>
                   </Button>
                 </li>
-              );
+              )
             })}
           </ul>
         </div>
       </div>
     </footer>
-  );
+  )
 }
