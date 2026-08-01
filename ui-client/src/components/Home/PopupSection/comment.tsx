@@ -1,12 +1,13 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  Web3Button,
-  useAddress,
-  useContract,
-  useContractRead,
-} from "@thirdweb-dev/react";
-import Lottie from "lottie-react";
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 
 import {
   DialogContent,
@@ -14,18 +15,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import loadingLottie from "@/lib/loadingLottie.json";
-import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
-import { formatHexToDecimal, truncateAddress } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
+import { SOCIAL_COPY } from "@/constants/social";
+import { statusContractAbi } from "@/abi/statusContract";
+import { truncateAddress } from "@/lib/utils";
+import { WalletAvatar } from "@/components/Chat/wallet-avatar";
 
 type CommentType = {
   status: string;
   walletAddress: string;
-  statusId: {
-    type: string;
-    _hex: string;
-  };
+  statusId: bigint;
 };
 
 export default function CommentSection({
@@ -33,89 +44,126 @@ export default function CommentSection({
   walletAddress,
   statusId,
 }: CommentType) {
-  const address = useAddress();
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-  const statusIdDeciaml = formatHexToDecimal(statusId._hex);
+  const { address } = useAccount();
   const [comment, setComment] = useState("");
 
-  const { data: myCommenst, isLoading: isStatusCommentLoading } =
-    useContractRead(contract, "getComments", [statusIdDeciaml, walletAddress]);
+  const {
+    data: comments,
+    isLoading: isStatusCommentLoading,
+    refetch,
+  } = useReadContract({
+    address: STATUS_CONTRACT_ADDRESS,
+    abi: statusContractAbi,
+    functionName: "getComments",
+    args: [statusId, walletAddress as `0x${string}`],
+  });
+
+  const { writeContractAsync, data: hash, isPending, reset } =
+    useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  useEffect(() => {
+    if (!isSuccess) return;
+    setComment("");
+    void refetch();
+    reset();
+  }, [isSuccess, refetch, reset]);
+
+  const submitComment = async () => {
+    if (!comment.trim()) return;
+    try {
+      await writeContractAsync({
+        address: STATUS_CONTRACT_ADDRESS,
+        abi: statusContractAbi,
+        functionName: "addComment",
+        args: [walletAddress as `0x${string}`, statusId, comment.trim()],
+      });
+    } catch (err) {
+      console.error("addComment failed", err);
+    }
+  };
 
   if (isStatusCommentLoading) {
     return (
       <DialogContent>
-        <Lottie
-          animationData={loadingLottie}
-          loop={true}
-          className="w-24 h-24 mx-auto"
-        />
+        <div className="flex flex-col gap-3 py-2">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
       </DialogContent>
     );
   }
 
-  return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle className="text-sm">
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/profile/${walletAddress}`}
-              className="hover:underline"
-            >
-              {truncateAddress(walletAddress)}
-            </Link>
-          </div>
-        </DialogTitle>
-        <DialogDescription>{status}</DialogDescription>
-        {!address ? (
-          <div className="text-red-500">
-            You did not connected your wallet yet!
-          </div>
-        ) : (
-          <div>
-            <div className="flex flex-col gap-2 border-t py-2">
-              <h4 className="font-medium">Comments:</h4>
+  const list = (comments as string[] | undefined) ?? [];
 
-              <div className="flex flex-col gap-4 border py-2 px-4 rounded-lg h-[50vh] overflow-y-auto">
-                {myCommenst.map((item: string, index: number) => {
-                  return <div key={index}>{item}</div>;
-                })}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input
-                className="flex-grow"
-                placeholder="say something!!"
-                value={comment}
-                onChange={(e) => {
-                  setComment(e.target.value);
-                }}
-              />
-              <Web3Button
-                className="cursor-pointer rounded-xl text-sm hover:opacity-80"
-                style={{
-                  backgroundColor: "#2c9f41",
-                  color: "white",
-                  height: "0px",
-                }}
-                contractAddress={STATUS_CONTRACT_ADDRESS}
-                action={(contract) =>
-                  contract.call("addComment", [
-                    walletAddress,
-                    statusIdDeciaml,
-                    comment,
-                  ])
-                }
-                onSuccess={() => {
-                  setComment("");
-                }}
-              >
-                Add Comment
-              </Web3Button>
-            </div>
-          </div>
-        )}
+  return (
+    <DialogContent className="sm:max-w-lg">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-sm">
+          <WalletAvatar address={walletAddress} size="sm" />
+          <Link href={`/profile/${walletAddress}`} className="hover:underline">
+            {truncateAddress(walletAddress)}
+          </Link>
+        </DialogTitle>
+        <DialogDescription className="line-clamp-3 text-left">
+          {status}
+        </DialogDescription>
       </DialogHeader>
+
+      {!address ? (
+        <Alert variant="destructive">
+          <AlertDescription>
+            {SOCIAL_COPY.walletRequiredDescription}
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <div className="flex flex-col gap-3">
+          <Separator />
+          <h4 className="text-sm font-medium">{SOCIAL_COPY.commentsTitle}</h4>
+          <ScrollArea className="h-[40vh] rounded-lg border">
+            <div className="flex flex-col gap-3 p-3">
+              {list.length === 0 ? (
+                <Card className="border-dashed shadow-none">
+                  <CardHeader className="py-4">
+                    <CardTitle className="text-sm">
+                      {SOCIAL_COPY.noCommentsTitle}
+                    </CardTitle>
+                    <CardDescription>
+                      {SOCIAL_COPY.noCommentsDescription}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              ) : (
+                list.map((item, index) => (
+                  <div
+                    key={`${item}-${index}`}
+                    className="rounded-xl bg-muted/50 px-3 py-2.5 text-sm leading-relaxed"
+                  >
+                    {item}
+                  </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+          <div className="flex items-center gap-2">
+            <Input
+              className="flex-1"
+              placeholder={SOCIAL_COPY.commentPlaceholder}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <Button
+              disabled={isPending || isConfirming || !comment.trim()}
+              onClick={() => void submitComment()}
+            >
+              {isPending || isConfirming ? "..." : SOCIAL_COPY.addComment}
+            </Button>
+          </div>
+        </div>
+      )}
     </DialogContent>
   );
 }

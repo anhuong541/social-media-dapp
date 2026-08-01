@@ -1,82 +1,96 @@
-import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
+"use client";
+
+import { useEffect, useState } from "react";
 import {
-  Dialog,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
+import { parseEther } from "viem";
+
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
+import { TIP_TOKEN_SYMBOL } from "@/constants/app";
+import { SOCIAL_COPY, TIP_AMOUNT_STEP } from "@/constants/social";
+import { statusContractAbi } from "@/abi/statusContract";
+import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Web3Button } from "@thirdweb-dev/react";
-import { ethers } from "ethers";
-import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { truncateAddress } from "@/lib/utils";
 
 type TipsType = {
   status: string;
   walletAddress: string;
-  statusId: {
-    type: string;
-    _hex: string;
-  };
+  statusId: bigint;
 };
 
-export default function TipsSection({
-  status,
-  walletAddress,
-  statusId,
-}: TipsType) {
+export default function TipsSection({ walletAddress }: TipsType) {
   const [tip, setTip] = useState(0.0);
+  const { writeContractAsync, data: hash, isPending, reset } =
+    useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  });
 
-  // console.log(tip);
+  useEffect(() => {
+    if (isSuccess) {
+      setTip(0.0);
+      reset();
+    }
+  }, [isSuccess, reset]);
+
+  const sendTip = async () => {
+    if (!tip || tip <= 0) return;
+    try {
+      await writeContractAsync({
+        address: STATUS_CONTRACT_ADDRESS,
+        abi: statusContractAbi,
+        functionName: "tipUser",
+        args: [walletAddress as `0x${string}`],
+        value: parseEther(tip.toString()),
+      });
+    } catch (err) {
+      console.error("tipUser failed", err);
+    }
+  };
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle className="text-sm font-medium">
-          Tip {walletAddress}
-        </DialogTitle>
-        {/* <DialogDescription>
-          This action cannot be undone. This will permanently delete your
-          account and remove your data from our servers.
-        </DialogDescription> */}
+        <DialogTitle>{SOCIAL_COPY.tipDialogTitle}</DialogTitle>
+        <DialogDescription>
+          {SOCIAL_COPY.tipDialogDescription} ({truncateAddress(walletAddress)})
+        </DialogDescription>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 pt-4">
-        <div>
+      <div className="flex flex-col gap-4 pt-1">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="tip-amount">
+            {SOCIAL_COPY.tipAmountLabel} ({TIP_TOKEN_SYMBOL})
+          </Label>
           <Input
-            value={tip}
+            id="tip-amount"
+            value={Number.isNaN(tip) ? "" : tip}
             onChange={(e) => {
               setTip(parseFloat(e.target.value));
             }}
             type="number"
-            placeholder="!!!!"
-            step="0.01"
+            placeholder={SOCIAL_COPY.tipAmountPlaceholder}
+            step={TIP_AMOUNT_STEP}
+            min={0}
           />
         </div>
-        <div className="flex justify-end items-center gap-2">
-          <Web3Button
-            className="bg-[#2c9f41] cursor-pointer rounded-xl p-2 w-full h-10 text-sm hover:opacity-80"
-            style={{
-              backgroundColor: "#2c9f41",
-              color: "white",
-              height: "0px",
-            }}
-            contractAddress={STATUS_CONTRACT_ADDRESS}
-            action={(contract) => {
-              // Convert tip amount to wei
-              const tipInWei = ethers.utils.parseEther(tip.toString());
-              contract.call("tipUser", [walletAddress], {
-                value: tipInWei,
-              });
-            }}
-            onSuccess={() => {
-              setTip(0.0);
-            }}
-          >
-            Post
-          </Web3Button>
-        </div>
+        <Button
+          className="w-full"
+          disabled={isPending || isConfirming || !tip || tip <= 0}
+          onClick={() => void sendTip()}
+        >
+          {isPending || isConfirming ? "Sending..." : SOCIAL_COPY.sendTip}
+        </Button>
       </div>
     </DialogContent>
   );

@@ -1,67 +1,86 @@
-import { useState } from "react";
-import { ReloadIcon } from "@radix-ui/react-icons";
+"use client";
 
-import { Input } from "../../../ui/input";
-import { useAddress, useContract, useContractWrite } from "@thirdweb-dev/react";
-import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
-import { Button } from "../../../ui/button";
-import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
-import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
+import { useState } from "react";
+import { Loader2, UserPlus } from "lucide-react";
+import { useMutation } from "convex/react";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { api } from "@/lib/convexApi";
+import { CHAT_COPY, WALLET_ADDRESS_MIN_LENGTH } from "@/constants/chat";
+import { isConvexConfigured } from "@/constants/convex";
+import { useChatKey } from "@/providers/ChatKeyProvider";
 
 export default function AddFriend() {
-  const address = useAddress();
-  const encryptedPrivateKey = localStorage.getItem(address!);
-  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
-  const [typeAddress, setTypeAddress] = useState<string>("");
+  const { walletAddress, isUnlocked } = useChatKey();
+  const [typeAddress, setTypeAddress] = useState("");
   const [isError, setIsError] = useState(false);
-  const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
+  const [errorMessage, setErrorMessage] = useState<string>(CHAT_COPY.requestFailed);
+  const [isLoading, setIsLoading] = useState(false);
+  const sendRequest = useMutation(api.chatRequests.sendRequest);
 
-  const { mutateAsync: sendChatRequest, isLoading: isLoadingChatRequest } =
-    useContractWrite(contract, "sendChatRequest");
-
-  const callChatRequestt = async () => {
-    try {
-      if (userPrivateKey[0].status === "success") {
-        const publicKey = getPublicKeyByPrivate(userPrivateKey[0].message);
-        const data = await sendChatRequest({
-          args: [typeAddress, publicKey],
-        });
-        setIsError(false);
-      }
-      // console.info("contract call successs", data);
-    } catch (err) {
-      console.error("contract call failure", err);
+  const callChatRequest = async () => {
+    if (!isConvexConfigured) {
       setIsError(true);
+      setErrorMessage(CHAT_COPY.convexMissingDescription);
+      return;
+    }
+    if (!walletAddress || !isUnlocked) {
+      setIsError(true);
+      setErrorMessage(CHAT_COPY.unlockRequired);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await sendRequest({
+        fromWallet: walletAddress,
+        toWallet: typeAddress.trim(),
+      });
+      setIsError(false);
+    } catch (err) {
+      console.error("chat request failure", err);
+      setIsError(true);
+      setErrorMessage(
+        err instanceof Error ? err.message : CHAT_COPY.requestFailed
+      );
     } finally {
       setTypeAddress("");
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col gap-2 justify-between items-center py-3 px-4 border-b text-sm font-medium">
-      <Input
-        value={typeAddress}
-        onChange={(e) => {
-          setTypeAddress(e.target.value);
-        }}
-        placeholder="Type address!!"
-        disabled={isLoadingChatRequest}
-      />
-      <Button
-        onClick={callChatRequestt}
-        className="text-white"
-        disabled={typeAddress.length < 24 || isLoadingChatRequest}
-      >
-        {!isLoadingChatRequest ? (
-          "Send Chat Request"
-        ) : (
-          <ReloadIcon className="animate-spin" />
-        )}
-      </Button>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Input
+          value={typeAddress}
+          onChange={(e) => setTypeAddress(e.target.value)}
+          placeholder={CHAT_COPY.addFriendPlaceholder}
+          disabled={isLoading}
+          className="h-9"
+        />
+        <Button
+          size="sm"
+          onClick={() => void callChatRequest()}
+          disabled={
+            typeAddress.trim().length < WALLET_ADDRESS_MIN_LENGTH || isLoading
+          }
+          className="shrink-0 gap-1.5"
+        >
+          {isLoading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <UserPlus className="size-4" />
+          )}
+          {CHAT_COPY.sendRequest}
+        </Button>
+      </div>
       {isError && (
-        <div className="text-red-500 text-xs">
-          Something wrong happen or you already sentDM
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
       )}
     </div>
   );

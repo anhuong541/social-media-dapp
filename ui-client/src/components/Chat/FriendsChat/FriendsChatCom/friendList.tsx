@@ -1,17 +1,26 @@
-import { FaCheck } from "react-icons/fa6";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import {
-  useContract,
-  useContractEvents,
-  useContractWrite,
-} from "@thirdweb-dev/react";
-import Lottie from "lottie-react";
+"use client";
+
+import { Check, X } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
 
 import { truncateAddress } from "@/lib/utils";
-import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
-import { decryptPrivateKey } from "@/lib/enCodePrivateKey";
-import { CHAT_CONTRACT_ADDRESS } from "../../../../constants/addresses";
-import loadingLottie from "@/lib/loadingLottie.json";
+import { CHAT_COPY } from "@/constants/chat";
+import { isConvexConfigured } from "@/constants/convex";
+import { api } from "@/lib/convexApi";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { walletsEqual } from "@/lib/wallet";
+import { useChatKey } from "@/providers/ChatKeyProvider";
+import { WalletAvatar } from "../../wallet-avatar";
 import { FriendsChatType } from "..";
 
 export default function FriendList({
@@ -21,181 +30,187 @@ export default function FriendList({
   props: FriendsChatType;
   address: string;
 }) {
-  const encryptedPrivateKey = address && localStorage.getItem(address);
-  const userPrivateKey = decryptPrivateKey(encryptedPrivateKey!, "123123");
+  const { isUnlocked } = useChatKey();
+  const friends = useQuery(
+    api.chatRequests.listFriends,
+    isConvexConfigured && address ? { walletAddress: address } : "skip"
+  );
+  const pending = useQuery(
+    api.chatRequests.listPendingForWallet,
+    isConvexConfigured && address ? { walletAddress: address } : "skip"
+  );
+  const acceptRequest = useMutation(api.chatRequests.acceptRequest);
+  const rejectRequest = useMutation(api.chatRequests.rejectRequest);
 
-  const { contract } = useContract(CHAT_CONTRACT_ADDRESS);
-  // You can get a specific event
-  const { data: eventChatRequestSent, isLoading: isLoadingChatRequestSent } =
-    useContractEvents(contract, "ChatRequestSent");
-
-  // You can get a specific event
-  const {
-    data: eventChatRequestAccepted,
-    isLoading: isLoadingChatRequestAccepted,
-  } = useContractEvents(contract, "ChatRequestAccepted");
-
-  const {
-    mutateAsync: acceptChatRequest,
-    isLoading: isLoadingAcceptChatRequest,
-  } = useContractWrite(contract, "acceptChatRequest");
-
-  const callAcceptChatRequest = async (sender: string) => {
+  const callAccept = async (requestId: string) => {
     try {
-      if (userPrivateKey[0].status === "success") {
-        const publicKey = getPublicKeyByPrivate(userPrivateKey[0].message);
-        const data = await acceptChatRequest({ args: [sender, publicKey] });
-        console.info("contract call successs", data);
-      }
+      await acceptRequest({
+        requestId: requestId as never,
+        toWallet: address,
+      });
     } catch (err) {
-      console.error("contract call failure", err);
+      console.error("accept request failure", err);
     }
   };
 
-  if (isLoadingChatRequestSent || isLoadingChatRequestAccepted) {
+  const callReject = async (requestId: string) => {
+    try {
+      await rejectRequest({
+        requestId: requestId as never,
+        toWallet: address,
+      });
+    } catch (err) {
+      console.error("reject request failure", err);
+    }
+  };
+
+  if (!isConvexConfigured) {
     return (
-      <Lottie
-        animationData={loadingLottie}
-        loop={true}
-        className="w-24 h-24 mx-auto"
-      />
+      <div className="p-4">
+        <Alert>
+          <AlertTitle>{CHAT_COPY.convexMissingTitle}</AlertTitle>
+          <AlertDescription>
+            {CHAT_COPY.convexMissingDescription}
+          </AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
-  const friendListItems: any =
-    !isLoadingChatRequestAccepted &&
-    eventChatRequestAccepted &&
-    eventChatRequestAccepted
-      .map((item) => item?.data)
-      .map((data) => {
-        if (data.sender === address) {
-          return { address: data.receiver };
-        } else if (data.receiver === address) {
-          return { address: data.sender };
-        }
-        return { address: undefined };
-      })
-      .filter((item) => item?.address !== undefined);
+  if (friends === undefined || pending === undefined) {
+    return (
+      <div className="flex flex-col gap-2 p-3">
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <Skeleton className="h-14 w-full rounded-xl" />
+      </div>
+    );
+  }
 
-  const friendRequestListItem =
-    !isLoadingChatRequestSent &&
-    eventChatRequestSent &&
-    eventChatRequestSent
-      .map((item) => item?.data)
-      .filter((data) => data.receiver === address)
-      .map((data) => {
-        let addressIsAlreadyAdded = false;
-        for (let i = 0; i < friendListItems.length; i++) {
-          if (friendListItems[i].address === data.sender) {
-            addressIsAlreadyAdded = true;
-          }
-        }
-        if (!addressIsAlreadyAdded) {
-          return { address: data.sender };
-        }
-      })
-      .filter((item) => item?.address !== undefined);
-
-  // const formateventChatRequestSent = eventChatRequestSent
-  //   ?.map((item) => item.data)
-  //   .filter((data) => data.receiver === address)
-  //   .map((data) => {
-  //     let addressIsAlreadyAdded = false;
-  //     for (let i = 0; i < friendListItems.length; i++) {
-  //       if (friendListItems[i].address === data.sender) {
-  //         addressIsAlreadyAdded = true;
-  //       }
-  //     }
-  //     if (!addressIsAlreadyAdded) {
-  //       return { address: data.sender };
-  //     }
-  //   });
-
-  // console.log({
-  //   friendRequestListItem,
-  //   friendListItems,
-  //   // formateventChatRequestSent,
-  // });
+  if (!isUnlocked) {
+    return (
+      <div className="p-4">
+        <Alert>
+          <AlertDescription>
+            {CHAT_COPY.privateKeyRequiredDescription}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col py-2 gap-4">
-      {!isLoadingChatRequestAccepted &&
-        !isLoadingChatRequestSent &&
-        eventChatRequestAccepted &&
-        eventChatRequestSent &&
-        friendRequestListItem!.length > 0 &&
-        userPrivateKey[0].status === "success" && (
-          <div className="flex flex-col gap-2 px-1">
-            <h2 className="font-medium text-sm px-3">
-              You have {friendRequestListItem?.length} chat request
+    <div className="flex flex-col gap-5 py-3">
+      {pending.length > 0 && (
+        <section className="px-3">
+          <div className="mb-2 flex items-center justify-between px-1">
+            <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              {CHAT_COPY.requestsTitle}
             </h2>
-            {friendRequestListItem?.map((item: any, index: number) => {
+            <Badge variant="secondary">{pending.length}</Badge>
+          </div>
+          <div className="flex flex-col gap-2">
+            {pending.map((item: { _id: string; fromWallet: string }) => (
+              <div
+                key={item._id}
+                className="flex items-center justify-between gap-2 rounded-xl border bg-card px-3 py-2.5"
+              >
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <WalletAvatar address={item.fromWallet} />
+                  <p className="truncate text-sm font-medium">
+                    {truncateAddress(item.fromWallet)}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <Button
+                    size="icon-sm"
+                    variant="default"
+                    className="rounded-full"
+                    onClick={() => void callAccept(item._id)}
+                    aria-label="Accept chat request"
+                  >
+                    <Check className="size-4" />
+                  </Button>
+                  <Button
+                    size="icon-sm"
+                    variant="outline"
+                    className="rounded-full"
+                    onClick={() => void callReject(item._id)}
+                    aria-label="Reject chat request"
+                  >
+                    <X className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="px-2">
+        <h2 className="mb-2 px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          {CHAT_COPY.friendsTitle}
+        </h2>
+        {friends.length > 0 ? (
+          <div className="flex flex-col gap-1">
+            {friends.map((friendWallet: string) => {
+              const selected = walletsEqual(
+                props?.addressSelected,
+                friendWallet
+              );
               return (
-                <div
-                  className="flex items-center justify-between gap-2 px-3 py-4 rounded-lg bg-green-600 text-white"
-                  key={index}
+                <button
+                  type="button"
+                  key={friendWallet}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left transition-colors",
+                    selected
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted"
+                  )}
+                  onClick={() => props.onChangeAddress(friendWallet)}
                 >
-                  {/* <Avatar>
-                          <AvatarImage src={item?.img} alt="user Avatar" />
-                          <AvatarFallback>AH</AvatarFallback>
-                        </Avatar> */}
-                  <div>
-                    {/* <p className="font-medium">{item?.data.title}</p> */}
-                    <p className="font-medium text-sm">
-                      {truncateAddress(item?.address)}
+                  <WalletAvatar address={friendWallet} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">
+                      {truncateAddress(friendWallet)}
+                    </p>
+                    <p
+                      className={cn(
+                        "truncate text-xs",
+                        selected
+                          ? "text-primary-foreground/70"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {friendWallet}
                     </p>
                   </div>
-                  <div
-                    className="text-green-800 cursor-pointer rounded-full p-1 bg-white hover:text-white hover:bg-green-500"
-                    onClick={async () => callAcceptChatRequest(item?.address)}
-                  >
-                    {!isLoadingAcceptChatRequest ? (
-                      <FaCheck className="w-5 h-5" />
-                    ) : (
-                      <ReloadIcon className="animate-spin" />
-                    )}
-                  </div>
-                </div>
+                  {selected && (
+                    <Badge
+                      variant="secondary"
+                      className="shrink-0 bg-primary-foreground/15 text-primary-foreground"
+                    >
+                      {CHAT_COPY.activeBadge}
+                    </Badge>
+                  )}
+                </button>
               );
             })}
           </div>
+        ) : (
+          <Card className="mx-1 border-dashed shadow-none">
+            <CardHeader className="py-4">
+              <CardTitle className="text-sm">
+                {CHAT_COPY.emptyFriendsTitle}
+              </CardTitle>
+              <CardDescription>
+                {CHAT_COPY.emptyFriendsDescription}
+              </CardDescription>
+            </CardHeader>
+          </Card>
         )}
-      <div className="flex flex-col gap-2 px-1">
-        <h2 className="font-medium text-sm px-3">Friends List:</h2>
-        <div className="flex flex-col">
-          {!isLoadingChatRequestAccepted &&
-          eventChatRequestAccepted &&
-          userPrivateKey[0].status === "success" ? (
-            friendListItems?.map((item: any, index: number) => {
-              return (
-                <div
-                  className={`flex items-center gap-2 px-3 py-4 rounded-lg hover:bg-green-500 hover:text-white cursor-pointer ${
-                    props?.addressSelected === item?.address &&
-                    "bg-green-600 text-white"
-                  }`}
-                  onClick={() => props.onChangeAddress(item?.address)}
-                  key={index}
-                >
-                  {/* <Avatar>
-                          <AvatarImage src={item?.img} alt="user Avatar" />
-                          <AvatarFallback>AH</AvatarFallback>
-                        </Avatar> */}
-                  <div>
-                    {/* <p className="font-medium">{item?.data.title}</p> */}
-                    <p className="font-medium text-sm">
-                      {truncateAddress(item?.address)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-sm text-red-500 text-center px-4">
-              You need to add your private key to connect chat
-            </div>
-          )}
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

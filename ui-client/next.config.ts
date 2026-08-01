@@ -1,7 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
-  pageExtensions: ["mdx", "md", "jsx", "js", "tsx", "ts"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "www.notion.so" },
@@ -18,22 +18,19 @@ const nextConfig = {
       { protocol: "https", hostname: "cdn.simplehash.com" },
       { protocol: "https", hostname: "cdn-icons-png.flaticon.com" },
       { protocol: "https", hostname: "i.seadn.io" },
-      { protocol: "https", hostname: "public.sandbox.exchange.coinbase.com" },
+      {
+        protocol: "https",
+        hostname: "public.sandbox.exchange.coinbase.com",
+      },
       { protocol: "https", hostname: "cointracking.info" },
       { protocol: "https", hostname: "assets-global.website-files.com" },
       { protocol: "https", hostname: "metacore.mobula.io" },
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""},
-      // {protocol: "https", hostname: ""}
     ],
+  },
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

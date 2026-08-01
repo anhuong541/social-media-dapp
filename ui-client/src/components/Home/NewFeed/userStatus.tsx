@@ -1,105 +1,154 @@
-import { Web3Button, useAddress } from "@thirdweb-dev/react";
+"use client";
+
 import { useState } from "react";
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { PenSquare } from "lucide-react";
 
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { STATUS_CONTRACT_ADDRESS } from "../../../constants/addresses";
-import { Button } from "../../ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
+import { STATUS_MAX_CHARACTERS, SOCIAL_COPY } from "@/constants/social";
+import { statusContractAbi } from "@/abi/statusContract";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { WalletAvatar } from "@/components/Chat/wallet-avatar";
+import { cn } from "@/lib/utils";
 
 export default function UserStatus() {
-  const address = useAddress();
+  const { address } = useAccount();
   const [newStatus, setNewStatus] = useState("");
   const [dialogOnClose, setDialogOnClose] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
 
+  const { writeContractAsync, data: hash, isPending } = useWriteContract();
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+
+  const publish = async () => {
+    try {
+      await writeContractAsync({
+        address: STATUS_CONTRACT_ADDRESS,
+        abi: statusContractAbi,
+        functionName: "setStatus",
+        args: [newStatus],
+      });
+      setNewStatus("");
+      setCharacterCount(0);
+      setDialogOnClose(true);
+    } catch (err) {
+      console.error("setStatus failed", err);
+    }
+  };
+
   if (!address) {
     return (
-      <div className="text-red-500 px-4">
-        You did not connected your wallet yet!
-      </div>
+      <Alert variant="destructive">
+        <AlertTitle>{SOCIAL_COPY.walletRequiredTitle}</AlertTitle>
+        <AlertDescription>
+          {SOCIAL_COPY.walletRequiredDescription}
+        </AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <div className="w-full">
-      <Dialog>
-        <div className="w-full flex justify-center">
-          <DialogTrigger>
-            <Button
-              variant="default"
-              onClick={() => setDialogOnClose(false)}
-              className="w-[200px]"
+    <Dialog
+      onOpenChange={(open) => {
+        if (open) setDialogOnClose(false);
+      }}
+    >
+      <Card className="shadow-xs">
+        <CardContent className="flex items-center gap-3 p-4">
+          <WalletAvatar address={address} size="lg" />
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="flex h-11 flex-1 items-center rounded-full border bg-muted/40 px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-muted"
             >
-              Posting
+              {SOCIAL_COPY.composerPrompt}
+            </button>
+          </DialogTrigger>
+          <DialogTrigger asChild>
+            <Button className="hidden gap-1.5 sm:inline-flex">
+              <PenSquare className="size-4" />
+              {SOCIAL_COPY.composerButton}
             </Button>
           </DialogTrigger>
-        </div>
-        <DialogContent>
-          {dialogOnClose ? (
+        </CardContent>
+      </Card>
+
+      <DialogContent>
+        {dialogOnClose ? (
+          <>
             <DialogHeader>
-              <DialogTitle>Status Updated!</DialogTitle>
+              <DialogTitle>{SOCIAL_COPY.composerSuccessTitle}</DialogTitle>
               <DialogDescription>
-                You can close the popup now!
+                {SOCIAL_COPY.composerSuccessDescription}
               </DialogDescription>
             </DialogHeader>
-          ) : (
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">{SOCIAL_COPY.close}</Button>
+              </DialogClose>
+            </DialogFooter>
+          </>
+        ) : (
+          <>
             <DialogHeader>
-              <DialogTitle>New Status:</DialogTitle>
-              <DialogDescription>Typing your thought!</DialogDescription>
+              <DialogTitle>{SOCIAL_COPY.composerDialogTitle}</DialogTitle>
+              <DialogDescription>
+                {SOCIAL_COPY.composerDialogDescription}
+              </DialogDescription>
             </DialogHeader>
-          )}
-
-          {dialogOnClose ? (
-            <DialogClose>close</DialogClose>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <textarea
+            <div className="flex flex-col gap-3">
+              <Textarea
                 value={newStatus}
                 onChange={(e) => {
                   setNewStatus(e.target.value);
                   setCharacterCount(e.target.value.length);
                 }}
-                placeholder="What is on your mind today!"
-                className="h-40 py-2 px-4 border"
+                placeholder={SOCIAL_COPY.composerPlaceholder}
+                className="min-h-36"
               />
-              <div className="flex justify-end w-full pr-2">
+              <div className="flex items-center justify-between gap-3">
                 <p
-                  className={`${
-                    characterCount >= 140 ? "text-red-500" : "text-black"
-                  }`}
+                  className={cn(
+                    "text-xs",
+                    characterCount >= STATUS_MAX_CHARACTERS
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                  )}
                 >
-                  {characterCount}/140
+                  {characterCount}/{STATUS_MAX_CHARACTERS}
                 </p>
               </div>
-
-              <Web3Button
-                className="bg-[#2c9f41] cursor-pointer rounded-xl p-2 w-full h-10 text-sm hover:opacity-80"
-                style={{
-                  backgroundColor: "#2c9f41",
-                  color: "white",
-                  height: "0px",
-                }}
-                contractAddress={STATUS_CONTRACT_ADDRESS}
-                action={(contract) => contract.call("setStatus", [newStatus])}
-                isDisabled={characterCount === 0 || characterCount > 140}
-                onSuccess={() => {
-                  setNewStatus("");
-                  setDialogOnClose(true);
-                }}
+              <Button
+                className="w-full"
+                disabled={
+                  isPending ||
+                  isConfirming ||
+                  characterCount === 0 ||
+                  characterCount > STATUS_MAX_CHARACTERS
+                }
+                onClick={() => void publish()}
               >
-                Post
-              </Web3Button>
+                {isPending || isConfirming
+                  ? "Publishing..."
+                  : SOCIAL_COPY.composerButton}
+              </Button>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

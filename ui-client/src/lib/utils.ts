@@ -1,33 +1,40 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
-import crypto from "crypto";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 
-const durationex = require("dayjs/plugin/duration");
-dayjs.extend(durationex);
+dayjs.extend(duration);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function filterStatusID(data: any): any {
-  let uniqueUpdates: { [key: string]: any } = {};
+export type StatusFeedItem = {
+  user: string;
+  statusId: bigint;
+  newStatus: string;
+  timestamp: bigint;
+  transactionHash?: string;
+  logIndex?: number;
+};
+
+/** Keep the latest StatusUpdated per (user, statusId), drop deleted posts. */
+export function filterStatusID(data: StatusFeedItem[]): StatusFeedItem[] {
+  const uniqueUpdates: { [key: string]: StatusFeedItem } = {};
 
   for (const update of data) {
-    const key = `${update.data.user}-${update.data.statusId._hex}`;
+    const key = `${update.user.toLowerCase()}-${update.statusId.toString()}`;
     if (
       !uniqueUpdates[key] ||
-      parseInt(update.data.timestamp._hex, 16) >
-        parseInt(uniqueUpdates[key].data.timestamp._hex, 16)
+      update.timestamp > uniqueUpdates[key].timestamp
     ) {
       uniqueUpdates[key] = update;
     }
   }
 
-  // add delete at this filter function
   return Object.values(uniqueUpdates).filter(
-    (item) => item.data.newStatus !== "deleted_status_@"
+    (item) => item.newStatus !== "deleted_status_@"
   );
 }
 

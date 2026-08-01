@@ -1,34 +1,33 @@
+"use client";
+
 import { useState } from "react";
 import {
-  Web3Button,
-  useAddress,
-  useContract,
-  useContractRead,
-  useContractWrite,
-} from "@thirdweb-dev/react";
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 
 import {
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { STATUS_CONTRACT_ADDRESS } from "@/constants/addresses";
-import { formatHexToDecimal } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
+import { SOCIAL_COPY, STATUS_MAX_CHARACTERS } from "@/constants/social";
+import { statusContractAbi } from "@/abi/statusContract";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SuccesType } from "../NewFeed/eventCardItem";
+import { walletsEqual } from "@/lib/wallet";
 
 type ChangeStatusType = {
   success: SuccesType;
   onChangeSuccess: ({ state, title }: SuccesType) => void;
   status: string;
   walletAddress: string;
-  statusId: {
-    type: string;
-    _hex: string;
-  };
+  statusId: bigint;
 };
 
 export default function ChangeStatusSection({
@@ -38,107 +37,103 @@ export default function ChangeStatusSection({
   walletAddress,
   statusId,
 }: ChangeStatusType) {
-  const address = useAddress();
+  const { address } = useAccount();
   const [edit, setEdit] = useState("");
-  const { contract } = useContract(STATUS_CONTRACT_ADDRESS);
-  const statusIdDeciaml = formatHexToDecimal(statusId._hex);
+  const isOwner = walletsEqual(address, walletAddress);
 
-  const { mutateAsync: editStatus, isLoading: isLoadingEdit } =
-    useContractWrite(contract, "editStatus");
-
-  const { mutateAsync: deleteStatus, isLoading: isLoadingDelete } =
-    useContractWrite(contract, "deleteStatus");
+  const {
+    writeContractAsync,
+    data: hash,
+    isPending,
+  } = useWriteContract();
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+  const busy = isPending || isConfirming;
 
   const callEditStatus = async () => {
+    if (!address) return;
     try {
-      const data = await editStatus({ args: [address, statusIdDeciaml, edit] });
-      // console.info("contract call successs", data);
+      await writeContractAsync({
+        address: STATUS_CONTRACT_ADDRESS,
+        abi: statusContractAbi,
+        functionName: "editStatus",
+        args: [address, statusId, edit],
+      });
       setEdit("");
       onChangeSuccess({
         state: true,
-        title: "Edit",
+        title: SOCIAL_COPY.editSuccess,
       });
     } catch (err) {
-      console.error("contract call failure", err);
+      console.error("editStatus failed", err);
     }
   };
 
   const callDeleteStatus = async () => {
+    if (!address) return;
     try {
-      const data = await deleteStatus({ args: [address, statusIdDeciaml] });
-      // console.info("contract call successs", data);
+      await writeContractAsync({
+        address: STATUS_CONTRACT_ADDRESS,
+        abi: statusContractAbi,
+        functionName: "deleteStatus",
+        args: [address, statusId],
+      });
       onChangeSuccess({
         state: true,
-        title: "Removed",
+        title: SOCIAL_COPY.deleteSuccess,
       });
     } catch (err) {
-      console.error("contract call failure", err);
+      console.error("deleteStatus failed", err);
     }
   };
 
-  // if () {
-  //   return (
-  //     <DialogContent>
-  //       <Lottie
-  //         animationData={loadingLottie}
-  //         loop={true}
-  //         className="w-24 h-24 mx-auto"
-  //       />
-  //     </DialogContent>
-  //   );
-  // }
-
   return (
     <DialogContent>
-      {!success?.state &&
-        (address === walletAddress ? (
-          <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to edit your status?
-            </DialogTitle>
-            <DialogDescription>Your old status: {status}</DialogDescription>
-          </DialogHeader>
-        ) : (
-          <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to block this person?
-            </DialogTitle>
-          </DialogHeader>
-        ))}
       {!success?.state ? (
-        <div className="flex flex-col gap-4 pt-4">
-          <div className={`${address !== walletAddress && "hidden"}`}>
-            <Input
-              value={edit}
-              onChange={(e) => {
-                setEdit(e.target.value);
-              }}
-              placeholder="!!!!"
-              disabled={isLoadingDelete || isLoadingEdit}
-            />
+        <>
+          <DialogHeader>
+            <DialogTitle>{SOCIAL_COPY.editDialogTitle}</DialogTitle>
+            <DialogDescription>
+              {SOCIAL_COPY.editDialogDescription}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+              {status}
+            </p>
+            {isOwner && (
+              <Textarea
+                value={edit}
+                onChange={(e) => setEdit(e.target.value)}
+                placeholder={SOCIAL_COPY.editPlaceholder}
+                maxLength={STATUS_MAX_CHARACTERS}
+                disabled={busy}
+                className="min-h-28"
+              />
+            )}
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                variant="default"
+                onClick={() => void callEditStatus()}
+                disabled={busy || !isOwner || edit.trim().length === 0}
+              >
+                {SOCIAL_COPY.edit}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => void callDeleteStatus()}
+                disabled={busy || !isOwner}
+              >
+                {SOCIAL_COPY.delete}
+              </Button>
+            </div>
           </div>
-
-          <div className="flex justify-end items-center gap-2">
-            <Button
-              variant="default"
-              onClick={callEditStatus}
-              disabled={isLoadingDelete || isLoadingEdit}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={callDeleteStatus}
-              disabled={isLoadingDelete || isLoadingEdit}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
+        </>
       ) : (
-        <div className="text-center text-green-600 font-medium text-lg">
-          {success?.title} success
-        </div>
+        <Alert>
+          <AlertDescription className="text-center text-base font-medium text-primary">
+            {success?.title}
+          </AlertDescription>
+        </Alert>
       )}
     </DialogContent>
   );
