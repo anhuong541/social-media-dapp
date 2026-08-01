@@ -1,40 +1,40 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
-import { Menu, MessageCircle, Radio, User } from "lucide-react";
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useAccount, useDisconnect } from 'wagmi'
+import { Menu, MessageCircle, Radio, User } from 'lucide-react'
 
-import { truncateAddress } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { truncateAddress } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-import { NAV_ITEMS } from "@/constants/navigation";
-import { ThemeToggle } from "./theme-toggle";
+} from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
+import { NAV_ITEMS } from '@/constants/navigation'
+import { ThemeToggle } from './theme-toggle'
 
 const iconMap = {
   radio: Radio,
-  "message-circle": MessageCircle,
+  'message-circle': MessageCircle,
   user: User,
-} as const;
+} as const
 
 export default function Header() {
-  const router = useRouter();
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const router = useRouter()
+  const { address } = useAccount()
+  const { disconnect } = useDisconnect()
 
   return (
     <header className="h-[10vh] w-full">
-      <div className="mx-auto flex h-full max-w-screen-xl items-center justify-between border-b px-3">
+      <div className="mx-auto flex h-full items-center justify-between border-b px-3">
         <div className="text-2xl font-medium">
-          Social Media <br className="sm:hidden" />{" "}
+          Social Media <br className="sm:hidden" />{' '}
           <sup className="hidden text-xs sm:inline">( Graduation thesis )</sup>
         </div>
 
@@ -72,8 +72,8 @@ export default function Header() {
                 <Separator className="my-4" />
                 <nav className="flex flex-col gap-2">
                   {NAV_ITEMS.map((item) => {
-                    const Icon = iconMap[item.icon];
-                    if (item.href === "profile") {
+                    const Icon = iconMap[item.icon]
+                    if (item.href === 'profile') {
                       return (
                         <Button
                           key={item.label}
@@ -87,7 +87,7 @@ export default function Header() {
                           <Icon className="size-5 text-primary" />
                           {item.label}
                         </Button>
-                      );
+                      )
                     }
 
                     return (
@@ -102,7 +102,7 @@ export default function Header() {
                           {item.label}
                         </Link>
                       </Button>
-                    );
+                    )
                   })}
                 </nav>
               </SheetContent>
@@ -122,5 +122,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
