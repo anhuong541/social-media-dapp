@@ -1,8 +1,10 @@
-require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ethers");
+require("@nomicfoundation/hardhat-verify");
 require("dotenv").config();
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || "";
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "";
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -37,5 +39,24 @@ module.exports = {
       chainId: 137,
       accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
     },
+  },
+  etherscan: {
+    apiKey: {
+      polygonAmoy: POLYGONSCAN_API_KEY,
+      polygon: POLYGONSCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "polygonAmoy",
+        chainId: 80002,
+        urls: {
+          apiURL: "https://api-amoy.polygonscan.com/api",
+          browserURL: "https://amoy.polygonscan.com",
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: true,
   },
 };

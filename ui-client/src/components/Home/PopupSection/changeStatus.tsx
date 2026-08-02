@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SuccesType } from "../NewFeed/eventCardItem";
 import { walletsEqual } from "@/lib/wallet";
+import { toastTxError, toastTxSuccess } from "@/lib/txToast";
 
 type ChangeStatusType = {
   success: SuccesType;
@@ -63,8 +64,10 @@ export default function ChangeStatusSection({
         state: true,
         title: SOCIAL_COPY.editSuccess,
       });
+      toastTxSuccess("Status updated");
     } catch (err) {
       console.error("editStatus failed", err);
+      toastTxError(err);
     }
   };
 
@@ -81,8 +84,10 @@ export default function ChangeStatusSection({
         state: true,
         title: SOCIAL_COPY.deleteSuccess,
       });
+      toastTxSuccess("Status deleted");
     } catch (err) {
       console.error("deleteStatus failed", err);
+      toastTxError(err);
     }
   };
 

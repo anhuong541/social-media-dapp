@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
 import { ChatKeyProvider } from "@/providers/ChatKeyProvider";
+import { SiweProvider } from "@/providers/SiweProvider";
 import { wagmiConfig } from "@/lib/wagmi";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -22,12 +23,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
             <ConvexClientProvider>
-              <ChatKeyProvider>
-                <TooltipProvider>
-                  {children}
-                  <Toaster />
-                </TooltipProvider>
-              </ChatKeyProvider>
+              <SiweProvider>
+                <ChatKeyProvider>
+                  <TooltipProvider>
+                    {children}
+                    <Toaster />
+                  </TooltipProvider>
+                </ChatKeyProvider>
+              </SiweProvider>
             </ConvexClientProvider>
           </RainbowKitProvider>
         </QueryClientProvider>

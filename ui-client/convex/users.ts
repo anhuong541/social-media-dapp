@@ -1,17 +1,23 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { normalizeWallet } from "./lib";
+import { requireSiweSession } from "./lib/siweSession";
 
 export const upsertPublicKey = mutation({
   args: {
+    sessionToken: v.string(),
     walletAddress: v.string(),
     publicKey: v.string(),
   },
   handler: async (ctx, args) => {
-    const walletAddress = normalizeWallet(args.walletAddress);
+    const walletAddress = await requireSiweSession(
+      ctx,
+      args.sessionToken,
+      args.walletAddress
+    );
     const publicKey = args.publicKey.trim();
-    if (!walletAddress || !publicKey) {
-      throw new Error("walletAddress and publicKey are required");
+    if (!publicKey) {
+      throw new Error("publicKey is required");
     }
 
     const existing = await ctx.db

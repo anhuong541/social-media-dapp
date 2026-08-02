@@ -1,28 +1,28 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { Header, SideBar } from '@/components/layouts'
-import { Providers } from './providers'
-import './globals.css'
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Header, SideBar, NetworkGuard } from "@/components/layouts";
+import { Providers } from "./providers";
+import "./globals.css";
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: 'Social Media DApp',
-  description: 'Graduation thesis social media dApp',
-}
+  title: "Social Media DApp",
+  description: "Graduation thesis social media dApp",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -32,6 +32,7 @@ export default function RootLayout({
         <Providers>
           <div className="flex max-h-screen min-h-screen w-full flex-col">
             <Header />
+            <NetworkGuard />
             <div className="mx-auto flex min-h-0 w-full flex-1">
               <div className="grid min-h-0 w-full flex-1 grid-cols-1 lg:grid-cols-4">
                 <SideBar />
@@ -44,5 +45,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

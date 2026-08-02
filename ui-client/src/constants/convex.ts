@@ -22,8 +22,15 @@ export const CHAT_IDB_PUBLIC_KEY_PREFIX = "chat:public-key:" as const;
 /** Max messages fetched per conversation query. */
 export const CHAT_MESSAGE_LIST_LIMIT = 100 as const;
 
-/**
- * TODO(SIWE): Gate Convex mutations with wallet signature / Convex auth.
- * Phase 1 trusts the wallet address from the connected client.
- */
-export const CHAT_AUTH_MODE = "wallet-address-unauthenticated" as const;
+/** SIWE session lifetime (ms). */
+export const SIWE_SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+
+/** SIWE nonce lifetime (ms). */
+export const SIWE_NONCE_TTL_MS = 1000 * 60 * 10;
+
+export const SIWE_STATEMENT =
+  "Sign in to Social Media DApp chat (Convex)." as const;
+
+export const CHAT_AUTH_MODE = "siwe-session" as const;
+
+export const SIWE_SESSION_STORAGE_KEY = "chat:siwe-session" as const;

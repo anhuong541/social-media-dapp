@@ -8,7 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { CHAT_COPY } from "@/constants/chat";
 import { isConvexConfigured } from "@/constants/convex";
 import { normalizeWallet } from "@/lib/wallet";
+import { useSiwe } from "@/providers/SiweProvider";
 import { AddFriend, AddPrivateKey, FriendList } from "./FriendsChatCom";
+import { Button } from "@/components/ui/button";
 
 export type FriendsChatType = {
   addressSelected: string;
@@ -18,6 +20,7 @@ export type FriendsChatType = {
 export default function FriendsChat(props: FriendsChatType) {
   const { address } = useAccount();
   const walletAddress = address ? normalizeWallet(address) : undefined;
+  const { isAuthenticated, isAuthenticating, signIn, error } = useSiwe();
 
   if (!walletAddress) {
     return (
@@ -41,6 +44,32 @@ export default function FriendsChat(props: FriendsChatType) {
         </div>
         <AddPrivateKey address={walletAddress} />
       </div>
+      {isConvexConfigured && !isAuthenticated && (
+        <>
+          <Separator />
+          <div className="px-3 py-3">
+            <Alert>
+              <AlertTitle>Sign in with Ethereum</AlertTitle>
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  {isAuthenticating
+                    ? "Waiting for wallet signature…"
+                    : error ??
+                      "Approve the SIWE signature to use off-chain chat."}
+                </span>
+                <Button
+                  size="sm"
+                  className="w-fit"
+                  disabled={isAuthenticating}
+                  onClick={() => void signIn()}
+                >
+                  Sign in
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        </>
+      )}
       {!isConvexConfigured && (
         <>
           <Separator />

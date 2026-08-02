@@ -41,4 +41,19 @@ export default defineSchema({
     ciphertextForSender: v.string(),
     createdAt: v.number(),
   }).index("by_conversation_createdAt", ["conversationId", "createdAt"]),
+
+  siweNonces: defineTable({
+    walletAddress: v.string(),
+    nonce: v.string(),
+    expiresAt: v.number(),
+  }).index("by_wallet", ["walletAddress"]),
+
+  sessions: defineTable({
+    walletAddress: v.string(),
+    tokenHash: v.string(),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_token_hash", ["tokenHash"])
+    .index("by_wallet", ["walletAddress"]),
 });

@@ -40,6 +40,7 @@ import { api } from "@/lib/convexApi";
 import { formatDateTimeDecimal, truncateAddress } from "@/lib/utils";
 import { walletsEqual } from "@/lib/wallet";
 import { useChatKey } from "@/providers/ChatKeyProvider";
+import { useRequireSiweSession } from "@/hooks/useRequireSiweSession";
 import {
   ChangeStatusSection,
   CommentSection,
@@ -47,6 +48,7 @@ import {
 } from "../PopupSection";
 import CopyAddress from "../../copyAddress";
 import { WalletAvatar } from "@/components/Chat/wallet-avatar";
+import { toastTxError, toastTxSuccess } from "@/lib/txToast";
 
 type EventCardProps = {
   walletAddress: string;
@@ -64,6 +66,7 @@ export default function EventCardItem(props: EventCardProps) {
   const { address } = useAccount();
   const router = useRouter();
   const { isUnlocked, hasStoredKey } = useChatKey();
+  const { requireSessionToken } = useRequireSiweSession();
   const [changeContentSuccess, setChangeContentSuccess] = useState<SuccesType>({
     state: false,
     title: "Edit",
@@ -131,14 +134,18 @@ export default function EventCardItem(props: EventCardProps) {
 
     setIsDmLoading(true);
     try {
+      const sessionToken = await requireSessionToken();
+      if (!sessionToken) throw new Error("SIWE session missing");
       await sendRequest({
+        sessionToken,
         fromWallet: address,
         toWallet: props.walletAddress,
       });
       setIsAlreadyDM(true);
+      toastTxSuccess("Chat request sent");
     } catch (err) {
       console.error("chat request failure", err);
-      toast(err instanceof Error ? err.message : "Request failed");
+      toastTxError(err, "Request failed");
     } finally {
       setIsDmLoading(false);
     }
@@ -152,8 +159,10 @@ export default function EventCardItem(props: EventCardProps) {
         functionName: "addLike",
         args: [props.walletAddress as `0x${string}`, props.statusId],
       });
+      toastTxSuccess("Like submitted");
     } catch (err) {
       console.error("addLike failed", err);
+      toastTxError(err);
     }
   };
 

@@ -5,6 +5,7 @@ import { usePublicClient, useWatchContractEvent } from "wagmi";
 import { decodeEventLog, getAbiItem, type Log } from "viem";
 
 import { statusContractAbi } from "@/abi/statusContract";
+import { STATUS_EVENTS_FROM_BLOCK } from "@/constants/app";
 import {
   isStatusContractConfigured,
   STATUS_CONTRACT_ADDRESS,
@@ -90,7 +91,7 @@ export function useStatusUpdatedEvents() {
         const logs = await publicClient.getLogs({
           address: STATUS_CONTRACT_ADDRESS,
           event: statusUpdatedEvent,
-          fromBlock: BigInt(0),
+          fromBlock: STATUS_EVENTS_FROM_BLOCK,
           toBlock: "latest",
         });
 

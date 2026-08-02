@@ -34,14 +34,18 @@ export const ALCHEMY_POLYGON_MAINNET_HTTP = ALCHEMY_API_KEY
 
 export const DAPP_NAME = "Social Media DApp" as const;
 
-/** Temporary passphrase used by legacy local private-key encrypt flow (social DM migrate). */
-export const LOCAL_KEY_PASSPHRASE = "123123" as const;
-
-export const LOCAL_KEY_PASS_STORAGE_KEY = "passs" as const;
-
 export const WALLET_ADDRESS_MIN_LENGTH = 24 as const;
 
 export const DEFAULT_AVATAR_SRC = "/PepeNoHappy.gif" as const;
 
-/** @deprecated Prefer ACTIVE_CHAIN_ID + wagmi chains. Kept for any leftover string refs. */
+/**
+ * Optional override for historical StatusUpdated scan start block.
+ * Leave unset to scan from genesis (fine on Amoy; set on mainnet).
+ */
+export const STATUS_EVENTS_FROM_BLOCK = process.env
+  .NEXT_PUBLIC_STATUS_EVENTS_FROM_BLOCK?.trim()
+  ? BigInt(process.env.NEXT_PUBLIC_STATUS_EVENTS_FROM_BLOCK.trim())
+  : BigInt(0);
+
+/** @deprecated Prefer ACTIVE_CHAIN_ID + wagmi chains. */
 export const ACTIVE_CHAIN = "polygon-amoy" as const;

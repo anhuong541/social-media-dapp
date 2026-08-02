@@ -14,6 +14,7 @@ import { DirectWalletType } from "@/constants/navigation";
 import { encryptMsg } from "@/lib/encodeMsg";
 import { normalizeWallet } from "@/lib/wallet";
 import { useChatKey } from "@/providers/ChatKeyProvider";
+import { useRequireSiweSession } from "@/hooks/useRequireSiweSession";
 
 export default function SendMessage({
   address,
@@ -23,7 +24,10 @@ export default function SendMessage({
   directWallet: DirectWalletType;
 }) {
   const { isUnlocked, publicKey: myPublicKey } = useChatKey();
-  const [placeholder, setPlaceholder] = useState<string>(CHAT_COPY.composerPlaceholder);
+  const { requireSessionToken } = useRequireSiweSession();
+  const [placeholder, setPlaceholder] = useState<string>(
+    CHAT_COPY.composerPlaceholder
+  );
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +62,9 @@ export default function SendMessage({
     setIsLoading(true);
     setError(null);
     try {
+      const sessionToken = await requireSessionToken();
+      if (!sessionToken) throw new Error("SIWE session missing");
+
       const ciphertextForReceiver = await encryptMsg(
         peerUser.publicKey,
         trimmed
@@ -65,6 +72,7 @@ export default function SendMessage({
       const ciphertextForSender = await encryptMsg(myPublicKey, trimmed);
 
       await sendMessage({
+        sessionToken,
         senderWallet: normalizeWallet(address),
         receiverWallet: normalizeWallet(directWallet),
         ciphertextForReceiver: JSON.stringify(ciphertextForReceiver),

@@ -32,6 +32,7 @@ import { SOCIAL_COPY } from "@/constants/social";
 import { statusContractAbi } from "@/abi/statusContract";
 import { truncateAddress } from "@/lib/utils";
 import { WalletAvatar } from "@/components/Chat/wallet-avatar";
+import { toastTxError, toastTxSuccess } from "@/lib/txToast";
 
 type CommentType = {
   status: string;
@@ -69,6 +70,7 @@ export default function CommentSection({
     setComment("");
     void refetch();
     reset();
+    toastTxSuccess("Comment added");
   }, [isSuccess, refetch, reset]);
 
   const submitComment = async () => {
@@ -82,6 +84,7 @@ export default function CommentSection({
       });
     } catch (err) {
       console.error("addComment failed", err);
+      toastTxError(err);
     }
   };
 

@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { truncateAddress } from "@/lib/utils";
+import { toastTxError, toastTxSuccess } from "@/lib/txToast";
 
 type TipsType = {
   status: string;
@@ -40,6 +41,7 @@ export default function TipsSection({ walletAddress }: TipsType) {
     if (isSuccess) {
       setTip(0.0);
       reset();
+      toastTxSuccess("Tip sent");
     }
   }, [isSuccess, reset]);
 
@@ -55,6 +57,7 @@ export default function TipsSection({ walletAddress }: TipsType) {
       });
     } catch (err) {
       console.error("tipUser failed", err);
+      toastTxError(err);
     }
   };
 

@@ -30,6 +30,16 @@ export const statusContractAbi = [
   },
   {
     type: "function",
+    name: "getLikes",
+    stateMutability: "view",
+    inputs: [
+      { name: "_user", type: "address" },
+      { name: "_statusId", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
     name: "getComments",
     stateMutability: "view",
     inputs: [

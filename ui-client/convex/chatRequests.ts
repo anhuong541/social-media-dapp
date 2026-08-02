@@ -1,14 +1,20 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { normalizeWallet, sortedWalletPair } from "./lib";
+import { requireSiweSession } from "./lib/siweSession";
 
 export const sendRequest = mutation({
   args: {
+    sessionToken: v.string(),
     fromWallet: v.string(),
     toWallet: v.string(),
   },
   handler: async (ctx, args) => {
-    const fromWallet = normalizeWallet(args.fromWallet);
+    const fromWallet = await requireSiweSession(
+      ctx,
+      args.sessionToken,
+      args.fromWallet
+    );
     const toWallet = normalizeWallet(args.toWallet);
 
     if (!fromWallet || !toWallet) {
@@ -100,11 +106,16 @@ export const sendRequest = mutation({
 
 export const acceptRequest = mutation({
   args: {
+    sessionToken: v.string(),
     requestId: v.id("chatRequests"),
     toWallet: v.string(),
   },
   handler: async (ctx, args) => {
-    const toWallet = normalizeWallet(args.toWallet);
+    const toWallet = await requireSiweSession(
+      ctx,
+      args.sessionToken,
+      args.toWallet
+    );
     const request = await ctx.db.get(args.requestId);
     if (!request) {
       throw new Error("Request not found");
@@ -143,11 +154,16 @@ export const acceptRequest = mutation({
 
 export const rejectRequest = mutation({
   args: {
+    sessionToken: v.string(),
     requestId: v.id("chatRequests"),
     toWallet: v.string(),
   },
   handler: async (ctx, args) => {
-    const toWallet = normalizeWallet(args.toWallet);
+    const toWallet = await requireSiweSession(
+      ctx,
+      args.sessionToken,
+      args.toWallet
+    );
     const request = await ctx.db.get(args.requestId);
     if (!request) {
       throw new Error("Request not found");

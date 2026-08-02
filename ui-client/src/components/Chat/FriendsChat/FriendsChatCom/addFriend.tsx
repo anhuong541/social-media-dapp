@@ -11,12 +11,16 @@ import { api } from "@/lib/convexApi";
 import { CHAT_COPY, WALLET_ADDRESS_MIN_LENGTH } from "@/constants/chat";
 import { isConvexConfigured } from "@/constants/convex";
 import { useChatKey } from "@/providers/ChatKeyProvider";
+import { useRequireSiweSession } from "@/hooks/useRequireSiweSession";
 
 export default function AddFriend() {
   const { walletAddress, isUnlocked } = useChatKey();
+  const { requireSessionToken } = useRequireSiweSession();
   const [typeAddress, setTypeAddress] = useState("");
   const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>(CHAT_COPY.requestFailed);
+  const [errorMessage, setErrorMessage] = useState<string>(
+    CHAT_COPY.requestFailed
+  );
   const [isLoading, setIsLoading] = useState(false);
   const sendRequest = useMutation(api.chatRequests.sendRequest);
 
@@ -34,7 +38,10 @@ export default function AddFriend() {
 
     setIsLoading(true);
     try {
+      const sessionToken = await requireSessionToken();
+      if (!sessionToken) throw new Error("SIWE session missing");
       await sendRequest({
+        sessionToken,
         fromWallet: walletAddress,
         toWallet: typeAddress.trim(),
       });

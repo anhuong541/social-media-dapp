@@ -1,10 +1,13 @@
-# Smart contracts (Hardhat + Polygon)
+# Smart contracts (Hardhat + Polygon / Alchemy)
 
-On-chain status feed contract: **SocialMediaV6** in `contracts/Contract.sol`.
+On-chain social feed: **`SocialMediaV6`** in `contracts/SocialMediaV6.sol`
+(posts, likes, comments, tips).
 
-Stack: Hardhat 2 + `@nomicfoundation/hardhat-toolbox` + OpenZeppelin 4.9. Deploy target: **Polygon Amoy** (chainId `80002`) via Alchemy. No thirdweb / zkSync.
+Chat is **off-chain** (Convex). Legacy chat / older Solidity lives under
+`legacy/` and is **not** compiled.
 
-The same Solidity file also contains legacy `ChatPrivate` (ERC721). Chat in the app is off-chain (Convex); only `SocialMediaV6` is deployed by the status script.
+Stack: Hardhat 2 + `@nomicfoundation/hardhat-ethers` + `hardhat-verify`.
+Deploy target: **Polygon Amoy** (chainId `80002`) via Alchemy.
 
 ## Setup
 
@@ -18,8 +21,9 @@ Fill `.env`:
 
 | Variable | Where to get it |
 | --- | --- |
-| `ALCHEMY_API_KEY` | [Alchemy dashboard](https://dashboard.alchemy.com) — create an app for Polygon Amoy |
-| `DEPLOYER_PRIVATE_KEY` | MetaMask (or other) account private key — **never commit**; fund with Amoy POL from a faucet |
+| `ALCHEMY_API_KEY` | [Alchemy dashboard](https://dashboard.alchemy.com) — Polygon Amoy app |
+| `DEPLOYER_PRIVATE_KEY` | Deployer wallet private key — **never commit**; fund with Amoy POL |
+| `POLYGONSCAN_API_KEY` | Optional — verify on Amoy/Polygonscan |
 
 `.env` is gitignored.
 
@@ -37,14 +41,8 @@ Artifacts land in `artifacts/` (gitignored).
 yarn deploy:amoy
 ```
 
-The script (`scripts/deploy-status.js`) prints:
-
-```text
-SocialMediaV6 deployed to: 0x...
-Set NEXT_PUBLIC_STATUS_CONTRACT_ADDRESS=0x... in ui-client/.env.local
-```
-
-Copy that address into `ui-client/.env.local` as `NEXT_PUBLIC_STATUS_CONTRACT_ADDRESS`.
+The script (`scripts/deploy-status.js`) prints the address. Copy into
+`ui-client/.env.local` as `NEXT_PUBLIC_STATUS_CONTRACT_ADDRESS`.
 
 Mainnet (only when explicitly needed):
 
@@ -60,63 +58,19 @@ In `ui-client/.env.local`:
 NEXT_PUBLIC_ALCHEMY_API_KEY=<same Alchemy key>
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=<from https://cloud.walletconnect.com>
 NEXT_PUBLIC_STATUS_CONTRACT_ADDRESS=<address from yarn deploy:amoy>
-
-# Chat (Convex) — already set if you ran `npx convex dev`
-NEXT_PUBLIC_CONVEX_URL=https://<deployment>.convex.cloud
-CONVEX_DEPLOYMENT=dev:<deployment>
+NEXT_PUBLIC_CONVEX_URL=<from npx convex dev>
+CONVEX_DEPLOYMENT=<from npx convex dev>
 ```
 
-Then:
+## Verify (optional)
 
 ```bash
-cd ui-client
-yarn dev
+npx hardhat verify --network polygonAmoy <CONTRACT_ADDRESS>
 ```
 
-Smoke test: MetaMask on **Polygon Amoy** → connect → post / like / comment / tip → feed & profile update from `StatusUpdated` events.
+## Notes
 
-## Optional: verify on Polygonscan
-
-`@nomicfoundation/hardhat-verify` is already a toolbox peer. To enable verification yourself:
-
-1. Get an API key at [Polygonscan](https://polygonscan.com/apis) (works for Amoy too).
-2. Add to `.env`:
-
-   ```bash
-   POLYGONSCAN_API_KEY=
-   ```
-
-3. In `hardhat.config.js`, add (toolbox already loads the plugin):
-
-   ```js
-   const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
-
-   module.exports = {
-     // ...existing solidity / networks...
-     etherscan: {
-       apiKey: POLYGONSCAN_API_KEY,
-     },
-   };
-   ```
-
-4. After deploy:
-
-   ```bash
-   npx hardhat verify --network polygonAmoy <CONTRACT_ADDRESS>
-   ```
-
-`SocialMediaV6` has a no-arg constructor, so no constructor arguments are needed.
-
-## Scripts
-
-| Script | Command |
-| --- | --- |
-| Compile | `yarn compile` |
-| Deploy Amoy | `yarn deploy:amoy` |
-| Deploy Polygon mainnet | `yarn deploy:polygon` |
-
-## Notes / TODOs (out of scope here)
-
-- `tipUser` has a questionable balance check before transfer — fix separately if tips fail for empty wallets.
-- Do not migrate chat back on-chain unless requested.
-- Do not deploy mainnet unless explicitly requested.
+- Tip token / gas: **POL**
+- `tipUser` sends `msg.value` to the recipient (no recipient-balance check)
+- `editStatus` / `deleteStatus` require `msg.sender == _user`
+- Amoy faucet: use any Polygon Amoy POL faucet

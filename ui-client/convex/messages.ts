@@ -1,16 +1,22 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { conversationIdFor, normalizeWallet, sortedWalletPair } from "./lib";
+import { requireSiweSession } from "./lib/siweSession";
 
 export const sendMessage = mutation({
   args: {
+    sessionToken: v.string(),
     senderWallet: v.string(),
     receiverWallet: v.string(),
     ciphertextForReceiver: v.string(),
     ciphertextForSender: v.string(),
   },
   handler: async (ctx, args) => {
-    const senderWallet = normalizeWallet(args.senderWallet);
+    const senderWallet = await requireSiweSession(
+      ctx,
+      args.sessionToken,
+      args.senderWallet
+    );
     const receiverWallet = normalizeWallet(args.receiverWallet);
 
     if (!senderWallet || !receiverWallet) {

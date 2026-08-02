@@ -12,7 +12,10 @@ import { useMutation } from "convex/react";
 import { useAccount } from "wagmi";
 
 import { api } from "@/lib/convexApi";
-import { isConvexConfigured } from "@/constants/convex";
+import {
+  isConvexConfigured,
+  SIWE_SESSION_STORAGE_KEY,
+} from "@/constants/convex";
 import { decryptPrivateKey, encryptPrivateKey } from "@/lib/enCodePrivateKey";
 import { getPublicKeyByPrivate } from "@/lib/encodeMsg";
 import {
@@ -22,6 +25,7 @@ import {
   saveStoredChatKey,
 } from "@/lib/idb/chatKeys";
 import { normalizeWallet } from "@/lib/wallet";
+import { useSiwe } from "@/providers/SiweProvider";
 
 type ChatKeyContextValue = {
   walletAddress: string | undefined;
@@ -42,8 +46,25 @@ type ChatKeyContextValue = {
 
 const ChatKeyContext = createContext<ChatKeyContextValue | null>(null);
 
+function readSessionTokenFromStorage(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(SIWE_SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as {
+      sessionToken: string;
+      expiresAt: number;
+    };
+    if (parsed.expiresAt < Date.now()) return null;
+    return parsed.sessionToken;
+  } catch {
+    return null;
+  }
+}
+
 export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
   const { address } = useAccount();
+  const { sessionToken, signIn } = useSiwe();
   const walletAddress = address ? normalizeWallet(address) : undefined;
   const upsertPublicKey = useMutation(api.users.upsertPublicKey);
 
@@ -73,6 +94,31 @@ export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
     void refreshStoredKeyState();
   }, [walletAddress, lockKey, refreshStoredKeyState]);
 
+  const ensureSessionToken = useCallback(async () => {
+    if (sessionToken) return sessionToken;
+    const ok = await signIn();
+    if (!ok) return null;
+    return readSessionTokenFromStorage();
+  }, [sessionToken, signIn]);
+
+  const registerPublicKey = useCallback(
+    async (derivedPublicKey: string) => {
+      if (!isConvexConfigured || !walletAddress) return true;
+      const token = await ensureSessionToken();
+      if (!token) {
+        setError("SIWE sign-in required before registering public key");
+        return false;
+      }
+      await upsertPublicKey({
+        sessionToken: token,
+        walletAddress,
+        publicKey: derivedPublicKey,
+      });
+      return true;
+    },
+    [ensureSessionToken, upsertPublicKey, walletAddress]
+  );
+
   const saveAndRegisterKey = useCallback(
     async (privateKeyPlain: string, password: string) => {
       if (!walletAddress) {
@@ -94,12 +140,8 @@ export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
           derivedPublicKey
         );
 
-        if (isConvexConfigured) {
-          await upsertPublicKey({
-            walletAddress,
-            publicKey: derivedPublicKey,
-          });
-        }
+        const registered = await registerPublicKey(derivedPublicKey);
+        if (!registered) return false;
 
         setHasStoredKey(true);
         setPrivateKey(trimmed);
@@ -115,7 +157,7 @@ export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
         setIsBusy(false);
       }
     },
-    [upsertPublicKey, walletAddress]
+    [registerPublicKey, walletAddress]
   );
 
   const unlockKey = useCallback(
@@ -153,12 +195,8 @@ export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
           );
         }
 
-        if (isConvexConfigured) {
-          await upsertPublicKey({
-            walletAddress,
-            publicKey: derivedPublicKey,
-          });
-        }
+        const registered = await registerPublicKey(derivedPublicKey);
+        if (!registered) return false;
 
         setPrivateKey(plain);
         setPublicKey(derivedPublicKey);
@@ -174,7 +212,7 @@ export function ChatKeyProvider({ children }: { children: React.ReactNode }) {
         setIsBusy(false);
       }
     },
-    [upsertPublicKey, walletAddress]
+    [registerPublicKey, walletAddress]
   );
 
   const value = useMemo<ChatKeyContextValue>(

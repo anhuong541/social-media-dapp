@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { WalletAvatar } from "@/components/Chat/wallet-avatar";
 import { cn } from "@/lib/utils";
+import { toastTxError, toastTxSuccess } from "@/lib/txToast";
 
 export default function UserStatus() {
   const { address } = useAccount();
@@ -44,8 +45,10 @@ export default function UserStatus() {
       setNewStatus("");
       setCharacterCount(0);
       setDialogOnClose(true);
+      toastTxSuccess("Status published");
     } catch (err) {
       console.error("setStatus failed", err);
+      toastTxError(err);
     }
   };
 

@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { walletsEqual } from "@/lib/wallet";
 import { useChatKey } from "@/providers/ChatKeyProvider";
+import { useRequireSiweSession } from "@/hooks/useRequireSiweSession";
 import { WalletAvatar } from "../../wallet-avatar";
 import { FriendsChatType } from "..";
 
@@ -31,6 +32,7 @@ export default function FriendList({
   address: string;
 }) {
   const { isUnlocked } = useChatKey();
+  const { requireSessionToken } = useRequireSiweSession();
   const friends = useQuery(
     api.chatRequests.listFriends,
     isConvexConfigured && address ? { walletAddress: address } : "skip"
@@ -44,7 +46,10 @@ export default function FriendList({
 
   const callAccept = async (requestId: string) => {
     try {
+      const sessionToken = await requireSessionToken();
+      if (!sessionToken) throw new Error("SIWE session missing");
       await acceptRequest({
+        sessionToken,
         requestId: requestId as never,
         toWallet: address,
       });
@@ -55,7 +60,10 @@ export default function FriendList({
 
   const callReject = async (requestId: string) => {
     try {
+      const sessionToken = await requireSessionToken();
+      if (!sessionToken) throw new Error("SIWE session missing");
       await rejectRequest({
+        sessionToken,
         requestId: requestId as never,
         toWallet: address,
       });
